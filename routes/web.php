@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\ManageElectionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\PagesController;
 use App\Http\Controllers\Admin\MenuController;
@@ -332,6 +333,11 @@ Route::prefix('admin')->middleware('auth')->group(function () {
             Route::post('manage-election-voters/update/{id}', [ManageelectioncountController::class, 'update'])->name('manageelectionvoters.update');
             Route::any('manage-election-voters/destroy/{id}', [ManageelectioncountController::class, 'destroy'])->name('manageelectionvoters.destroy');
             Route::post('manage-election-voters/status', [ManageelectioncountController::class, 'status'])->name('manageelectionvoters.status');
+
+            //Add Election
+            Route::get('/manage-election/create', [ManageElectionController::class, 'create'])->name('manageelection.create');
+            Route::post('/manage-election/store', [ManageElectionController::class, 'store'])->name('manageelection.store');
+            Route::get('/polling-units', [ManageElectionController::class, 'getPollingUnits'])->name('getPollingUnits');
 
  
  

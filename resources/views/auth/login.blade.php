@@ -61,9 +61,9 @@
 						<div class="row">
 							<div class="col-md-12">
 								<div class="md-input-wrapper">
-									<input type="email" id="email" name="email" class="md-form-control" required="required"/>
+									<input type="text" id="email" name="email" class="md-form-control" required="required"/>
 									<x-input-error :messages="$errors->get('email')" class="mt-2" />
-									<label>Email</label> 
+									<label>Username</label> 
 								</div>
 							</div>
 							<div class="col-md-12">
