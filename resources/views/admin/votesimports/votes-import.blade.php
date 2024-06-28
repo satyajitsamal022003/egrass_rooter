@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Election Result</title>
+    <title>Votes Imports</title>
 </head>
 @extends('layouts.admin.layout')
 @section('section')
@@ -32,43 +32,49 @@
             <!-- Row end -->
 
 
-            <div class="col-lg-8">
+            <div class="col-lg-12">
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="card-header-text">Add Election Result</h5>
+                        <h5 class="card-header-text">Add Party Vote Result</h5>
                     </div>
                     <div class="card-block">
                         <form method="post" action="{{ route('manageelection.store') }}" enctype="multipart/form-data">
                             @csrf
 
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">Upload CSV File<span class="required">*</span>
+                                </label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <input name="upload_csv" id="upload_csv" type="file" class="form-control"><br>
+                                    <a href="https://egrassrooter.com/uploads/votescsvfile/egrassrooter_partyvotes_import.csv" download="">CSV Format?</a>
+                                    <h6>Note*: Do not include the first row of title.</h6>
+                                </div>
+                            </div>
                             <div class="form-group row">
-                                <label for="polling_units" class="col-xs-2 col-form-label form-control-label">Polling
-                                    Units</label>
-                                <div class="col-sm-10">
-                                    <select class="form-control col-md-7 col-xs-12 js-example-basic-single" id="polling_units" name="polling_units">
-                                        <option value="">Select Polling Unit</option>
+                                <div class="col-sm-10 offset-sm-2">
+                                    <button type="submit" class="btn btn-primary">Add Votes</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-header-text">Add Statewise Election Result</h5>
+                    </div>
+                    <div class="card-block">
+                        <form method="post" action="{{ route('manageelection.store') }}" enctype="multipart/form-data">
+                            @csrf
 
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label for="example-text-input" class="col-xs-2 col-form-label form-control-label">Election Year *</label>
-                                <div class="col-sm-10">
-                                    <input class="form-control" type="text" name="election_year" id="election_year" required>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label for="example-text-input" class="col-xs-2 col-form-label form-control-label">Votes
-                                    *</label>
-                                <div class="col-sm-10">
-                                    <input class="form-control" type="text" name="votes" id="votes" required>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label for="example-text-input" class="col-xs-2 col-form-label form-control-label">Pollitical Party
-                                    *</label>
-                                <div class="col-sm-10">
-                                    <input class="form-control" type="text" name="political_party" id="political_party" required>
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">Upload CSV File<span class="required">*</span>
+                                </label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <input name="upload_csv2" id="upload_csv2" type="file" class="form-control"><br>
+                                    <a href="https://egrassrooter.com/uploads/votescsvfile/egrassrooter_statevotes_import.csv" download="">CSV Format?</a>
+                                    <h6>Note*: Do not include the first row of title.</h6>
                                 </div>
                             </div>
                             <div class="form-group row">

@@ -334,10 +334,20 @@ Route::prefix('admin')->middleware('auth')->group(function () {
             Route::any('manage-election-voters/destroy/{id}', [ManageelectioncountController::class, 'destroy'])->name('manageelectionvoters.destroy');
             Route::post('manage-election-voters/status', [ManageelectioncountController::class, 'status'])->name('manageelectionvoters.status');
 
-            //Add Election
+            //Manage Election Vote
+            Route::get('manage-election/list', [ManageElectionController::class, 'list'])->name('manageelection.list');
             Route::get('/manage-election/create', [ManageElectionController::class, 'create'])->name('manageelection.create');
             Route::post('/manage-election/store', [ManageElectionController::class, 'store'])->name('manageelection.store');
+            Route::any('manage-election/edit/{id}', [ManageElectionController::class, 'edit'])->name('manageelection.edit');
+            Route::post('manage-election/update/{id}', [ManageElectionController::class, 'update'])->name('manageelection.update');
+            Route::any('manage-election/destroy/{id}', [ManageElectionController::class, 'destroy'])->name('manageelection.destroy');
             Route::get('/polling-units', [ManageElectionController::class, 'getPollingUnits'])->name('getPollingUnits');
+
+
+            //Votes Import
+            Route::get('votes-import/addimport', [ManageElectionController::class, 'addImport'])->name('votesimport.addImport');
+            Route::post('partyvotesresult/import', [ManageElectionController::class, 'importPartyVotesResult'])->name('partyvotesresult.import');
+            Route::post('statewisevote/import', [ManageElectionController::class, 'importStatewiseVote'])->name('statewisevote.import');
 
  
  

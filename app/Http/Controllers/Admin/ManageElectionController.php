@@ -7,6 +7,8 @@ use App\Models\Polling_unit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Service;
+use App\Models\VoteImport;
+use Illuminate\Support\Facades\Auth;
 
 class ManageElectionController extends Controller
 {
@@ -27,18 +29,19 @@ class ManageElectionController extends Controller
 
     public function store(Request $request)
     {
-
-        $electiondd = new Votesimport();
+        $userID = Auth::id();
+        $electiondd = new VoteImport();
         $electiondd->polling_units = $request->input('polling_units');
         $electiondd->election_year = $request->input('election_year');
         $electiondd->votes = $request->input('votes');
         $electiondd->political_party = $request->input('political_party');
+        $electiondd->user_id = $userID;
         $electiondd->created_at = now();
         $electiondd->updated_at = now();
 
         $electiondd->save();
 
-        return redirect()->route('manageservices.list')->with('message', 'Service created Successfully !');
+        return redirect()->route('manageservices.list')->with('message', 'Election Result Added Successfully !');
     }
 
     public function getPollingUnits()
@@ -83,6 +86,11 @@ class ManageElectionController extends Controller
 
     public function status(Request $request)
     {
+    }
+
+    public function addImport()
+    {
+        return view('admin.votesimports.votes-import');
     }
 
 }

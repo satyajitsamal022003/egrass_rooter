@@ -184,7 +184,7 @@
                         <li><a class="waves-effect waves-dark" href="accordion.html"><i class="icon-arrow-right"></i> Manage Election</a></li>
                         <li><a class="waves-effect waves-dark" href="button.html"><i class="icon-arrow-right"></i>Election Year</a></li>
                         <li><a class="waves-effect waves-dark" href="{{route('manageelection.create')}}"><i class="icon-arrow-right"></i> Add Election</a></li>
-                        <li><a class="waves-effect waves-dark" href="button.html"><i class="icon-arrow-right"></i> Contact Import</a></li>
+                        <li><a class="waves-effect waves-dark" href="{{route('votesimport.addImport')}}"><i class="icon-arrow-right"></i> Contact Import</a></li>
                     </ul>
                 </li>
 

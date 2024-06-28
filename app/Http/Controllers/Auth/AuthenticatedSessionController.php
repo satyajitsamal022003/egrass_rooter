@@ -18,6 +18,8 @@ class AuthenticatedSessionController extends Controller
      */
     public function create(): View
     {
+        // $dfgdfg = User::all();
+        // dd($dfgdfg);
         return view('auth.login');
     }
 
