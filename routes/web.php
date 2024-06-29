@@ -31,6 +31,8 @@ use App\Http\Controllers\Admin\ManageTeamController;
 use App\Http\Controllers\Admin\ManageuserController;
 use App\Http\Controllers\Admin\ManagemenuController;
 use App\Http\Controllers\Admin\ManageelectioncountController;
+use App\Http\Controllers\Admin\ManageadminController;
+use App\Http\Controllers\Admin\ManageelectionresultController;
 
 
 
@@ -328,10 +330,26 @@ Route::prefix('admin')->middleware('auth')->group(function () {
             Route::get('manage-election-voters/list', [ManageelectioncountController::class, 'list'])->name('manageelectionvoters.list');
             Route::get('manage-election-voters/create', [ManageelectioncountController::class, 'create'])->name('manageelectionvoters.create');
             Route::post('manage-election-voters/store', [ManageelectioncountController::class, 'store'])->name('manageelectionvoters.store');
-            Route::any('manage-election-voters/edit/{id}', [ManageelectioncountController::class, 'edit'])->name('manageelectionvoters.edit');
-            Route::post('manage-election-voters/update/{id}', [ManageelectioncountController::class, 'update'])->name('manageelectionvoters.update');
-            Route::any('manage-election-voters/destroy/{id}', [ManageelectioncountController::class, 'destroy'])->name('manageelectionvoters.destroy');
-            Route::post('manage-election-voters/status', [ManageelectioncountController::class, 'status'])->name('manageelectionvoters.status');
+
+
+            //Manage admin-users
+            Route::get('manage-admin-users/list', [ManageadminController::class, 'list'])->name('manageadmins.list');
+            Route::get('manage-admin-users/create', [ManageadminController::class, 'create'])->name('manageadmins.create');
+            Route::post('manage-admin-users/store', [ManageadminController::class, 'store'])->name('manageadmins.store');
+            Route::any('manage-admin-users/edit/{id}', [ManageadminController::class, 'edit'])->name('manageadmins.edit');
+            Route::post('manage-admin-users/update/{id}', [ManageadminController::class, 'update'])->name('manageadmins.update');
+            Route::any('manage-admin-users/destroy/{id}', [ManageadminController::class, 'destroy'])->name('manageadmins.destroy');
+
+            //Manage Election Result
+            Route::get('manage-election-result/list', [ManageelectionresultController::class, 'list'])->name('manageelectionresult.list');
+            Route::get('manage-election-result/create', [ManageelectionresultController::class, 'create'])->name('manageelectionresult.create');
+            Route::post('manage-election-result/store', [ManageelectionresultController::class, 'store'])->name('manageelectionresult.store');
+            Route::any('manage-election-result/edit/{id}', [ManageelectionresultController::class, 'edit'])->name('manageelectionresult.edit');
+            Route::post('manage-election-result/update/{id}', [ManageelectionresultController::class, 'update'])->name('manageelectionresult.update');
+            Route::any('manage-election-result/destroy/{id}', [ManageelectionresultController::class, 'destroy'])->name('manageelectionresult.destroy');
+            Route::get('/api/manage-election-result/fetch-polling-units', [ManageelectionresultController::class, 'fetchPollingUnits'])->name('api.fetchPollingUnits');
+
+          
 
  
  
