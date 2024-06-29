@@ -45,8 +45,8 @@
                                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">Upload CSV File<span class="required">*</span>
                                 </label>
                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                    <input name="upload_csv" id="upload_csv" type="file" class="form-control"><br>
-                                    <a href="https://egrassrooter.com/uploads/votescsvfile/egrassrooter_partyvotes_import.csv" download="">CSV Format?</a>
+                                    <input name="upload_csv" id="upload_csv" type="file" class="form-control" required><br>
+                                    <a href="{{asset('/votescsvfile/egrassrooter_partyvotes_import.csv')}}" download="">CSV Format?</a>
                                     <h6>Note*: Do not include the first row of title.</h6>
                                 </div>
                             </div>
@@ -72,8 +72,8 @@
                                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">Upload CSV File<span class="required">*</span>
                                 </label>
                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                    <input name="upload_csv2" id="upload_csv2" type="file" class="form-control"><br>
-                                    <a href="https://egrassrooter.com/uploads/votescsvfile/egrassrooter_statevotes_import.csv" download="">CSV Format?</a>
+                                    <input name="upload_csv2" id="upload_csv2" type="file" class="form-control" required><br>
+                                    <a href="{{asset('/votescsvfile/egrassrooter_statevotes_import.csv')}}" download="">CSV Format?</a>
                                     <h6>Note*: Do not include the first row of title.</h6>
                                 </div>
                             </div>

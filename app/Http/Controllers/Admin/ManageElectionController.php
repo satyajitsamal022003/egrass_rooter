@@ -99,7 +99,6 @@ class ManageElectionController extends Controller
 
     public function importPartyVotesResult(Request $request)
     {
-        // $adminUser = Auth::user();
         if ($request->hasFile('upload_csv')) {
             $file = $request->file('upload_csv');
             $path = $file->getRealPath();
@@ -131,17 +130,49 @@ class ManageElectionController extends Controller
                         $allpost['created_at'] = now();
 
                         $newVote = new PartyVote($allpost);
-                        $saveVote = $newVote->save();
-
-                        if ($saveVote) {
-                            return redirect()->route('manageservices.list')->with('message', 'Party Vote Result Imported into the Database Successfully');
-                        } 
+                        $newVote->save();
                     }
                     $row++;
                 }
                 fclose($handle);
             }
-            return redirect()->route('votes.import');
+            return redirect()->route('votesimport.addImport')->with('message', 'Party Vote Result Imported into the Database Successfully');
         }
+        return redirect()->route('votesimport.addImport')->with('error', 'No CSV file uploaded');
+    }
+
+    public function importStatewiseVote(Request $request)
+    {
+        if ($request->hasFile('upload_csv2')) {
+            $file = $request->file('upload_csv2');
+            $path = $file->getRealPath();
+
+            if (($handle = fopen($path, 'r')) !== FALSE) {
+                $row = 1;
+                while (($data = fgetcsv($handle, 0, ',')) !== FALSE) {
+                    if ($row > 1) { // Skip header row
+                        $allpost = $request->except('_token');
+
+                        $state = State::where('state', $data[0])->first();
+
+                        if ($state) {
+                            $allpost['state_id'] = $state->id;
+
+                            $allpost['accredited_votes'] = !empty($data[1]) ? trim(str_replace(',', '', $data[1])) : null;
+                            $allpost['valid_votes'] = !empty($data[2]) ? trim(str_replace(',', '', $data[2])) : null;
+                            $allpost['election_year'] = $data[3] ?? null;
+                            $allpost['created'] = now();
+
+                            $newStateVote = new StateVote($allpost);
+                            $saveVotes = $newStateVote->save();
+                        }
+                    }
+                    $row++;
+                }
+                fclose($handle);
+            }
+            return redirect()->route('votesimport.addImport')->with('message', 'Statewise Election Result Imported into the Database Successfully');
+        }
+        return redirect()->route('votesimport.addImport')->with('error', 'No CSV file uploaded');
     }
 }
