@@ -3,10 +3,14 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Party;
+use App\Models\PartyVote;
 use App\Models\Polling_unit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Service;
+use App\Models\State;
+use App\Models\StateVote;
 use App\Models\VoteImport;
 use Illuminate\Support\Facades\Auth;
 
@@ -93,4 +97,51 @@ class ManageElectionController extends Controller
         return view('admin.votesimports.votes-import');
     }
 
+    public function importPartyVotesResult(Request $request)
+    {
+        // $adminUser = Auth::user();
+        if ($request->hasFile('upload_csv')) {
+            $file = $request->file('upload_csv');
+            $path = $file->getRealPath();
+
+            if (($handle = fopen($path, 'r')) !== FALSE) {
+                $row = 1;
+                while (($data = fgetcsv($handle, 0, ',')) !== FALSE) {
+                    if ($row > 1) {
+                        $allpost = $request->all();
+
+                        $state = State::where('state', $data[0])->first();
+                        $stateVote = StateVote::where('state_id', $state->id)
+                            ->where('election_year', $data[3])
+                            ->orderBy('id', 'desc')
+                            ->first();
+
+                        $allpost['state_vote_id'] = $stateVote->id ?? null;
+                        $allpost['state_id'] = $state->id ?? '';
+
+                        if (!empty($data[1])) {
+                            $party = Party::where('party_name', $data[1])->first();
+                            $allpost['party_id'] = $party->id ?? '';
+                        } else {
+                            $allpost['party_id'] = '';
+                        }
+
+                        $allpost['vote_value'] = !empty($data[2]) ? trim(str_replace(',', '', $data[2])) : '';
+                        $allpost['election_year'] = $data[3] ?? '';
+                        $allpost['created_at'] = now();
+
+                        $newVote = new PartyVote($allpost);
+                        $saveVote = $newVote->save();
+
+                        if ($saveVote) {
+                            return redirect()->route('manageservices.list')->with('message', 'Party Vote Result Imported into the Database Successfully');
+                        } 
+                    }
+                    $row++;
+                }
+                fclose($handle);
+            }
+            return redirect()->route('votes.import');
+        }
+    }
 }

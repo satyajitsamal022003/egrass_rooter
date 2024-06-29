@@ -38,7 +38,7 @@
                         <h5 class="card-header-text">Add Party Vote Result</h5>
                     </div>
                     <div class="card-block">
-                        <form method="post" action="{{ route('manageelection.store') }}" enctype="multipart/form-data">
+                        <form method="post" action="{{ route('partyvotesresult.import') }}" enctype="multipart/form-data">
                             @csrf
 
                             <div class="form-group">
@@ -65,7 +65,7 @@
                         <h5 class="card-header-text">Add Statewise Election Result</h5>
                     </div>
                     <div class="card-block">
-                        <form method="post" action="{{ route('manageelection.store') }}" enctype="multipart/form-data">
+                        <form method="post" action="{{ route('statewisevote.import') }}" enctype="multipart/form-data">
                             @csrf
 
                             <div class="form-group">
@@ -93,39 +93,4 @@
     </div>
 
 </html>
-<!-- Include jQuery -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<!-- Select2 JavaScript -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/js/select2.min.js"></script>
-<!-- CSS for Select2 -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/css/select2.min.css" rel="stylesheet" />
-<script>
-    jQuery(document).ready(function($) {
-        $('.js-example-basic-single').select2({
-            allowClear: true,
-            width: '100%',
-            dropdownParent: $('#polling_units').parent(),
-            ajax: {
-                url: "{{ route('getPollingUnits') }}", // Replace with your Laravel route name
-                dataType: 'json',
-                delay: 250, // Delay in milliseconds before the request is sent
-                processResults: function(data) {
-                    console.log('Data received from server:', data); // Debugging line
-                    return {
-                        results: $.map(data, function(item) {
-                            return {
-                                id: item.id,
-                                text: item.text
-                            };
-                        })
-                    };
-                },
-                error: function(jqXHR, textStatus, errorThrown) { // Error handling
-                    console.error('Error fetching data:', textStatus, errorThrown);
-                },
-                cache: true
-            }
-        });
-    });
-</script>
 @endsection
