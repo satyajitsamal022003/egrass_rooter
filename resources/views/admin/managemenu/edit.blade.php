@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Menu</title>
+    <title>Edit Menu</title>
 </head>
 @extends('layouts.admin.layout')
 @section('section')
@@ -33,7 +33,7 @@
                <div class="col-lg-8">
                      <div class="card">
                         <div class="card-header">
-                           <h5 class="card-header-text">Add Menu</h5>
+                           <h5 class="card-header-text">Edit Menu</h5>
                         </div>
                         <div class="card-block">
                            <form action="{{route('managemenu.update',$menuedit->id)}}" method="post">
@@ -108,7 +108,7 @@
                               </div>
                               <div class="form-group row">
                                  <div class="col-sm-10 offset-sm-2">
-                                       <button type="submit" class="btn btn-primary">Submit</button>
+                                       <button type="submit" class="btn btn-success">Update</button>
                                  </div>
                               </div>
                            </form>

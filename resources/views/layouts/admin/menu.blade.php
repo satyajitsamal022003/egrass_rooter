@@ -27,14 +27,14 @@
                 <!-- <li class="nav-level">--- Components</li> -->
                 <li class="treeview"><a class="waves-effect waves-dark" href="#!"><i class="fa fa-user" aria-hidden="true"></i><span> Admin</span><i class="icon-arrow-down"></i></a>
                     <ul class="treeview-menu">
-                        <li><a class="waves-effect waves-dark" href="accordion.html"><i class="icon-arrow-right"></i> Manage Admin</a></li>
+                        <li><a class="waves-effect waves-dark" href="{{route('manageadmins.list')}}"><i class="icon-arrow-right"></i> Manage Admin</a></li>
                     </ul>
                 </li>
 
                 <li class="treeview"><a class="waves-effect waves-dark" href="#!"><i class="fa fa-users" aria-hidden="true"></i><span> Users</span><i class="icon-arrow-down"></i></a>
                     <ul class="treeview-menu">
-                        <li><a class="waves-effect waves-dark" href="accordion.html"><i class="icon-arrow-right"></i> Manage Users</a></li>
-                        <li><a class="waves-effect waves-dark" href="button.html"><i class="icon-arrow-right"></i> Add User</a></li>
+                        <li><a class="waves-effect waves-dark" href="{{route('manageusers.list')}}"><i class="icon-arrow-right"></i> Manage Users</a></li>
+                        <li><a class="waves-effect waves-dark" href="{{route('manageusers.create')}}"><i class="icon-arrow-right"></i> Add User</a></li>
                     </ul>
                 </li>
 
@@ -181,7 +181,7 @@
 
                 <li class="treeview"><a class="waves-effect waves-dark" href="#!"><i class="icon-briefcase"></i><span>Manage Election Result</span><i class="icon-arrow-down"></i></a>
                     <ul class="treeview-menu">
-                        <li><a class="waves-effect waves-dark" href="accordion.html"><i class="icon-arrow-right"></i> Manage Election</a></li>
+                        <li><a class="waves-effect waves-dark" href="{{route('manageelectionresult.list')}}"><i class="icon-arrow-right"></i> Manage Election</a></li>
                         <li><a class="waves-effect waves-dark" href="button.html"><i class="icon-arrow-right"></i>Election Year</a></li>
                         <li><a class="waves-effect waves-dark" href="{{route('manageelection.create')}}"><i class="icon-arrow-right"></i> Add Election</a></li>
                         <li><a class="waves-effect waves-dark" href="{{route('votesimport.addImport')}}"><i class="icon-arrow-right"></i> Contact Import</a></li>

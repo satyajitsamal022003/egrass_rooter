@@ -47,14 +47,47 @@ class ManagemenuController extends Controller
     $clientadd->save();
 
     return redirect()->route('managemenu.list')->with('message', 'Menu created Successfully !');
-
-    // Proceed with your logic if validation passes
 }
 
 public function edit($id){
     $menuedit = Menu::find($id);
   return view('admin.managemenu.edit',compact('menuedit'));
 }
+
+
+public function update(Request $request, $id)
+{
+    $validator = Validator::make($request->all(), [
+        'menu_name' => 'required',
+        'menuposition' => 'required',
+        'assign_type' => 'required|in:1,2,3',
+        'menu_link1' => 'required_if:assign_type,1',
+        'menulink2' => 'required_if:assign_type,2', 
+    ]);
+
+    if ($validator->fails()) {
+        return redirect()->back()->withErrors($validator)->withInput();
+    }
+
+    $clientupdate = Menu::find($id);
+    if (!$clientupdate) {
+        return redirect()->back()->with('error', 'Menu not found.');
+    }
+
+    $clientupdate->menu_name = $request->input('menu_name');
+    $clientupdate->assign_type = $request->input('assign_type');
+    $clientupdate->menu_link = $request->input('menulink2');
+    $clientupdate->select_page = $request->input('menu_link1');
+    $clientupdate->menu_position = $request->input('menuposition');
+    $clientupdate->select_parent = $request->input('parent');
+    $clientupdate->order_no = $request->input('orderno');
+    $clientupdate->is_active = $request->input('status');
+    $clientupdate->updated_at = now();
+    $clientupdate->save();
+
+    return redirect()->route('managemenu.list')->with('message', 'Menu updated Successfully!');
+}
+
 
     public function status(Request $request){
         $get_id=$request->id;

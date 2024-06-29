@@ -41,8 +41,8 @@
                               <div class="form-group row">
                                  <label for="example-text-input" class="col-xs-4 col-form-label form-control-label">First Name *</label>
                                  <div class="col-sm-10">
-                                    <input class="form-control" type="text" name="firstname" id="firstname" value="{{old('firstname')}}">
-                                        @error('firstname')
+                                    <input class="form-control" type="text" name="first_name" id="firstname" value="{{old('first_name')}}">
+                                        @error('first_name')
                                             <span class="text-danger">{{ $message }}</span>
                                         @enderror
                                  </div>
@@ -50,8 +50,8 @@
                                  <div class="form-group row">
                                  <label for="example-text-input" class="col-xs-4 col-form-label form-control-label">last Name *</label>
                                  <div class="col-sm-10">
-                                    <input class="form-control" type="text" name="lastname" id="lastname" value="{{old('lastname')}}">
-                                        @error('lastname')
+                                    <input class="form-control" type="text" name="last_name" id="lastname" value="{{old('last_name')}}">
+                                        @error('last_name')
                                                 <span class="text-danger">{{ $message }}</span>
                                         @enderror
                                  </div>
@@ -68,14 +68,14 @@
                                  <div class="form-group row">
                                  <label for="example-text-input" class="col-xs-4 col-form-label form-control-label">Phone Number</label>
                                  <div class="col-sm-10">
-                                    <input class="form-control" type="text" name="phnno" id="phnno" value="{{old('phnno')}}" onkeypress="return isNumberKey(event)" >
+                                    <input class="form-control" type="text" name="telephone" id="phnno" value="{{old('telephone')}}" onkeypress="return isNumberKey(event)" >
                                  </div>
                                  </div>
                                  <div class="form-group row">
                                  <label for="example-text-input" class="col-xs-4 col-form-label form-control-label">Password *</label>
                                  <div class="col-sm-10">
-                                    <input class="form-control" type="text" name="password" id="password" >
-                                        @error('password')
+                                    <input class="form-control" type="text" name="pass" id="password" >
+                                        @error('pass')
                                                 <span class="text-danger">{{ $message }}</span>
                                         @enderror
                                  </div>
@@ -107,8 +107,8 @@
                                  <div class="form-group row">
                                  <label for="example-text-input" class="col-xs-4 col-form-label form-control-label">Level of Education*</label>
                                  <div class="col-sm-10">
-                                    <input class="form-control" type="text" name="levelofeduc" id="levelofeduc" value="{{old('levelofeduc')}}">
-                                        @error('levelofeduc')
+                                    <input class="form-control" type="text" name="level_of_education" id="levelofeduc" value="{{old('level_of_education')}}">
+                                        @error('level_of_education')
                                                 <span class="text-danger">{{ $message }}</span>
                                         @enderror
                                  </div>
@@ -116,8 +116,8 @@
                                  <div class="form-group row">
                                  <label for="example-text-input" class="col-xs-4 col-form-label form-control-label">Origin town</label>
                                  <div class="col-sm-10">
-                                    <input class="form-control" type="text" name="origintown" id="origintown" value="{{old('origintown')}}">
-                                        @error('origintown')
+                                    <input class="form-control" type="text" name="town_of_origin" id="origintown" value="{{old('origintown')}}">
+                                        @error('town_of_origin')
                                                 <span class="text-danger">{{ $message }}</span>
                                         @enderror
                                  </div>
@@ -125,8 +125,8 @@
                                  <div class="form-group row">
                                  <label for="example-text-input" class="col-xs-4 col-form-label form-control-label">Campaign Name*</label>
                                  <div class="col-sm-10">
-                                    <input class="form-control" type="text" name="campaign_name" id="campaign_name" value="{{old('campaign_name')}}" onkeyup="return slugName(0);" onblur="return slugName(0);">
-                                        @error('campaign_name')
+                                    <input class="form-control" type="text" name="title" id="campaign_name" value="{{old('title')}}" onkeyup="return slugName(0);" onblur="return slugName(0);">
+                                        @error('title')
                                                 <span class="text-danger">{{ $message }}</span>
                                         @enderror
                                         <span id="showmsg"></span>
@@ -135,8 +135,8 @@
                                  <div class="form-group row">
                                  <label for="example-text-input" class="col-xs-4 col-form-label form-control-label">Campaign URL*</label>
                                  <div class="col-sm-10">
-                                    <input class="form-control" type="text" name="campaign_url" id="campaign_url" value="{{old('campaign_url')}}" onblur="return clslugName(0);">
-                                        @error('campaign_url')
+                                    <input class="form-control" type="text" name="slug" id="campaign_url" value="{{old('slug')}}" onblur="return clslugName(0);" required>
+                                        @error('slug')
                                                 <span class="text-danger">{{ $message }}</span>
                                         @enderror
                                  </div>
@@ -182,13 +182,13 @@
                                  <div class="form-group row" id="statemainid">
                                  <label for="example-text-input" class="col-xs-4 col-form-label form-control-label">State*</label>
                                  <div class="col-sm-10">
-                                 <select name="state_id" id="state_id" class="form-control"   onchange="stateid(this.value)">
+                                 <select name="state" id="state_id" class="form-control"   onchange="stateid(this.value)">
                                         <option value="">Select State</option>
                                         @foreach (App\Models\State::all() as $statedata )
                                            <option value="{{$statedata->id }}">{{$statedata->state }}</option>
                                         @endforeach
                                  </select>
-                                        @error('state_id')
+                                        @error('state')
                                                     <span class="text-danger">{{ $message }}</span>
                                         @enderror
                                  </div>
@@ -196,10 +196,10 @@
                                  <div class="form-group row" id="senomainid">
                                  <label for="example-text-input" class="col-xs-4 col-form-label form-control-label">Senatorial State*</label>
                                  <div class="col-sm-10">
-                                 <select name="senotorial_state" id="senotorial_state" class="form-control">
+                                 <select name="senatorial_district_id" id="senotorial_state" class="form-control">
                                    <!-- values will be appended from state selection -->
                                   </select>
-                                    @error('senotorial_state')
+                                    @error('senatorial_district_id')
                                                 <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                  </div>
@@ -207,13 +207,13 @@
                                  <div class="form-group row" id="federalmainid">
                                  <label for="example-text-input" class="col-xs-4 col-form-label form-control-label">Federal Constituency*</label>
                                  <div class="col-sm-10">
-                                 <select name="federal_const" id="federal_const" class="form-control">
+                                 <select name="federal_constituency_id" id="federal_const" class="form-control">
                                     <option value="">--Select--</option>
                                     @foreach ($federalList as $federalDet)
                                         <option value="{{$federalDet->id}}">{{$federalDet->federal_name}}</option>
                                     @endforeach
                                   </select>
-                                        @error('federal_const')
+                                        @error('federal_constituency_id')
                                                     <span class="text-danger">{{ $message }}</span>
                                         @enderror
                                  </div>
@@ -221,13 +221,13 @@
                                  <div class="form-group row" id="lcamainid">
                                  <label for="example-text-input" class="col-xs-4 col-form-label form-control-label">Local constituency Area*</label>
                                  <div class="col-sm-10">
-                                 <select name="lca" id="lca" class="form-control">
+                                 <select name="local_constituency_id" id="lca" class="form-control">
                                  <option value="">--Select--</option>
                                     @foreach ($localConList as $loc)
                                     <option value="{{$loc->id}}">{{$loc->lga}}</option>
                                     @endforeach
                                  </select>
-                                    @error('lca')
+                                    @error('local_constituency_id')
                                                 <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                  </div>
