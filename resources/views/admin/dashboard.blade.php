@@ -31,7 +31,7 @@
                <div class="col-lg-3 col-md-6">
                   <div class="card dashboard-product">
                      <span>Verified Users</span>
-                     <h2 class="dashboard-total-products">0</h2>
+                     <h2 class="dashboard-total-products">{{$verifiedusers}}</h2>
                      <span class="label label-primary">Views</span>View Today
                      <div class="side-box ">
                         <i class="ti-check text-info-color"></i> 
@@ -41,7 +41,7 @@
                <div class="col-lg-3 col-md-6">
                   <div class="card dashboard-product">
                      <span>Active Users</span>
-                     <h2 class="dashboard-total-products"><span>0</span></h2>
+                     <h2 class="dashboard-total-products"><span>{{$activeuser}}</span></h2>
                      <span class="label label-success">Sales</span>Reviews
                      <div class="side-box">
                            <i class="ti-thumb-up text-success"></i> <!-- Thumbs-up icon -->
@@ -212,7 +212,7 @@
                <div class="col-xl-4 col-lg-12">
                   <div class="card">
                      <div class="card-header">
-                        <h5 class="card-header-text">Bar chart</h5>
+                        <h5 class="card-header-text">Survey Response</h5>
                      </div>
                      <div class="card-block">
                         <div id="piechart" style="min-width: 250px; height: 460px; margin: 0 auto"></div>

@@ -32,6 +32,8 @@ use App\Http\Controllers\Admin\ManageTeamController;
 use App\Http\Controllers\Admin\ManageuserController;
 use App\Http\Controllers\Admin\ManagemenuController;
 use App\Http\Controllers\Admin\ManageelectioncountController;
+use App\Http\Controllers\Admin\ManageadminController;
+use App\Http\Controllers\Admin\ManageelectionresultController;
 
 
 
@@ -329,15 +331,41 @@ Route::prefix('admin')->middleware('auth')->group(function () {
             Route::get('manage-election-voters/list', [ManageelectioncountController::class, 'list'])->name('manageelectionvoters.list');
             Route::get('manage-election-voters/create', [ManageelectioncountController::class, 'create'])->name('manageelectionvoters.create');
             Route::post('manage-election-voters/store', [ManageelectioncountController::class, 'store'])->name('manageelectionvoters.store');
-            Route::any('manage-election-voters/edit/{id}', [ManageelectioncountController::class, 'edit'])->name('manageelectionvoters.edit');
-            Route::post('manage-election-voters/update/{id}', [ManageelectioncountController::class, 'update'])->name('manageelectionvoters.update');
-            Route::any('manage-election-voters/destroy/{id}', [ManageelectioncountController::class, 'destroy'])->name('manageelectionvoters.destroy');
-            Route::post('manage-election-voters/status', [ManageelectioncountController::class, 'status'])->name('manageelectionvoters.status');
 
-            //Add Election
+
+            //Manage admin-users
+            Route::get('manage-admin-users/list', [ManageadminController::class, 'list'])->name('manageadmins.list');
+            Route::get('manage-admin-users/create', [ManageadminController::class, 'create'])->name('manageadmins.create');
+            Route::post('manage-admin-users/store', [ManageadminController::class, 'store'])->name('manageadmins.store');
+            Route::any('manage-admin-users/edit/{id}', [ManageadminController::class, 'edit'])->name('manageadmins.edit');
+            Route::post('manage-admin-users/update/{id}', [ManageadminController::class, 'update'])->name('manageadmins.update');
+            Route::any('manage-admin-users/destroy/{id}', [ManageadminController::class, 'destroy'])->name('manageadmins.destroy');
+
+            //Manage Election Result
+            Route::get('manage-election-result/list', [ManageelectionresultController::class, 'list'])->name('manageelectionresult.list');
+            Route::get('manage-election-result/create', [ManageelectionresultController::class, 'create'])->name('manageelectionresult.create');
+            Route::post('manage-election-result/store', [ManageelectionresultController::class, 'store'])->name('manageelectionresult.store');
+            Route::any('manage-election-result/edit/{id}', [ManageelectionresultController::class, 'edit'])->name('manageelectionresult.edit');
+            Route::post('manage-election-result/update/{id}', [ManageelectionresultController::class, 'update'])->name('manageelectionresult.update');
+            Route::any('manage-election-result/destroy/{id}', [ManageelectionresultController::class, 'destroy'])->name('manageelectionresult.destroy');
+            Route::get('/api/manage-election-result/fetch-polling-units', [ManageelectionresultController::class, 'fetchPollingUnits'])->name('api.fetchPollingUnits');
+
+          
+
+            //Manage Election Vote
+            Route::get('manage-election/list', [ManageElectionController::class, 'list'])->name('manageelection.list');
             Route::get('/manage-election/create', [ManageElectionController::class, 'create'])->name('manageelection.create');
             Route::post('/manage-election/store', [ManageElectionController::class, 'store'])->name('manageelection.store');
+            Route::any('manage-election/edit/{id}', [ManageElectionController::class, 'edit'])->name('manageelection.edit');
+            Route::post('manage-election/update/{id}', [ManageElectionController::class, 'update'])->name('manageelection.update');
+            Route::any('manage-election/destroy/{id}', [ManageElectionController::class, 'destroy'])->name('manageelection.destroy');
             Route::get('/polling-units', [ManageElectionController::class, 'getPollingUnits'])->name('getPollingUnits');
+
+
+            //Votes Import
+            Route::get('votes-import/addimport', [ManageElectionController::class, 'addImport'])->name('votesimport.addImport');
+            Route::post('partyvotesresult/import', [ManageElectionController::class, 'importPartyVotesResult'])->name('partyvotesresult.import');
+            Route::post('statewisevote/import', [ManageElectionController::class, 'importStatewiseVote'])->name('statewisevote.import');
 
  
  

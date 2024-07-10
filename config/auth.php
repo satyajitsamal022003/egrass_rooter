@@ -40,6 +40,12 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+
+        'api' => [
+            'driver' => 'sanctum',
+            'provider' => 'api_users', // Use your custom provider here
+            'hash' => false,
+        ],
     ],
 
     /*
@@ -63,6 +69,11 @@ return [
         'users' => [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
+        ],
+
+        'api_users' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Models\ApiUser::class, // Replace with your custom user model
         ],
 
         // 'users' => [

@@ -5,6 +5,9 @@ use Illuminate\Http\Request;
 
 define('LARAVEL_START', microtime(true));
 
+//put by satyajit for large datas to show in the list
+ini_set('memory_limit', '512M');
+
 /*
 |--------------------------------------------------------------------------
 | Check If The Application Is Under Maintenance
