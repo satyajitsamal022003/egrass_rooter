@@ -103,14 +103,12 @@
     <link rel="stylesheet" type="text/css" href="{{ url('/') }}/assets/icon/icofont/css/icofont.css">
 
     <!-- simple line icon -->
-    <link rel="stylesheet" type="text/css"
-        href="{{ url('/') }}/assets/icon/simple-line-icons/css/simple-line-icons.css">
+    <link rel="stylesheet" type="text/css" href="{{ url('/') }}/assets/icon/simple-line-icons/css/simple-line-icons.css">
 
     <!-- Required Fremwork -->
     <link rel="stylesheet" type="text/css" href="{{ url('/') }}/assets/plugins/bootstrap/css/bootstrap.min.css">
     <!-- Chartlist chart css -->
-    <link rel="stylesheet" href="{{ url('/') }}/assets/plugins/chartist/dist/chartist.css" type="text/css"
-        media="all">
+    <link rel="stylesheet" href="{{ url('/') }}/assets/plugins/chartist/dist/chartist.css" type="text/css" media="all">
 
     <!-- Weather css -->
     <link href="{{ url('/') }}/assets/css/svg-weather.css" rel="stylesheet">
@@ -127,10 +125,8 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="{{ url('/') }}/datatables/plugins/fontawesome-free/css/all.min.css">
     <!-- DataTables -->
-    <link rel="stylesheet"
-        href="{{ url('/') }}/datatables/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
-    <link rel="stylesheet"
-        href="{{ url('/') }}/datatables/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+    <link rel="stylesheet" href="{{ url('/') }}/datatables/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="{{ url('/') }}/datatables/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
 
 
     <!-- toastr.css -->
@@ -151,8 +147,7 @@
         <div class="wrapper">
             <!-- Navbar-->
             <header class="main-header-top hidden-print">
-                <a href="{{ route('admin.dashboard') }}" class="logo"><i class="fa fa-globe"
-                        aria-hidden="true"></i>&nbsp;&nbsp;Egrassrooter</a>
+                <a href="{{ route('admin.dashboard') }}" class="logo"><i class="fa fa-globe" aria-hidden="true"></i>&nbsp;&nbsp;Egrassrooter</a>
                 <nav class="navbar navbar-static-top">
                     <!-- Sidebar toggle button-->
                     <a href="#!" data-toggle="offcanvas" class="sidebar-toggle"></a>
@@ -202,9 +197,7 @@
                                     <li class="bell-notification">
                                         <a href="javascript:;" class="media">
                                             <span class="media-left media-icon">
-                                                <img class="img-circle"
-                                                    src="{{ url('/') }}/assets/images/avatar-1.png"
-                                                    alt="User Image">
+                                                <img class="img-circle" src="{{ url('/') }}/assets/images/avatar-1.png" alt="User Image">
                                             </span>
                                             <div class="media-body"><span class="block">Lisa sent you a
                                                     mail</span><span class="text-muted block-time">2min ago</span>
@@ -214,9 +207,7 @@
                                     <li class="bell-notification">
                                         <a href="javascript:;" class="media">
                                             <span class="media-left media-icon">
-                                                <img class="img-circle"
-                                                    src="{{ url('/') }}/assets/images/avatar-2.png"
-                                                    alt="User Image">
+                                                <img class="img-circle" src="{{ url('/') }}/assets/images/avatar-2.png" alt="User Image">
                                             </span>
                                             <div class="media-body"><span class="block">Server Not
                                                     Working</span><span class="text-muted block-time">20min ago</span>
@@ -225,9 +216,7 @@
                                     </li>
                                     <li class="bell-notification">
                                         <a href="javascript:;" class="media"><span class="media-left media-icon">
-                                                <img class="img-circle"
-                                                    src="{{ url('/') }}/assets/images/avatar-3.png"
-                                                    alt="User Image">
+                                                <img class="img-circle" src="{{ url('/') }}/assets/images/avatar-3.png" alt="User Image">
                                             </span>
                                             <div class="media-body"><span class="block">Transaction xyz
                                                     complete</span><span class="text-muted block-time">3 hours
@@ -253,29 +242,29 @@
                                     <i class="icon-size-fullscreen"></i>
                                 </a>
 
-                  </li>
-                  <!-- User Menu-->
-                   @php($admindata = Auth::user())
-                  <li class="dropdown">
-                     <a href="#!" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" class="dropdown-toggle drop icon-circle drop-image">
-                        <span><img class="img-circle " src="{{url('/')}}/images/blank-user.png" style="width:40px;" alt="User Image"></span>
-                        <span>{{$admindata->name}} <i class=" icofont icofont-simple-down"></i></span>
-                     </a>
-                     <ul class="dropdown-menu settings-menu">
-                        <!-- <li><a href="#!"><i class="icon-settings"></i> Settings</a></li> -->
-                        <li><a href="{{route('manageadmins.edit',$admindata->id)}}"><i class="icon-user"></i> Profile</a></li>
-                        <!-- <li><a href="#"><i class="icon-envelope-open"></i> My Messages</a></li>
+                            </li>
+                            <!-- User Menu-->
+                            @php($admindata = Auth::user())
+                            <li class="dropdown">
+                                <a href="#!" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" class="dropdown-toggle drop icon-circle drop-image">
+                                    <span><img class="img-circle " src="{{url('/')}}/images/blank-user.png" style="width:40px;" alt="User Image"></span>
+                                    <span>{{$admindata->name}} <i class=" icofont icofont-simple-down"></i></span>
+                                </a>
+                                <ul class="dropdown-menu settings-menu">
+                                    <!-- <li><a href="#!"><i class="icon-settings"></i> Settings</a></li> -->
+                                    <li><a href="{{route('manageadmins.edit',$admindata->id)}}"><i class="icon-user"></i> Profile</a></li>
+                                    <!-- <li><a href="#"><i class="icon-envelope-open"></i> My Messages</a></li>
                         <li class="p-0">
                            <div class="dropdown-divider m-0"></div>
                         </li>
                         <li><a href="#"><i class="icon-lock"></i> Lock Screen</a></li> -->
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
-                        <li><a href="{{ route('logout') }}"  onclick="event.preventDefault();this.closest('form').submit();"><i class="icon-logout"></i> Logout</a></li>
-                        </form>
-                     </ul>
-                  </li>
-               </ul>
+                                    <form method="POST" action="{{ route('logout') }}">
+                                        @csrf
+                                        <li><a href="{{ route('logout') }}" onclick="event.preventDefault();this.closest('form').submit();"><i class="icon-logout"></i> Logout</a></li>
+                                    </form>
+                                </ul>
+                            </li>
+                        </ul>
 
                         <!-- search -->
                         <div id="morphsearch" class="morphsearch">
@@ -290,43 +279,35 @@
                                 <div class="dummy-column">
                                     <h2>People</h2>
                                     <a class="dummy-media-object" href="#!">
-                                        <img class="round"
-                                            src="http://0.gravatar.com/avatar/81b58502541f9445253f30497e53c280?s=50&d=identicon&r=G"
-                                            alt="Sara Soueidan" />
+                                        <img class="round" src="http://0.gravatar.com/avatar/81b58502541f9445253f30497e53c280?s=50&d=identicon&r=G" alt="Sara Soueidan" />
                                         <h3>Sara Soueidan</h3>
                                     </a>
 
                                     <a class="dummy-media-object" href="#!">
-                                        <img class="round"
-                                            src="http://1.gravatar.com/avatar/9bc7250110c667cd35c0826059b81b75?s=50&d=identicon&r=G"
-                                            alt="Shaun Dona" />
+                                        <img class="round" src="http://1.gravatar.com/avatar/9bc7250110c667cd35c0826059b81b75?s=50&d=identicon&r=G" alt="Shaun Dona" />
                                         <h3>Shaun Dona</h3>
                                     </a>
                                 </div>
                                 <div class="dummy-column">
                                     <h2>Popular</h2>
                                     <a class="dummy-media-object" href="#!">
-                                        <img src="{{ url('/') }}/assets/images/avatar-1.png"
-                                            alt="PagePreloadingEffect" />
+                                        <img src="{{ url('/') }}/assets/images/avatar-1.png" alt="PagePreloadingEffect" />
                                         <h3>Page Preloading Effect</h3>
                                     </a>
 
                                     <a class="dummy-media-object" href="#!">
-                                        <img src="{{ url('/') }}/assets/images/avatar-1.png"
-                                            alt="DraggableDualViewSlideshow" />
+                                        <img src="{{ url('/') }}/assets/images/avatar-1.png" alt="DraggableDualViewSlideshow" />
                                         <h3>Draggable Dual-View Slideshow</h3>
                                     </a>
                                 </div>
                                 <div class="dummy-column">
                                     <h2>Recent</h2>
                                     <a class="dummy-media-object" href="#!">
-                                        <img src="{{ url('/') }}/assets/images/avatar-1.png"
-                                            alt="TooltipStylesInspiration" />
+                                        <img src="{{ url('/') }}/assets/images/avatar-1.png" alt="TooltipStylesInspiration" />
                                         <h3>Tooltip Styles Inspiration</h3>
                                     </a>
                                     <a class="dummy-media-object" href="#!">
-                                        <img src="{{ url('/') }}/assets/images/avatar-1.png"
-                                            alt="NotificationStyles" />
+                                        <img src="{{ url('/') }}/assets/images/avatar-1.png" alt="NotificationStyles" />
                                         <h3>Notification Styles Inspiration</h3>
                                     </a>
                                 </div>
@@ -348,8 +329,7 @@
                                     <i class="icofont icofont-search-alt-2 chat-search"></i>
                                 </span>
                                 <div class="md-input-wrapper">
-                                    <input type="text" class="md-form-control" name="username"
-                                        id="search-friends">
+                                    <input type="text" class="md-form-control" name="username" id="search-friends">
                                     <label>Search</label>
                                 </div>
 
@@ -360,14 +340,10 @@
 
                             </div>
                             <div class="main-friend-list">
-                                <div class="media friendlist-box" data-id="1" data-status="online"
-                                    data-username="Josephin Doe" data-toggle="tooltip" data-placement="left"
-                                    title="Josephin Doe">
+                                <div class="media friendlist-box" data-id="1" data-status="online" data-username="Josephin Doe" data-toggle="tooltip" data-placement="left" title="Josephin Doe">
 
                                     <a class="media-left" href="#!">
-                                        <img class="media-object img-circle"
-                                            src="{{ url('/') }}/assets/images/avatar-1.png"
-                                            alt="Generic placeholder image">
+                                        <img class="media-object img-circle" src="{{ url('/') }}/assets/images/avatar-1.png" alt="Generic placeholder image">
                                         <div class="live-status bg-success"></div>
                                     </a>
                                     <div class="media-body">
@@ -375,13 +351,9 @@
                                         <span>20min ago</span>
                                     </div>
                                 </div>
-                                <div class="media friendlist-box" data-id="3" data-status="online"
-                                    data-username="Alice" data-toggle="tooltip" data-placement="left"
-                                    title="Alice">
+                                <div class="media friendlist-box" data-id="3" data-status="online" data-username="Alice" data-toggle="tooltip" data-placement="left" title="Alice">
                                     <a class="media-left" href="#!">
-                                        <img class="media-object img-circle"
-                                            src="{{ url('/') }}/assets/images/avatar-2.png"
-                                            alt="Generic placeholder image">
+                                        <img class="media-object img-circle" src="{{ url('/') }}/assets/images/avatar-2.png" alt="Generic placeholder image">
                                         <div class="live-status bg-success"></div>
                                     </a>
                                     <div class="media-body">
@@ -389,13 +361,9 @@
                                         <span>1 hour ago</span>
                                     </div>
                                 </div>
-                                <div class="media friendlist-box" data-id="7" data-status="offline"
-                                    data-username="Michael Scofield" data-toggle="tooltip" data-placement="left"
-                                    title="Michael Scofield">
+                                <div class="media friendlist-box" data-id="7" data-status="offline" data-username="Michael Scofield" data-toggle="tooltip" data-placement="left" title="Michael Scofield">
                                     <a class="media-left" href="#!">
-                                        <img class="media-object img-circle"
-                                            src="{{ url('/') }}/assets/images/avatar-3.png"
-                                            alt="Generic placeholder image">
+                                        <img class="media-object img-circle" src="{{ url('/') }}/assets/images/avatar-3.png" alt="Generic placeholder image">
                                         <div class="live-status bg-danger"></div>
                                     </a>
                                     <div class="media-body">
@@ -403,13 +371,9 @@
                                         <span>3 hours ago</span>
                                     </div>
                                 </div>
-                                <div class="media friendlist-box" data-id="5" data-status="online"
-                                    data-username="Irina Shayk" data-toggle="tooltip" data-placement="left"
-                                    title="Irina Shayk">
+                                <div class="media friendlist-box" data-id="5" data-status="online" data-username="Irina Shayk" data-toggle="tooltip" data-placement="left" title="Irina Shayk">
                                     <a class="media-left" href="#!">
-                                        <img class="media-object img-circle"
-                                            src="{{ url('/') }}/assets/images/avatar-4.png"
-                                            alt="Generic placeholder image">
+                                        <img class="media-object img-circle" src="{{ url('/') }}/assets/images/avatar-4.png" alt="Generic placeholder image">
                                         <div class="live-status bg-success"></div>
                                     </a>
                                     <div class="media-body">
@@ -417,13 +381,9 @@
                                         <span>1 day ago</span>
                                     </div>
                                 </div>
-                                <div class="media friendlist-box" data-id="6" data-status="offline"
-                                    data-username="Sara Tancredi" data-toggle="tooltip" data-placement="left"
-                                    title="Sara Tancredi">
+                                <div class="media friendlist-box" data-id="6" data-status="offline" data-username="Sara Tancredi" data-toggle="tooltip" data-placement="left" title="Sara Tancredi">
                                     <a class="media-left" href="#!">
-                                        <img class="media-object img-circle"
-                                            src="{{ url('/') }}/assets/images/avatar-5.png"
-                                            alt="Generic placeholder image">
+                                        <img class="media-object img-circle" src="{{ url('/') }}/assets/images/avatar-5.png" alt="Generic placeholder image">
                                         <div class="live-status bg-danger"></div>
                                     </a>
                                     <div class="media-body">
@@ -431,13 +391,9 @@
                                         <span>2 days ago</span>
                                     </div>
                                 </div>
-                                <div class="media friendlist-box" data-id="1" data-status="online"
-                                    data-username="Josephin Doe" data-toggle="tooltip" data-placement="left"
-                                    title="Josephin Doe">
+                                <div class="media friendlist-box" data-id="1" data-status="online" data-username="Josephin Doe" data-toggle="tooltip" data-placement="left" title="Josephin Doe">
                                     <a class="media-left" href="#!">
-                                        <img class="media-object img-circle"
-                                            src="{{ url('/') }}/assets/images/avatar-1.png"
-                                            alt="Generic placeholder image">
+                                        <img class="media-object img-circle" src="{{ url('/') }}/assets/images/avatar-1.png" alt="Generic placeholder image">
                                         <div class="live-status bg-success"></div>
                                     </a>
                                     <div class="media-body">
@@ -445,13 +401,9 @@
                                         <span>20min ago</span>
                                     </div>
                                 </div>
-                                <div class="media friendlist-box" data-id="3" data-status="online"
-                                    data-username="Alice" data-toggle="tooltip" data-placement="left"
-                                    title="Alice">
+                                <div class="media friendlist-box" data-id="3" data-status="online" data-username="Alice" data-toggle="tooltip" data-placement="left" title="Alice">
                                     <a class="media-left" href="#!">
-                                        <img class="media-object img-circle"
-                                            src="{{ url('/') }}/assets/images/avatar-2.png"
-                                            alt="Generic placeholder image">
+                                        <img class="media-object img-circle" src="{{ url('/') }}/assets/images/avatar-2.png" alt="Generic placeholder image">
                                         <div class="live-status bg-success"></div>
                                     </a>
                                     <div class="media-body">
@@ -459,14 +411,10 @@
                                         <span>1 hour ago</span>
                                     </div>
                                 </div>
-                                <div class="media friendlist-box" data-id="1" data-status="online"
-                                    data-username="Josephin Doe" data-toggle="tooltip" data-placement="left"
-                                    title="Josephin Doe">
+                                <div class="media friendlist-box" data-id="1" data-status="online" data-username="Josephin Doe" data-toggle="tooltip" data-placement="left" title="Josephin Doe">
 
                                     <a class="media-left" href="#!">
-                                        <img class="media-object img-circle"
-                                            src="{{ url('/') }}/assets/images/avatar-1.png"
-                                            alt="Generic placeholder image">
+                                        <img class="media-object img-circle" src="{{ url('/') }}/assets/images/avatar-1.png" alt="Generic placeholder image">
                                         <div class="live-status bg-success"></div>
                                     </a>
                                     <div class="media-body">
@@ -474,13 +422,9 @@
                                         <span>20min ago</span>
                                     </div>
                                 </div>
-                                <div class="media friendlist-box" data-id="3" data-status="online"
-                                    data-username="Alice" data-toggle="tooltip" data-placement="left"
-                                    title="Alice">
+                                <div class="media friendlist-box" data-id="3" data-status="online" data-username="Alice" data-toggle="tooltip" data-placement="left" title="Alice">
                                     <a class="media-left" href="#!">
-                                        <img class="media-object img-circle"
-                                            src="{{ url('/') }}/assets/images/avatar-2.png"
-                                            alt="Generic placeholder image">
+                                        <img class="media-object img-circle" src="{{ url('/') }}/assets/images/avatar-2.png" alt="Generic placeholder image">
                                         <div class="live-status bg-success"></div>
                                     </a>
                                     <div class="media-body">
@@ -488,14 +432,10 @@
                                         <span>1 hour ago</span>
                                     </div>
                                 </div>
-                                <div class="media friendlist-box" data-id="1" data-status="online"
-                                    data-username="Josephin Doe" data-toggle="tooltip" data-placement="left"
-                                    title="Josephin Doe">
+                                <div class="media friendlist-box" data-id="1" data-status="online" data-username="Josephin Doe" data-toggle="tooltip" data-placement="left" title="Josephin Doe">
 
                                     <a class="media-left" href="#!">
-                                        <img class="media-object img-circle"
-                                            src="{{ url('/') }}/assets/images/avatar-1.png"
-                                            alt="Generic placeholder image">
+                                        <img class="media-object img-circle" src="{{ url('/') }}/assets/images/avatar-1.png" alt="Generic placeholder image">
                                         <div class="live-status bg-success"></div>
                                     </a>
                                     <div class="media-body">
@@ -503,13 +443,9 @@
                                         <span>20min ago</span>
                                     </div>
                                 </div>
-                                <div class="media friendlist-box" data-id="3" data-status="online"
-                                    data-username="Alice" data-toggle="tooltip" data-placement="left"
-                                    title="Alice">
+                                <div class="media friendlist-box" data-id="3" data-status="online" data-username="Alice" data-toggle="tooltip" data-placement="left" title="Alice">
                                     <a class="media-left" href="#!">
-                                        <img class="media-object img-circle"
-                                            src="{{ url('/') }}/assets/images/avatar-2.png"
-                                            alt="Generic placeholder image">
+                                        <img class="media-object img-circle" src="{{ url('/') }}/assets/images/avatar-2.png" alt="Generic placeholder image">
                                         <div class="live-status bg-success"></div>
                                     </a>
                                     <div class="media-body">
@@ -517,14 +453,10 @@
                                         <span>1 hour ago</span>
                                     </div>
                                 </div>
-                                <div class="media friendlist-box" data-id="1" data-status="online"
-                                    data-username="Josephin Doe" data-toggle="tooltip" data-placement="left"
-                                    title="Josephin Doe">
+                                <div class="media friendlist-box" data-id="1" data-status="online" data-username="Josephin Doe" data-toggle="tooltip" data-placement="left" title="Josephin Doe">
 
                                     <a class="media-left" href="#!">
-                                        <img class="media-object img-circle"
-                                            src="{{ url('/') }}/assets/images/avatar-1.png"
-                                            alt="Generic placeholder image">
+                                        <img class="media-object img-circle" src="{{ url('/') }}/assets/images/avatar-1.png" alt="Generic placeholder image">
                                         <div class="live-status bg-success"></div>
                                     </a>
                                     <div class="media-body">
@@ -532,14 +464,10 @@
                                         <span>20min ago</span>
                                     </div>
                                 </div>
-                                <div class="media friendlist-box" data-id="1" data-status="online"
-                                    data-username="Josephin Doe" data-toggle="tooltip" data-placement="left"
-                                    title="Josephin Doe">
+                                <div class="media friendlist-box" data-id="1" data-status="online" data-username="Josephin Doe" data-toggle="tooltip" data-placement="left" title="Josephin Doe">
 
                                     <a class="media-left" href="#!">
-                                        <img class="media-object img-circle"
-                                            src="{{ url('/') }}/assets/images/avatar-1.png"
-                                            alt="Generic placeholder image">
+                                        <img class="media-object img-circle" src="{{ url('/') }}/assets/images/avatar-1.png" alt="Generic placeholder image">
                                         <div class="live-status bg-success"></div>
                                     </a>
                                     <div class="media-body">
@@ -547,14 +475,10 @@
                                         <span>20min ago</span>
                                     </div>
                                 </div>
-                                <div class="media friendlist-box" data-id="1" data-status="online"
-                                    data-username="Josephin Doe" data-toggle="tooltip" data-placement="left"
-                                    title="Josephin Doe">
+                                <div class="media friendlist-box" data-id="1" data-status="online" data-username="Josephin Doe" data-toggle="tooltip" data-placement="left" title="Josephin Doe">
 
                                     <a class="media-left" href="#!">
-                                        <img class="media-object img-circle"
-                                            src="{{ url('/') }}/assets/images/avatar-1.png"
-                                            alt="Generic placeholder image">
+                                        <img class="media-object img-circle" src="{{ url('/') }}/assets/images/avatar-1.png" alt="Generic placeholder image">
                                         <div class="live-status bg-success"></div>
                                     </a>
                                     <div class="media-body">
@@ -562,14 +486,10 @@
                                         <span>20min ago</span>
                                     </div>
                                 </div>
-                                <div class="media friendlist-box" data-id="1" data-status="online"
-                                    data-username="Josephin Doe" data-toggle="tooltip" data-placement="left"
-                                    title="Josephin Doe">
+                                <div class="media friendlist-box" data-id="1" data-status="online" data-username="Josephin Doe" data-toggle="tooltip" data-placement="left" title="Josephin Doe">
 
                                     <a class="media-left" href="#!">
-                                        <img class="media-object img-circle"
-                                            src="{{ url('/') }}/assets/images/avatar-1.png"
-                                            alt="Generic placeholder image">
+                                        <img class="media-object img-circle" src="{{ url('/') }}/assets/images/avatar-1.png" alt="Generic placeholder image">
                                         <div class="live-status bg-success"></div>
                                     </a>
                                     <div class="media-body">
@@ -591,8 +511,7 @@
                 </div>
                 <div class="media chat-messages">
                     <a class="media-left photo-table" href="#!">
-                        <img class="media-object img-circle m-t-5"
-                            src="{{ url('/') }}/assets/images/avatar-1.png" alt="Generic placeholder image">
+                        <img class="media-object img-circle m-t-5" src="{{ url('/') }}/assets/images/avatar-1.png" alt="Generic placeholder image">
                         <div class="live-status bg-success"></div>
                     </a>
                     <div class="media-body chat-menu-content">
@@ -613,8 +532,7 @@
                     </div>
                     <div class="media-right photo-table">
                         <a href="#!">
-                            <img class="media-object img-circle m-t-5"
-                                src="{{ url('/') }}/assets/images/avatar-2.png" alt="Generic placeholder image">
+                            <img class="media-object img-circle m-t-5" src="{{ url('/') }}/assets/images/avatar-2.png" alt="Generic placeholder image">
                             <div class="live-status bg-success"></div>
                         </a>
                     </div>
@@ -624,8 +542,7 @@
                         <input type="text" class="md-form-control" id="inputEmail" name="inputEmail">
                         <label>Share your thoughts</label>
                         <span class="highlight"></span>
-                        <span class="bar"></span> <button type="button"
-                            class="chat-send waves-effect waves-light">
+                        <span class="bar"></span> <button type="button" class="chat-send waves-effect waves-light">
                             <i class="icofont icofont-location-arrow f-20 "></i>
                         </button>
 
@@ -692,6 +609,14 @@
 
         <!-- Required Jqurey -->
         <script src="{{ url('/') }}/assets/plugins/Jquery/dist/jquery.min.js"></script>
+        
+        <!-- <script src="{{ asset('assets/plugins/ckeditor/ckeditor.js') }}"></script>
+        <script src="{{ asset('assets/plugins/ckeditor/plugins/colorbutton/plugin.js') }}"></script>
+        <script src="{{ asset('assets/plugins/ckeditor/plugins/justify/plugin.js') }}"></script>
+        <script src="{{ asset('assets/plugins/ckeditor/plugins/button/plugin.js') }}"></script>
+        <script src="{{ asset('assets/plugins/ckeditor/plugins/panelbutton/plugin.js') }}"></script>
+        <script src="{{ asset('assets/plugins/ckeditor/plugins/imageuploader/plugin.js') }}"></script> -->
+
         <script src="{{ url('/') }}/assets/plugins/jquery-ui/jquery-ui.min.js"></script>
         <script src="{{ url('/') }}/assets/plugins/tether/dist/js/tether.min.js"></script>
 
@@ -742,8 +667,7 @@
 
 
         <!-- font awesome -->
-        <link rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
 
 
@@ -785,17 +709,17 @@
         <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> -->
         <script src="https://cdn.jsdelivr.net/npm/toastr@2.1.4/build/toastr.min.js"></script>
 
-        
+
         <!-- toastr script -->
         <script>
             // Check if there's an error message
-            @if (Session::has('error'))
-                toastr.error("{{ session('error') }}");
+            @if(Session::has('error'))
+            toastr.error("{{ session('error') }}");
             @endif
 
             // Check if there's a success message
-            @if (Session::has('message'))
-                toastr.success("{{ session('message') }}");
+            @if(Session::has('message'))
+            toastr.success("{{ session('message') }}");
             @endif
         </script>
 

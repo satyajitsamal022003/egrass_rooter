@@ -21,14 +21,19 @@ class DashboardController extends Controller
         $allServices = Service::orderBy('id', 'desc')->limit(5)->get();
 
         $registeredusers = Campaign_user::get();
-        $verifiedusers = Campaign_user::where('is_active',1)->get();
+        // $verifiedusers = Campaign_user::where('is_active',1)->get();
         // dd($verifiedusers);
 
         $parties = Party::get();
 
+        $verifiedusers = Campaign_user::where('is_mail_verified', 1)->count();
+        $activeuser = Campaign_user::where('is_mail_verified', 1)
+                                ->where('is_active', 1)
+                                ->count();
+
 
 
         // dd($campaignManagers);
-        return view('admin.dashboard',compact('campaignManagers','pollingList','allServices','registeredusers','parties'));
+        return view('admin.dashboard',compact('campaignManagers','pollingList','allServices','registeredusers','parties','verifiedusers', 'activeuser'));
     }
 }

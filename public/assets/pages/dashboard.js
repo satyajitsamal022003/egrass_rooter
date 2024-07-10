@@ -128,7 +128,7 @@ function dashboard(){
          //  backgroundColor:'#fff'
       },
       title: {
-          text: 'Browser market shares at a specific website, 2014'
+          text: 'Survey Response'
       },
       tooltip: {
           pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'

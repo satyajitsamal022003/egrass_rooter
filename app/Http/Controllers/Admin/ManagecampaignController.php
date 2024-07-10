@@ -14,7 +14,7 @@ class ManagecampaignController extends Controller
 
     public function view($id){
 
-        $campaignnext = DB::table('campaign_next')->where('user_id',$id)->first();
+        $campaignnext = DB::table('campaign_nexts')->where('user_id',$id)->first();
         // dd($campaignnext);
         return view('admin.managecampaigns.view',compact('campaignnext'));
     }
