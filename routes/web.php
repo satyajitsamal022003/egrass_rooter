@@ -187,6 +187,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
   //Manage Wards
   Route::get('/manage-wards/list', [ManagewardController::class, 'list'])->name('manageward.list');
+  Route::get('/manage-wards/getlist', [ManagewardController::class, 'GetWardlist'])->name('manageward.getlist');
   Route::get('/manage-wards/create', [ManagewardController::class, 'create'])->name('manageward.create');
   Route::post('/manage-wards/store', [ManagewardController::class, 'store'])->name('manageward.store');
   Route::any('/manage-wards/edit/{id}', [ManagewardController::class, 'edit'])->name('manageward.edit');
