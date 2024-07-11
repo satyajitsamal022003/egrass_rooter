@@ -8,36 +8,42 @@ use App\Models\Polling_unit;
 use Illuminate\Support\Facades\DB;
 use App\Models\Local_constituency;
 use App\Models\Ward;
-
+use Yajra\DataTables\Facades\DataTables;
 
 class ManagepollingunitController extends Controller
 {
-    public function list(Request $request){
-
-        $searchtxt = $request->input('searchtxt');
-
-        // Check if search term is present
-        if ($searchtxt) {
-            $pollongunit = Polling_unit::where('political_zone', 'like', '%' . $searchtxt . '%')->get();
-        } else {
-            $pollongunit = Polling_unit::all();
-        }
-
-        dd($pollongunit);
-    
-        // Check if the request is an Ajax request
-        if ($request->ajax()) {
-            return view('admin.managepollingunits.filter', compact('pollongunit'));
-        } else {
-            return view('admin.managepollingunits.list', compact('pollongunit'));
-        }
+    public function list(Request $request)
+    {
+        return view('admin.managepollingunits.list');
     }
 
-    public function create(){
+    public function GetPollingUnitlist(Request $request)
+    {
+        $pollingUnits = Polling_unit::query();
+
+        return DataTables::of($pollingUnits)
+            ->addColumn('actions', function ($row) {
+                $btn = '<a href="' . route('managepollings.edit', $row->id) . '" class="edit btn btn-info btn-sm">Edit</a>';
+                $btn .= ' <a href="' . route('managepollings.destroy', $row->id) . '" class="delete btn btn-danger btn-sm" onclick="return confirm(\'Are you sure to delete!\');">Delete</a>';
+                return $btn;
+            })
+            ->editColumn('created_at', function ($row) {
+                return !empty($row->created_at) && $row->created_at != '0000-00-00 00:00:00'
+                    ? date('d-M-Y', strtotime($row->created_at))
+                    : 'N/A';
+            })
+            ->rawColumns(['actions'])
+            ->make(true);
+    }
+
+
+    public function create()
+    {
         return view('admin.managepollingunits.add');
     }
 
-    public function store(Request $request){
+    public function store(Request $request)
+    {
         $all_post = $request->only(['polling_name', 'polling_capacity', 'ward_details']);
 
         // Check if the polling unit already exists
@@ -46,25 +52,25 @@ class ManagepollingunitController extends Controller
             ->where('ward_details', $all_post['ward_details'])
             ->first();
 
-            if ($check) {
-                return back()->withErrors('Polling Unit already exists'); 
-            } else {
-                $statename = DB::table('states')->where('state_id',$request->state_id)->first();
-                $lganame = DB::table('local_constituencies')->where('id',$request->lga)->first();
-                $polling = new Polling_unit();
-                $polling->political_zone = $request->input('political_zone');
-                $polling->state_id = $request->input('state_id');
-                $polling->state_name = $statename->state;
-                $polling->lga = $lganame;
-                $polling->ward_details = $request->input('ward_details');
-                $polling->ward_id = $request->input('imagalt');
-                $polling->polling_name = $request->input('polling_name');
-                $polling->Delims = $request->input('delims');
-                $polling->polling_capacity = $request->input('polling_capacity');
-                $polling->created_at = now();
-                $polling->updated_at = now(); 
-                $polling->save();
-            }
+        if ($check) {
+            return back()->withErrors('Polling Unit already exists');
+        } else {
+            $statename = DB::table('states')->where('state_id', $request->state_id)->first();
+            $lganame = DB::table('local_constituencies')->where('id', $request->lga)->first();
+            $polling = new Polling_unit();
+            $polling->political_zone = $request->input('political_zone');
+            $polling->state_id = $request->input('state_id');
+            $polling->state_name = $statename->state;
+            $polling->lga = $lganame;
+            $polling->ward_details = $request->input('ward_details');
+            $polling->ward_id = $request->input('imagalt');
+            $polling->polling_name = $request->input('polling_name');
+            $polling->Delims = $request->input('delims');
+            $polling->polling_capacity = $request->input('polling_capacity');
+            $polling->created_at = now();
+            $polling->updated_at = now();
+            $polling->save();
+        }
 
         return redirect()->route('managepollings.list')->with('message', 'Polling Unit created Successfully !');
     }
@@ -80,12 +86,13 @@ class ManagepollingunitController extends Controller
 
         // Fetch wards related to the selected LGA
         $wards = Ward::where('lga_id', $lgaid)->pluck('ward_details', 'id');
-    
-        return view('admin.managepollingunits.edit', compact('editpollingunit', 'states', 'lgas' ,'wards'));
+
+        return view('admin.managepollingunits.edit', compact('editpollingunit', 'states', 'lgas', 'wards'));
     }
 
-    
-    public function update(Request $request,$id){
+
+    public function update(Request $request, $id)
+    {
         $all_post = $request->only(['polling_name', 'polling_capacity', 'ward_details']);
 
         // Find the existing polling unit record
@@ -99,13 +106,13 @@ class ManagepollingunitController extends Controller
             ->first();
 
         if ($check) {
-            return back()->withErrors('Polling Unit already exists'); 
+            return back()->withErrors('Polling Unit already exists');
         } else {
             $statename = DB::table('states')->where('state_id', $request->state_id)->first();
-            $lganame = DB::table('local_constituencies')->where('id',$request->lga)->first();
+            $lganame = DB::table('local_constituencies')->where('id', $request->lga)->first();
             // Update the polling unit with the new data
             $polling->political_zone = $request->input('political_zone');
-            $polling->state_id = $request->input('state_id'); 
+            $polling->state_id = $request->input('state_id');
             $polling->state_name = $statename->state;
             $polling->lga = $lganame;
             $polling->ward_details = $request->input('ward_details');
@@ -113,7 +120,7 @@ class ManagepollingunitController extends Controller
             $polling->polling_name = $request->input('polling_name');
             $polling->Delims = $request->input('delims');
             $polling->polling_capacity = $request->input('polling_capacity');
-            $polling->updated_at = now(); 
+            $polling->updated_at = now();
             $polling->save();
         }
 
@@ -129,14 +136,14 @@ class ManagepollingunitController extends Controller
 
         $locconst->delete(); // Delete the item
 
-         return redirect()->route('managepollings.list')->with('message', 'Site content Removed successfully !.'); // Redirect to the index page with success message
+        return redirect()->route('managepollings.list')->with('message', 'Site content Removed successfully !.'); // Redirect to the index page with success message
     }
 
     public function getLgas(Request $request)
     {
         $stateId = $request->input('id');
         $lgas = Local_constituency::where('state_id', $stateId)->get();
-        
+
         if ($lgas->isEmpty()) {
             return response()->json(['code' => 200, 'status' => []]);
         }
@@ -148,7 +155,7 @@ class ManagepollingunitController extends Controller
     {
         $lgaid = $request->input('id');
         $lgas = Ward::where('lga_id', $lgaid)->get();
-        
+
         if ($lgas->isEmpty()) {
             return response()->json(['code' => 300, 'status' => []]);
         }
@@ -163,7 +170,7 @@ class ManagepollingunitController extends Controller
     //     ->select('is_active')
     //     ->where('id','=',$get_id)
     //     ->first();
-        
+
 
     //     $astatus=$catstatus->is_active;
     //      if($astatus == '1'){

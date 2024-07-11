@@ -14,57 +14,83 @@ use App\Models\CampaignNext;
 use App\Models\Sitesetting;
 use Illuminate\Support\Facades\Mail; // Import the Mail facade
 use App\Mail\YourMailable;
+use App\Models\State;
+use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Validator;
 
 class ManageuserController extends Controller
 {
-    public function list(Request $request){
+    public function list(Request $request)
+    {
+        $getAllState = State::orderBy('state')->get();
+        $localConList = Local_constituency::orderBy('lga')->get();
 
+        $query = Campaign_user::query()->join('campaign_nexts', 'campaign_users.id', '=', 'campaign_nexts.user_id');
+
+        $searchstate = $request->input('searchstate');
+        $searchlocal = $request->input('searchlocal');
+        $searchtype = $request->input('searchtype');
         $searchtxt = $request->input('searchtxt');
 
-        // Check if search term is present
+        if ($searchstate) {
+            $query->where('campaign_nexts.state', $searchstate);
+        }
+
+        if ($searchlocal) {
+            $query->where('campaign_nexts.local_constituency_id', $searchlocal);
+        }
+
+        if ($searchtype) {
+            $query->where('campaign_nexts.campaign_type', $searchtype);
+        }
+
         if ($searchtxt) {
-            $faqlist = Faq::where('lga', 'like', '%' . $searchtxt . '%')->get();
-        } else {
-            $faqlist = Faq::all();
+            $query->where(function ($q) use ($searchtxt) {
+                $q->where(DB::raw("concat_ws(' ', campaign_users.first_name, campaign_users.last_name)"), 'like', '%' . $searchtxt . '%')
+                    ->orWhere('campaign_users.email_id', 'like', '%' . $searchtxt . '%');
+            });
         }
-    
-        // Check if the request is an Ajax request
-        if ($request->ajax()) {
-            return view('admin.manageusers.filter', compact('faqlist'));
-        } else {
-            return view('admin.manageusers.list', compact('faqlist'));
-        }
+
+        $perpage = 10;
+        $userRes = $query->select('campaign_users.*')
+            ->orderBy('campaign_users.id', 'desc')
+            ->paginate($perpage);
+
+        return view('admin.manageusers.list', compact('getAllState', 'localConList', 'userRes', 'perpage', 'searchtxt'));
     }
 
-    public function create(){
+
+    public function create()
+    {
 
         $localConList = Local_constituency::orderBy('lga')->get();
 
         $getAllParty = Party::orderBy('party_name')->get();
 
         $federalList = Federal_constituency::orderBy('federal_name')->get();
-        return view('admin.manageusers.add',compact('localConList','getAllParty','federalList'));
+        return view('admin.manageusers.add', compact('localConList', 'getAllParty', 'federalList'));
     }
 
-    public function store(Request $request){
+    public function store(Request $request)
+    {
 
         // Define validation rules
         $rules = [
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'email_id' => 'required|email|max:255|unique:campaign_users,email_id',
-            'pass'=>'required|min:6',
-            'dob'=>'required',
-            'address'=>'required',
-            'title'=>'required',
+            'pass' => 'required|min:6',
+            'dob' => 'required',
+            'address' => 'required',
+            'title' => 'required',
             'campaign_type' => 'required',
             'user_type' => 'required',
             'state' => 'required_if:campaign_type,2,3,4,5,6',
             'senatorial_district_id' => 'required_if:campaign_type,2',
             'federal_constituency_id' => 'required_if:campaign_type,3',
             'local_constituency_id' => 'required_if:campaign_type,6',
-            'political_party'=>'required'
+            'political_party' => 'required'
         ];
 
         // Define custom error messages
@@ -97,58 +123,58 @@ class ManageuserController extends Controller
         }
 
 
-         // Prepare the data
-         $allpost = $request->all();
-         $mailid = $allpost['email_id'];
-         $allpost['pass'] = base64_encode($allpost['pass']);
-         $allpost['is_active'] = 1;
-         $allpost['created_at'] = now();
-         $allpost['updated_at'] = now();
- 
-         // Generate username
-         $userName = $allpost['first_name'] . $allpost['last_name'];
-         $chkUserName = Campaign_user::where('username', $userName)->get();
-         if ($chkUserName->count() > 0) {
-             $userName .= rand(10, 10000);
-         }
- 
-         // Generate user ID
-         $lastUser = Campaign_user::orderBy('id', 'desc')->first();
-         if ($lastUser) {
-             $customerid = $lastUser->userid;
-             $custArr = explode("SO", $customerid);
-             $fistID = $custArr[0];
-             $secID = intval($custArr[1]) + 1;
-             $allpost['userid'] = $fistID . "SO" . $secID;
-         } else {
-             $allpost['userid'] = "CMSO1001";
-         }
- 
-         $allpost['username'] = $userName;
-         $allpost['mail_code'] = base64_encode(rand(10, 100000));
- 
-         // Save user
-         $user = new Campaign_user();
-         $user->email_id = $allpost['email_id'];
-         $user->pass = $allpost['pass'];
-         $user->is_active = $allpost['is_active'];
-         $user->created_at = NOW();
-         $user->updated_at = NOW();
-         $user->userid = $allpost['userid'];
-         $user->username = $allpost['username'];
-         $user->mail_code = $allpost['mail_code'];
-         $user->save();
- 
-         if ($user) {
-             // Prepare email data
-             $activationLink = url("pagefront/activate?email=" . base64_encode($allpost['email_id']) . "&activation_code=" . $allpost['mail_code'] . "&task=1");
-             $siteAdmin = Sitesetting::find(1);
-             $logoImg = $siteAdmin->logo;
-             $logo = file_exists(public_path('uploads/siteimage/' . $logoImg))
-                 ? '<a href="' . url('/') . '"> <img src="' . url('uploads/siteimage/' . $logoImg) . '" ></a>'
-                 : '<a href="' . url('/') . '"><img src="' . url('frontfile/images/logo.jpg') . '"></a>';
-             $emailImgpath = url('frontfile/images/email-conf.png');
-             $umsg = "<table width='650' style='background:#fff; margin:0px auto; font-family: Open Sans, sans-serif; font-size:13px; line-height:19px;border-collapse: collapse;' border='0' vspace='0'>
+        // Prepare the data
+        $allpost = $request->all();
+        $mailid = $allpost['email_id'];
+        $allpost['pass'] = base64_encode($allpost['pass']);
+        $allpost['is_active'] = 1;
+        $allpost['created_at'] = now();
+        $allpost['updated_at'] = now();
+
+        // Generate username
+        $userName = $allpost['first_name'] . $allpost['last_name'];
+        $chkUserName = Campaign_user::where('username', $userName)->get();
+        if ($chkUserName->count() > 0) {
+            $userName .= rand(10, 10000);
+        }
+
+        // Generate user ID
+        $lastUser = Campaign_user::orderBy('id', 'desc')->first();
+        if ($lastUser) {
+            $customerid = $lastUser->userid;
+            $custArr = explode("SO", $customerid);
+            $fistID = $custArr[0];
+            $secID = intval($custArr[1]) + 1;
+            $allpost['userid'] = $fistID . "SO" . $secID;
+        } else {
+            $allpost['userid'] = "CMSO1001";
+        }
+
+        $allpost['username'] = $userName;
+        $allpost['mail_code'] = base64_encode(rand(10, 100000));
+
+        // Save user
+        $user = new Campaign_user();
+        $user->email_id = $allpost['email_id'];
+        $user->pass = $allpost['pass'];
+        $user->is_active = $allpost['is_active'];
+        $user->created_at = NOW();
+        $user->updated_at = NOW();
+        $user->userid = $allpost['userid'];
+        $user->username = $allpost['username'];
+        $user->mail_code = $allpost['mail_code'];
+        $user->save();
+
+        if ($user) {
+            // Prepare email data
+            $activationLink = url("pagefront/activate?email=" . base64_encode($allpost['email_id']) . "&activation_code=" . $allpost['mail_code'] . "&task=1");
+            $siteAdmin = Sitesetting::find(1);
+            $logoImg = $siteAdmin->logo;
+            $logo = file_exists(public_path('uploads/siteimage/' . $logoImg))
+                ? '<a href="' . url('/') . '"> <img src="' . url('uploads/siteimage/' . $logoImg) . '" ></a>'
+                : '<a href="' . url('/') . '"><img src="' . url('frontfile/images/logo.jpg') . '"></a>';
+            $emailImgpath = url('frontfile/images/email-conf.png');
+            $umsg = "<table width='650' style='background:#fff; margin:0px auto; font-family: Open Sans, sans-serif; font-size:13px; line-height:19px;border-collapse: collapse;' border='0' vspace='0'>
                          <tr>
                              <td align='center' style='border-bottom:4px solid #1abc9c; padding:15px 0px 15px;'>
                                  <table width='96%' border='0' cellspacing='0' cellpadding='0'>
@@ -180,125 +206,121 @@ class ManageuserController extends Controller
                              </td>
                          </tr>
                      </table>";
-             $subject = stripslashes($siteAdmin->site_title) . ': registration';
- 
-           // Prepare email data
-                $activationLink = url("pagefront/activate?email=" . base64_encode($allpost['email_id']) . "&activation_code=" . $allpost['mail_code'] . "&task=1");
+            $subject = stripslashes($siteAdmin->site_title) . ': registration';
 
-                // Send email
-                Mail::send('admin.emails.your_mailable', ['activationLink' => $activationLink, 'subject' => $subject, 'umsg' => $umsg], function ($message) use ($allpost, $subject) {
-                    $message->to($allpost['email_id'])
-                        ->subject($subject);
-                });
- 
-             // Save campaign
-             $campaign = new UserWebsite();
-             $campaign->title = $allpost['title'];
-             $campaign->slug = $allpost['slug'];
-             $campaign->user_id = $user->id;
-             $campaign->save();
- 
-             // Save campaign next
-             $campaignNext = new CampaignNext();
-             $campaignNext->user_id = $user->id;
-             $campaignNext->senatorial_district_id = $allpost['senatorial_district_id'] ?? 0;
-             $campaignNext->federal_constituency_id = $allpost['federal_constituency_id'] ?? 0;
-             $campaignNext->local_constituency_id = $allpost['local_constituency_id'] ?? 0;
-             $campaignNext->save();
- 
-             return redirect()->route('users.index')->with('message', 'User created successfully!');
-         }
+            // Prepare email data
+            $activationLink = url("pagefront/activate?email=" . base64_encode($allpost['email_id']) . "&activation_code=" . $allpost['mail_code'] . "&task=1");
 
-        
+            // Send email
+            Mail::send('admin.emails.your_mailable', ['activationLink' => $activationLink, 'subject' => $subject, 'umsg' => $umsg], function ($message) use ($allpost, $subject) {
+                $message->to($allpost['email_id'])
+                    ->subject($subject);
+            });
 
-      
-        
-        
+            // Save campaign
+            $campaign = new UserWebsite();
+            $campaign->title = $allpost['title'];
+            $campaign->slug = $allpost['slug'];
+            $campaign->user_id = $user->id;
+            $campaign->save();
+
+            // Save campaign next
+            $campaignNext = new CampaignNext();
+            $campaignNext->user_id = $user->id;
+            $campaignNext->senatorial_district_id = $allpost['senatorial_district_id'] ?? 0;
+            $campaignNext->federal_constituency_id = $allpost['federal_constituency_id'] ?? 0;
+            $campaignNext->local_constituency_id = $allpost['local_constituency_id'] ?? 0;
+            $campaignNext->save();
+
+            return redirect()->route('users.index')->with('message', 'User created successfully!');
+        }
+
+
+
+
+
+
         return back()->with('message', 'User created Successfully !');
     }
 
-    public function edit($id){
+    public function edit($id)
+    {
         $faqedit = Faq::find($id);
-      return view('admin.manageusers.edit',compact('faqedit'));
+        return view('admin.manageusers.edit', compact('faqedit'));
     }
 
-    
-    public function update(Request $request,$id){
+
+    public function update(Request $request, $id)
+    {
         $updatefaq = Faq::findOrFail($id);
         $updatefaq->question = $request->input('question');
         $updatefaq->answer = $request->input('answer');
         $updatefaq->is_active = $request->input('status');
-        $updatefaq->updated_at = now(); 
- 
+        $updatefaq->updated_at = now();
+
         $updatefaq->save();
-        
+
         return redirect()->route('manageusers.list')->with('message', 'Faq Updated Successfully !');
     }
 
     public function destroy($id)
     {
-        $locconst = Faq::find($id); // Find the item by its ID
+        $locconst = Campaign_user::find($id); // Find the item by its ID
         if (!$locconst) {
             return redirect()->back()->with('error', 'Item not found.'); // Redirect back if item does not exist
         }
 
         $locconst->delete(); // Delete the item
 
-         return redirect()->route('manageusers.list')->with('message', 'Faq Removed successfully !.'); // Redirect to the index page with success message
+        return redirect()->route('manageusers.list')->with('message', 'User Removed successfully !.'); // Redirect to the index page with success message
     }
 
-    public function status(Request $request){
-        $get_id=$request->id;
-        $catstatus=DB::table('faqs')
-        ->select('is_active')
-        ->where('id','=',$get_id)
-        ->first();
-        
+    public function status(Request $request, $id, $status)
+    {
+        $statusupdate = DB::table('campaign_users')
+            ->where('id', $id)
+            ->update(['is_active' => $status]);
 
-        $astatus=$catstatus->is_active;
-         if($astatus == '1'){
-             $astatus='0'; 
-         } else{
-             $astatus='1';
-         }
-         $statusupdate=DB::table('faqs')
-         ->where('id', $get_id)
-         ->update(array('is_active'=>$astatus));
+        if ($statusupdate) {
+            return response()->json([
+                'status' => 'success',
+                'code' => 200,
+            ]);
+        } else {
+            return response()->json([
+                'status' => 'error',
+                'code' => 500,
+            ]);
+        }
+    }
 
-         if($statusupdate){
-             return response()->json([
-                 'status' => 'success',
-                 'code' => 200,
-             ]);
-            }
+
+
+
+    public function getsenstates(Request $request)
+    {
+        $stateId = $request->input('id');
+        $stateconst = Senatorial_state::where('state_id', $stateId)->get();
+
+        if ($stateconst->isEmpty()) {
+            return response()->json(['code' => 200, 'status' => []]);
         }
 
+        return response()->json(['code' => 200, 'status' => $stateconst]);
+    }
 
-        public function getsenstates(Request $request)
-        {
-            $stateId = $request->input('id');
-            $stateconst = Senatorial_state::where('state_id', $stateId)->get();
-            
-            if ($stateconst->isEmpty()) {
-                return response()->json(['code' => 200, 'status' => []]);
-            }
-    
-            return response()->json(['code' => 200, 'status' => $stateconst]);
+    public function checkSlug(Request $request)
+    {
+        $title = $request->input('title');
+        $editid = $request->input('editid');
+
+        // Check if the slug already exists in the database
+        $existingSlug = Campaign_user::where('slug', $title)->exists();
+
+        if ($existingSlug) {
+            return response()->json(2); // Slug already exists
+        } else {
+            return response()->json($title); // Slug is unique
         }
-
-     public function checkSlug(Request $request)
-        {
-            $title = $request->input('title');
-            $editid = $request->input('editid');
-
-            // Check if the slug already exists in the database
-            $existingSlug = Campaign_user::where('slug', $title)->exists();
-
-            if ($existingSlug) {
-                return response()->json(2); // Slug already exists
-            } else {
-                return response()->json($title); // Slug is unique
-            }
-        }
-
+    }
 }

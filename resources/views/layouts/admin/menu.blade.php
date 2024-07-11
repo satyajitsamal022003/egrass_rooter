@@ -87,7 +87,7 @@
                     <ul class="treeview-menu">
                         <li><a class="waves-effect waves-dark" href="{{route('manageparty.list')}}"><i class="icon-arrow-right"></i> Manage Party</a></li>
                         <li><a class="waves-effect waves-dark" href="{{route('manageparty.create')}}"><i class="icon-arrow-right"></i> Add Party</a></li>
-                        <li><a class="waves-effect waves-dark" href=""><i class="icon-arrow-right"></i> Import Party</a></li>
+                        <li><a class="waves-effect waves-dark" href="{{route('manageparty.addImport')}}"><i class="icon-arrow-right"></i> Import Party</a></li>
                     </ul>
                 </li>
 
