@@ -34,12 +34,7 @@ use App\Http\Controllers\Admin\ManagemenuController;
 use App\Http\Controllers\Admin\ManageelectioncountController;
 use App\Http\Controllers\Admin\ManageadminController;
 use App\Http\Controllers\Admin\ManageelectionresultController;
-
-
-
-
-
-
+use App\Http\Controllers\Admin\ManageVotersDataController;
 use Illuminate\Support\Facades\Route;
 
 use function PHPUnit\Framework\returnSelf;
@@ -370,6 +365,17 @@ Route::prefix('admin')->middleware('auth')->group(function () {
   Route::get('votes-import/addimport', [ManageElectionController::class, 'addImport'])->name('votesimport.addImport');
   Route::post('partyvotesresult/import', [ManageElectionController::class, 'importPartyVotesResult'])->name('partyvotesresult.import');
   Route::post('statewisevote/import', [ManageElectionController::class, 'importStatewiseVote'])->name('statewisevote.import');
+
+
+  //Manage Contacts Data
+  Route::get('manage-votersdata/list', [ManageVotersDataController::class, 'list'])->name('managevotersdata.list');
+  Route::any('manage-votersdata/edit/{id}', [ManageVotersDataController::class, 'edit'])->name('managevotersdata.edit');
+  Route::post('manage-votersdata/update/{id}', [ManageVotersDataController::class, 'update'])->name('managevotersdata.update');
+  Route::any('manage-votersdata/destroy/{id}', [ManageVotersDataController::class, 'destroy'])->name('managevotersdata.destroy');
+  Route::get('manage-votersdata/addimport', [ManageVotersDataController::class, 'addImport'])->name('managevotersdata.addImport');
+  Route::post('manage-votersdata/import', [ManageVotersDataController::class, 'importVotersData'])->name('managevotersdata.import');
+  Route::post('manage-votersdata/get-districts', [ManageVotersDataController::class, 'getDistricts'])->name('managevotersdata.getDistricts');
+
 
 
 

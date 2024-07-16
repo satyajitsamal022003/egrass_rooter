@@ -174,7 +174,7 @@
 
                 <li class="treeview"><a class="waves-effect waves-dark" href="#!"><i class="fa fa-address-book" aria-hidden="true"></i><span>Manage Contacts Data</span><i class="icon-arrow-down"></i></a>
                     <ul class="treeview-menu">
-                        <li><a class="waves-effect waves-dark" href="accordion.html"><i class="icon-arrow-right"></i> Manage Contacts</a></li>
+                        <li><a class="waves-effect waves-dark" href="{{route('managevotersdata.list')}}"><i class="icon-arrow-right"></i> Manage Contacts</a></li>
                         <li><a class="waves-effect waves-dark" href="button.html"><i class="icon-arrow-right"></i>Import Contacts Data</a></li>
                     </ul>
                 </li>
