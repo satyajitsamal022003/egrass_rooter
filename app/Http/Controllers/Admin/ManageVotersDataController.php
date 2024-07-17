@@ -17,227 +17,333 @@ use App\Models\State_constituency;
 use App\Models\Ward;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\View;
+use Yajra\DataTables\Facades\DataTables;
 
 class ManageVotersDataController extends Controller
 {
     public function create()
     {
-        return view('admin.manageblogs.add');
+
     }
 
     public function store(Request $request)
     {
 
-        $catid = $request->get('category');
-        $catslug = DB::table('blog_categories')->select('slug')->where('cat_id', $catid)->value('slug');
 
-        $tagid = $request->get('tag');
-        $tagslug = DB::table('blog_tags')->select('slug')->where('tag_id', $tagid)->value('slug');
-
-        $blogdata = new Blog();
-        $blogdata->cat_slug = $catslug; // Assuming 'cat_slug' is a string field
-        $blogdata->tag_slug = $tagslug; // Assuming 'tag_slug' is a string field
-        $blogdata->page_name = $request->input('title');
-        $blogdata->slug = $request->input('slug');
-        $blogdata->description = $request->input('description');
-        $blogdata->meta_title = $request->input('metatitle');
-        $blogdata->meta_key = $request->input('meta_key');
-        $blogdata->meta_desc = $request->input('meta_description');
-        $blogdata->is_active = $request->input('status');
-        $blogdata->created_at = now();
-        $blogdata->updated_at = now();
-
-        if ($request->hasFile('image')) {
-            // Generate a unique file name for the image
-            $imageName = 'blogs_' . time() . '.' . $request->file('image')->getClientOriginalExtension();
-
-            $destinationDirectory = public_path('images/blogs');
-
-            if (!is_dir($destinationDirectory)) {
-                mkdir($destinationDirectory, 0777, true);
-            }
-
-            // Move the file to the public/uploads directory
-            $request->file('image')->move($destinationDirectory, $imageName);
-
-            $blogdata->blog_image = $imageName;
-        }
-
-        $blogdata->save();
-
-        return back()->with('message', 'Blog Added Successfully!');
     }
 
     public function edit($id)
     {
 
-        $editblogs = Blog::find($id);
-        // dd($editblogs);
-        $editblogcat = DB::table('blog_categories')->where('slug', $editblogs->cat_slug)->first();
-        $editblogtag = DB::table('blog_tags')->where('slug', $editblogs->tag_slug)->first();
-
-        return view('admin.manageblogs.edit', compact('editblogs', 'editblogcat', 'editblogtag'));
     }
 
     public function update(Request $request, $id)
     {
-        $catid = $request->get('category');
-        $catslug = DB::table('blog_categories')->select('slug')->where('cat_id', $catid)->value('slug');
 
-        $tagid = $request->get('tag');
-        $tagslug = DB::table('blog_tags')->select('slug')->where('tag_id', $tagid)->value('slug');
-
-        $blogdata = Blog::findOrFail($id);
-        $blogdata->cat_slug = $catslug; // Assuming 'cat_slug' is a string field
-        $blogdata->tag_slug = $tagslug; // Assuming 'tag_slug' is a string field
-        $blogdata->page_name = $request->input('title');
-        $blogdata->slug = $request->input('slug');
-        $blogdata->description = $request->input('description');
-        $blogdata->meta_title = $request->input('metatitle');
-        $blogdata->meta_key = $request->input('meta_key');
-        $blogdata->meta_desc = $request->input('meta_description');
-        $blogdata->is_active = $request->input('status');
-        $blogdata->updated_at = now();
-
-        // Update Image
-        if ($request->hasFile('image')) {
-            // Generate a unique file name for the image
-            $imageName = 'blogs_' . time() . '.' . $request->file('image')->getClientOriginalExtension();
-
-            $destinationDirectory = public_path('images/blogs');
-
-            if (!is_dir($destinationDirectory)) {
-                mkdir($destinationDirectory, 0777, true);
-            }
-
-            // Move the file to the public/uploads directory
-            $request->file('image')->move($destinationDirectory, $imageName);
-
-            // Delete existing image file if it exists
-            if (!empty($blogdata->image)) {
-                $existingImagePath = $destinationDirectory . '/' . $blogdata->image;
-                if (file_exists($existingImagePath) && is_file($existingImagePath)) {
-                    unlink($existingImagePath);
-                }
-            }
-
-            $blogdata->blog_image = $imageName;
-        }
-
-        $blogdata->save();
-
-        return back()->with('message', 'Blog updated Successfully !');
     }
 
 
     public function list(Request $request)
     {
-        $stateList = State::where('state', '!=', '')->orderBy('state')->get();
-        $senatorialList = Senatorial_state::where('sena_district', '!=', '')->orderBy('sena_district')->get();
-        $federalList = Federal_constituency::where('federal_name', '!=', '')->orderBy('federal_name')->get();
-        $localConList = Local_constituency::where('lga', '!=', '')->orderBy('lga')->get();
-        $wardList = Ward::where('ward_details', '!=', '')->orderBy('ward_details')->get();
-        $staList = State_constituency::where('state_constituency', '!=', '')->orderBy('state_constituency')->get();
-        $pollingList = Polling_unit::where('polling_name', '!=', '')->orderBy('polling_name')->get();
+
         $getAllgender = ImportVotersdata::select('gender')->groupBy('gender')->orderByDesc('id')->get();
         $getAllemp = ImportVotersdata::select('employ_status')->groupBy('employ_status')->orderByDesc('id')->get();
 
-        $votersData = ImportVotersdata::orderByDesc('id')->get();
-
-        return view('admin.managevotersdata.list', compact('stateList', 'senatorialList', 'federalList', 'localConList', 'wardList', 'staList', 'pollingList', 'getAllgender', 'getAllemp', 'votersData'));
+        return view('admin.managevotersdata.list', compact('getAllgender', 'getAllemp'));
     }
 
-    public function filterList(Request $request)
+
+    public function GetVotersData(Request $request)
     {
-        $stateList = State::where('state', '!=', '')->orderBy('state')->get();
-        $senatorialList = Senatorial_state::where('sena_district', '!=', '')->orderBy('sena_district')->get();
-        $federalList = Federal_constituency::where('federal_name', '!=', '')->orderBy('federal_name')->get();
-        $localConList = Local_constituency::where('lga', '!=', '')->orderBy('lga')->get();
-        $wardList = Ward::where('ward_details', '!=', '')->orderBy('ward_details')->get();
-        $staList = State_constituency::where('state_constituency', '!=', '')->orderBy('state_constituency')->get();
-        $pollingList = Polling_unit::where('polling_name', '!=', '')->orderBy('polling_name')->get();
-        $getAllgender = ImportVotersdata::select('gender')->groupBy('gender')->orderByDesc('id')->get();
-        $getAllemp = ImportVotersdata::select('employ_status')->groupBy('employ_status')->orderByDesc('id')->get();
+        $query = ImportVotersdata::query();
 
-        $whr = [];
-
-        if ($request->has('search')) {
-            $searchage = $request->input('searchage');
-            $searchemp = $request->input('searchemp');
-            $searchgender = $request->input('searchgender');
-            $state = $request->input('state');
-            $senatorial_state = $request->input('senatorial_state');
-            $federal_constituency = $request->input('federal_constituency');
-            $local_constituency = $request->input('local_constituency');
-            $ward = $request->input('ward');
-            $state_constituency = $request->input('state_constituency');
-            $polling_unit = $request->input('polling_unit');
-            $searchaddress = $request->input('searchaddress');
-
-            if ($searchage == 1) {
-                $whr[] = ['age', '>=', 18];
-                $whr[] = ['age', '<=', 20];
-            }
-            if ($searchage == 2) {
-                $whr[] = ['age', '>=', 21];
-                $whr[] = ['age', '<=', 30];
-            }
-            if ($searchage == 3) {
-                $whr[] = ['age', '>=', 31];
-                $whr[] = ['age', '<=', 40];
-            }
-            if ($searchage == 4) {
-                $whr[] = ['age', '>=', 41];
-                $whr[] = ['age', '<=', 50];
-            }
-            if ($searchage == 5) {
-                $whr[] = ['age', '>=', 51];
-                $whr[] = ['age', '<=', 60];
-            }
-            if ($searchage == 6) {
-                $whr[] = ['age', '>=', 61];
-                $whr[] = ['age', '<=', 70];
-            }
-            if ($searchage == 7) {
-                $whr[] = ['age', '>=', 71];
-                $whr[] = ['age', '<=', 80];
-            }
-            if (!empty($searchemp)) {
-                $whr[] = ['employ_status', 'like', '%' . trim($searchemp) . '%'];
-            }
-            if (!empty($searchgender)) {
-                $whr[] = ['gender', 'like', '%' . trim($searchgender) . '%'];
-            }
-            if (!empty($searchaddress)) {
-                $whr[] = ['address', 'like', '%' . trim($searchaddress) . '%'];
-            }
-            if (!empty($state)) {
-                $whr[] = ['state', 'like', '%' . trim($state) . '%'];
-            }
-            if (!empty($senatorial_state)) {
-                $whr[] = ['senatorial_state', 'like', '%' . trim($senatorial_state) . '%'];
-            }
-            if (!empty($federal_constituency)) {
-                $whr[] = ['federal_constituency', 'like', '%' . trim($federal_constituency) . '%'];
-            }
-            if (!empty($local_constituency)) {
-                $whr[] = ['local_constituency', 'like', '%' . trim($local_constituency) . '%'];
-            }
-            if (!empty($ward)) {
-                $whr[] = ['ward', 'like', '%' . trim($ward) . '%'];
-            }
-            if (!empty($state_constituency)) {
-                $whr[] = ['state_constituency', 'like', '%' . trim($state_constituency) . '%'];
-            }
-            if (!empty($polling_unit)) {
-                $whr[] = ['polling_unit', 'like', '%' . trim($polling_unit) . '%'];
+        if ($request->searchage) {
+            switch ($request->searchage) {
+                case 1:
+                    $query->where('age', '>=', 18)->where('age', '<=', 20);
+                    break;
+                case 2:
+                    $query->where('age', '>=', 21)->where('age', '<=', 30);
+                    break;
+                case 3:
+                    $query->where('age', '>=', 31)->where('age', '<=', 40);
+                    break;
+                case 4:
+                    $query->where('age', '>=', 41)->where('age', '<=', 50);
+                    break;
+                case 5:
+                    $query->where('age', '>=', 51)->where('age', '<=', 60);
+                    break;
+                case 6:
+                    $query->where('age', '>=', 61)->where('age', '<=', 70);
+                    break;
+                case 7:
+                    $query->where('age', '>=', 71)->where('age', '<=', 80);
+                    break;
+                default:
+                    // Handle default case if necessary
+                    break;
             }
         }
 
-        $votersData = ImportVotersdata::where($whr)->orderByDesc('id')->get();
+        if ($request->searchgender) {
+            $query->where('gender', $request->searchgender);
+        }
 
-        return view('admin.managevotersdata.list', compact('stateList', 'senatorialList', 'federalList', 'localConList', 'wardList', 'staList', 'pollingList', 'getAllgender', 'getAllemp', 'votersData'));
+        if ($request->searchemp) {
+            $query->where('employ_status', 'like', '%' . $request->searchemp . '%');
+        }
+
+        if ($request->searchaddress) {
+            $query->where('address', 'like', '%' . $request->searchaddress . '%');
+        }
+
+        if ($request->state) {
+            $query->where('state', $request->state);
+        }
+
+        if ($request->senatorial_state) {
+            $query->where('senatorial_state', $request->senatorial_state);
+        }
+
+        if ($request->federal_constituency) {
+            $query->where('federal_constituency', $request->federal_constituency);
+        }
+
+        if ($request->local_constituency) {
+            $query->where('local_constituency', $request->local_constituency);
+        }
+
+        if ($request->ward) {
+            $query->where('ward', $request->ward);
+        }
+
+        if ($request->state_constituency) {
+            $query->where('state_constituency', $request->state_constituency);
+        }
+
+        if ($request->polling_unit) {
+            $query->where('polling_unit', $request->polling_unit);
+        }
+
+        return DataTables::of($query)
+            ->addIndexColumn()
+            ->addColumn('fullname', function ($row) {
+                return $row->first_name . ' ' . $row->last_name;
+            })
+            ->addColumn('email', function ($row) {
+                return $row->email;
+            })
+            ->addColumn('phone', function ($row) {
+                return $row->phone;
+            })
+            ->addColumn('gender', function ($row) {
+                return $row->gender;
+            })
+            ->addColumn('age', function ($row) {
+                return $row->age;
+            })
+            ->addColumn('employ_status', function ($row) {
+                return $row->employ_status;
+            })
+            ->addColumn('address', function ($row) {
+                return $row->address;
+            })
+            ->addColumn('zipcode', function ($row) {
+                return $row->zipcode;
+            })
+            ->addColumn('created_at', function ($row) {
+                $created_at = date('d-m-Y', strtotime($row->created));
+                return $created_at; // Format the date if necessary
+    
+            })
+            ->addColumn('actions', function ($row) {
+                return '<a class="btn btn-info" href="' . route('managevotersdata.edit', $row->id) . '" title="Edit"><i class="fa fa-edit"></i></a>
+                    <a class="btn btn-danger" href="' . route('managevotersdata.destroy', $row->id) . '" onclick="return confirm(\'Are you sure to delete!\');" title="Delete"><i class="fa fa-remove"></i></a>';
+            })
+            ->rawColumns(['actions'])
+            ->make(true);
     }
+
+    public function getStateList()
+    {
+        $states = State::where('state', '!=', '')->orderBy('state')->get();
+
+        $options = '<option value="">-- Search by State --</option>';
+        foreach ($states as $state) {
+            $options .= '<option value="' . htmlspecialchars($state->state) . '">' . htmlspecialchars($state->state) . '</option>';
+        }
+
+        return $options;
+    }
+
+
+    public function getSenatorialList()
+    {
+        $senatorialList = Senatorial_state::where('sena_district', '!=', '')->orderBy('sena_district')->get();
+
+        $options = '<option value="">-- Search by Senatorial State --</option>';
+        foreach ($senatorialList as $senatorial) {
+            $options .= '<option value="' . htmlspecialchars($senatorial->sena_district) . '">' . htmlspecialchars($senatorial->sena_district) . '</option>';
+        }
+
+        return $options;
+    }
+
+    public function getFederalList()
+    {
+        $federalList = Federal_constituency::where('federal_name', '!=', '')->orderBy('federal_name')->get();
+
+        $options = '<option value="">-- Search by Federal Constituency --</option>';
+        foreach ($federalList as $federal) {
+            $options .= '<option value="' . htmlspecialchars($federal->federal_name) . '">' . htmlspecialchars($federal->federal_name) . '</option>';
+        }
+
+        return $options;
+    }
+
+    public function getLocalConstituencyList()
+    {
+        $localConstituencyList = Local_constituency::where('lga', '!=', '')->orderBy('lga')->get();
+
+        $options = '<option value="">-- Search by LGA --</option>';
+        foreach ($localConstituencyList as $localConstituency) {
+            $options .= '<option value="' . htmlspecialchars($localConstituency->lga) . '">' . htmlspecialchars($localConstituency->lga) . '</option>';
+        }
+
+        return $options;
+    }
+
+    public function getWardList()
+    {
+        $wardList = Ward::where('ward_details', '!=', '')->orderBy('ward_details')->get();
+
+        $options = '<option value="">-- Search by Ward --</option>';
+        foreach ($wardList as $ward) {
+            $options .= '<option value="' . htmlspecialchars($ward->ward_details) . '">' . htmlspecialchars($ward->ward_details) . '</option>';
+        }
+
+        return $options;
+    }
+
+    public function getStateConstituencyList()
+    {
+        $stateConstituencyList = State_constituency::where('state_constituency', '!=', '')->orderBy('state_constituency')->get();
+
+        $options = '<option value="">-- Search by State Constituency --</option>';
+        foreach ($stateConstituencyList as $stateConstituency) {
+            $options .= '<option value="' . htmlspecialchars($stateConstituency->state_constituency) . '">' . htmlspecialchars($stateConstituency->state_constituency) . '</option>';
+        }
+
+        return $options;
+    }
+
+    public function getPollingUnitList()
+    {
+        $pollingUnitList = Polling_unit::where('polling_name', '!=', '')->orderBy('polling_name')->get();
+
+        $options = '<option value="">-- Search by Polling Unit --</option>';
+        foreach ($pollingUnitList as $pollingUnit) {
+            $options .= '<option value="' . htmlspecialchars($pollingUnit->polling_name) . '">' . htmlspecialchars($pollingUnit->polling_name) . '</option>';
+        }
+
+        return $options;
+    }
+
+
+
+
+    // public function filterList(Request $request)
+    // {
+    //     $stateList = State::where('state', '!=', '')->orderBy('state')->get();
+    //     $senatorialList = Senatorial_state::where('sena_district', '!=', '')->orderBy('sena_district')->get();
+    //     $federalList = Federal_constituency::where('federal_name', '!=', '')->orderBy('federal_name')->get();
+    //     $localConList = Local_constituency::where('lga', '!=', '')->orderBy('lga')->get();
+    //     $wardList = Ward::where('ward_details', '!=', '')->orderBy('ward_details')->get();
+    //     $staList = State_constituency::where('state_constituency', '!=', '')->orderBy('state_constituency')->get();
+    //     $pollingList = Polling_unit::where('polling_name', '!=', '')->orderBy('polling_name')->get();
+    //     $getAllgender = ImportVotersdata::select('gender')->groupBy('gender')->orderByDesc('id')->get();
+    //     $getAllemp = ImportVotersdata::select('employ_status')->groupBy('employ_status')->orderByDesc('id')->get();
+
+    //     $whr = [];
+
+    //     if ($request->has('search')) {
+    //         $searchage = $request->input('searchage');
+    //         $searchemp = $request->input('searchemp');
+    //         $searchgender = $request->input('searchgender');
+    //         $state = $request->input('state');
+    //         $senatorial_state = $request->input('senatorial_state');
+    //         $federal_constituency = $request->input('federal_constituency');
+    //         $local_constituency = $request->input('local_constituency');
+    //         $ward = $request->input('ward');
+    //         $state_constituency = $request->input('state_constituency');
+    //         $polling_unit = $request->input('polling_unit');
+    //         $searchaddress = $request->input('searchaddress');
+
+    //         if ($searchage == 1) {
+    //             $whr[] = ['age', '>=', 18];
+    //             $whr[] = ['age', '<=', 20];
+    //         }
+    //         if ($searchage == 2) {
+    //             $whr[] = ['age', '>=', 21];
+    //             $whr[] = ['age', '<=', 30];
+    //         }
+    //         if ($searchage == 3) {
+    //             $whr[] = ['age', '>=', 31];
+    //             $whr[] = ['age', '<=', 40];
+    //         }
+    //         if ($searchage == 4) {
+    //             $whr[] = ['age', '>=', 41];
+    //             $whr[] = ['age', '<=', 50];
+    //         }
+    //         if ($searchage == 5) {
+    //             $whr[] = ['age', '>=', 51];
+    //             $whr[] = ['age', '<=', 60];
+    //         }
+    //         if ($searchage == 6) {
+    //             $whr[] = ['age', '>=', 61];
+    //             $whr[] = ['age', '<=', 70];
+    //         }
+    //         if ($searchage == 7) {
+    //             $whr[] = ['age', '>=', 71];
+    //             $whr[] = ['age', '<=', 80];
+    //         }
+    //         if (!empty($searchemp)) {
+    //             $whr[] = ['employ_status', 'like', '%' . trim($searchemp) . '%'];
+    //         }
+    //         if (!empty($searchgender)) {
+    //             $whr[] = ['gender', 'like', '%' . trim($searchgender) . '%'];
+    //         }
+    //         if (!empty($searchaddress)) {
+    //             $whr[] = ['address', 'like', '%' . trim($searchaddress) . '%'];
+    //         }
+    //         if (!empty($state)) {
+    //             $whr[] = ['state', 'like', '%' . trim($state) . '%'];
+    //         }
+    //         if (!empty($senatorial_state)) {
+    //             $whr[] = ['senatorial_state', 'like', '%' . trim($senatorial_state) . '%'];
+    //         }
+    //         if (!empty($federal_constituency)) {
+    //             $whr[] = ['federal_constituency', 'like', '%' . trim($federal_constituency) . '%'];
+    //         }
+    //         if (!empty($local_constituency)) {
+    //             $whr[] = ['local_constituency', 'like', '%' . trim($local_constituency) . '%'];
+    //         }
+    //         if (!empty($ward)) {
+    //             $whr[] = ['ward', 'like', '%' . trim($ward) . '%'];
+    //         }
+    //         if (!empty($state_constituency)) {
+    //             $whr[] = ['state_constituency', 'like', '%' . trim($state_constituency) . '%'];
+    //         }
+    //         if (!empty($polling_unit)) {
+    //             $whr[] = ['polling_unit', 'like', '%' . trim($polling_unit) . '%'];
+    //         }
+    //     }
+
+    //     $votersData = ImportVotersdata::where($whr)->orderByDesc('id')->get();
+
+    //     return view('admin.managevotersdata.list', compact('stateList', 'senatorialList', 'federalList', 'localConList', 'wardList', 'staList', 'pollingList', 'getAllgender', 'getAllemp', 'votersData'));
+    // }
 
 
     public function destroy($id)
@@ -360,5 +466,10 @@ class ManageVotersDataController extends Controller
         }
 
         return response()->json($myresAry);
+    }
+
+    public function addImport(Request $request)
+    {
+        return view('admin.managevotersdata.importvotersdata');
     }
 }

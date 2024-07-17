@@ -370,12 +370,22 @@ Route::prefix('admin')->middleware('auth')->group(function () {
   //Manage Contacts Data
   Route::get('manage-votersdata/list', [ManageVotersDataController::class, 'list'])->name('managevotersdata.list');
   Route::post('manage-votersdata/list', [ManageVotersDataController::class, 'filterList'])->name('managevotersdata.filterList');
+  Route::get('manage-votersdata/votersdata', [ManageVotersDataController::class, 'GetVotersData'])->name('managevotersdata.votersdata');
   Route::any('manage-votersdata/edit/{id}', [ManageVotersDataController::class, 'edit'])->name('managevotersdata.edit');
   Route::post('manage-votersdata/update/{id}', [ManageVotersDataController::class, 'update'])->name('managevotersdata.update');
   Route::any('manage-votersdata/destroy/{id}', [ManageVotersDataController::class, 'destroy'])->name('managevotersdata.destroy');
   Route::get('manage-votersdata/addimport', [ManageVotersDataController::class, 'addImport'])->name('managevotersdata.addImport');
   Route::post('manage-votersdata/import', [ManageVotersDataController::class, 'importVotersData'])->name('managevotersdata.import');
   Route::post('manage-votersdata/get-districts', [ManageVotersDataController::class, 'getDistricts'])->name('managevotersdata.getDistricts');
+  
+  Route::get('manage-votersdata/state-list', [ManageVotersDataController::class, 'getStateList'])->name('managevotersdata.statelist');
+  Route::get('manage-votersdata/senatorial-list', [ManageVotersDataController::class, 'getSenatorialList'])->name('managevotersdata.senatoriallist');
+  Route::get('manage-votersdata/federal-list', [ManageVotersDataController::class, 'getFederalList'])->name('managevotersdata.federallist');
+  Route::get('manage-votersdata/local-constituency-list', [ManageVotersDataController::class, 'getLocalConstituencyList'])->name('managevotersdata.localconstituencylist');
+  Route::get('manage-votersdata/ward-list', [ManageVotersDataController::class, 'getWardList'])->name('managevotersdata.wardlist');
+  Route::get('manage-votersdata/state-constituency-list', [ManageVotersDataController::class, 'getStateConstituencyList'])->name('managevotersdata.stateconstituencylist');
+  Route::get('manage-votersdata/polling-unit-list', [ManageVotersDataController::class, 'getPollingUnitList'])->name('managevotersdata.pollingunitlist');
+
 
 
 
