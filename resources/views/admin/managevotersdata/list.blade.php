@@ -8,7 +8,7 @@
 
 
 <style>
-  /* The switch - the box around the slider */
+  /* The switch - the box around the slstateer */
   .switch {
     position: relative;
     display: inline-block;
@@ -110,7 +110,8 @@
     <div class="row">
       <div class="col-12">
         <div class="card" style="padding: 20px;">
-          <form action="{{ url('votes/votersdatalist') }}" method="GET" class="form-horizontal" onsubmit="return filterFormValidate();">
+          <form action="{{ route('managevotersdata.filterList') }}" method="POST" class="form-horizontal" onsubmit="return filterFormValidate();">
+            @csrf
             <div class="col-md-3 mb30">
               <select id="searchage" name="searchage" class="form-control">
                 <option value="">--Search by Age--</option>
@@ -145,62 +146,6 @@
                 <option value="others">Others</option>
               </select>
             </div>
-            <div class="col-md-3 mb30">
-              <select id="state" name="state" class="form-control" onchange="getdistricts(this.value);">
-                <option value="">--Search by State--</option>
-                @foreach($stateList as $stateListDet)
-                <option value="{{ utf8_encode($stateListDet->state) }}">{{ utf8_encode($stateListDet->state) }}</option>
-                @endforeach
-              </select>
-            </div>
-            <div class="col-md-3 mb30">
-              <select name="senatorial_state" id="senatorial_state" class="form-control">
-                <option value="">--Search by Senatorial State--</option>
-                @foreach($senatorialList as $senatorialDet)
-                <option value="{{ utf8_encode($senatorialDet->sena_district) }}">{{ utf8_encode($senatorialDet->sena_district) }}</option>
-                @endforeach
-              </select>
-            </div>
-            <div class="col-md-3 mb30">
-              <select name="federal_constituency" id="federal_constituency" class="form-control">
-                <option value="">--Search by Federal Constituency--</option>
-                @foreach($federalList as $federalDet)
-                <option value="{{ utf8_encode($federalDet->federal_name) }}">{{ utf8_encode($federalDet->federal_name) }}</option>
-                @endforeach
-              </select>
-            </div>
-            <div class="col-md-3 mb30">
-              <select name="local_constituency" id="local_constituency" class="form-control">
-                <option value="">--Search by LGA--</option>
-                @foreach($localConList as $localConListDet)
-                <option value="{{ utf8_encode($localConListDet->lga) }}">{{ utf8_encode($localConListDet->lga) }}</option>
-                @endforeach
-              </select>
-            </div>
-            <div class="col-md-3 mb30">
-              <select name="ward" id="ward" class="form-control">
-                <option value="">--Search by Ward--</option>
-                @foreach($wardList as $wardDet)
-                <option value="{{ utf8_encode($wardDet->ward_details) }}">{{ utf8_encode($wardDet->ward_details) }}</option>
-                @endforeach
-              </select>
-            </div>
-            <div class="col-md-3 mb30">
-              <select name="state_constituency" id="state_constituency" class="form-control">
-                <option value="">--Search by State Constituency--</option>
-                @foreach($staList as $staDet)
-                <option value="{{ utf8_encode($staDet->state_constituency) }}">{{ utf8_encode($staDet->state_constituency) }}</option>
-                @endforeach
-              </select>
-            </div>
-            <div class="col-md-3 mb30">
-              <select name="polling_unit" id="polling_unit" class="form-control">
-                <option value="">--Search by Polling Unit--</option>
-                @foreach($pollingList as $pollingDet)
-                <option value="{{ utf8_encode($pollingDet->polling_name) }}">{{ utf8_encode($pollingDet->polling_name) }}</option>
-                @endforeach
-              </select>
-            </div>
             <div class="pull-right col-md-12">
               <div class="col-md-1">
                 <input type="submit" name="search" id="search" class="btn btn-primary waves-effect" style="margin-top: 5px;" value="Filter">
@@ -210,6 +155,7 @@
               </div>
             </div>
           </form>
+
           <!-- /.card-header -->
           <div class="card-body">
             <table id="datatable" class="table table-bordered table-striped">
@@ -264,6 +210,65 @@
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
+  function getdistricts(state) {
+    if (state) {
+      $("#senatorial_state").html('');
+      $("#federal_constituency").html('');
+      $("#local_constituency").html('');
+      $("#ward").html('');
+      $("#state_constituency").html('');
+      $("#polling_unit").html('');
+      $.ajax({
+        type: "POST",
+        url: "{{ route('managevotersdata.getDistricts') }}",
+        data: {
+          "_token": "{{ csrf_token() }}",
+          state: state
+        },
+        success: function(data) {
+          var res = JSON.parse(data);
+          if (res.status1 == 2) {
+            $('#senatorial_state').html('<option value="">Select Senatorial State</option>');
+            alert('There is no Senatorial State.')
+          } else if (res.status1 == 1) {
+            $('#senatorial_state').html(res.html1);
+          }
+          if (res.status2 == 2) {
+            $('#federal_constituency').html('<option value="">Select Federal Constituency</option>');
+            alert('There is no Federal Constituency.')
+          } else if (res.status2 == 1) {
+            $('#federal_constituency').html(res.html2);
+          }
+          if (res.status3 == 2) {
+            $('#local_constituency').html('<option value="">Select Local constituency Area</option>');
+            alert('There is no Local constituency Area.')
+          } else if (res.status3 == 1) {
+            $('#local_constituency').html(res.html3);
+          }
+          if (res.status4 == 2) {
+            $('#ward').html('<option value="">Select Ward</option>');
+            alert('There is no Ward.')
+          } else if (res.status4 == 1) {
+            $('#ward').html(res.html4);
+          }
+          if (res.status5 == 2) {
+            $('#state_constituency').html('<option value="">Select State Constituency</option>');
+            alert('There is no State Constituency.')
+          } else if (res.status5 == 1) {
+            $('#state_constituency').html(res.html5);
+          }
+          if (res.status6 == 2) {
+            $('#polling_unit').html('<option value="">Select Polling Unit</option>');
+            alert('There is no Polling Unit.')
+          } else if (res.status6 == 1) {
+            $('#polling_unit').html(res.html6);
+          }
+        }
+      });
+    }
+  }
+
+
   function resetPage() {
     location.reload();
   }

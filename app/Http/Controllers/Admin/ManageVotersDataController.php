@@ -142,6 +142,23 @@ class ManageVotersDataController extends Controller
         $getAllgender = ImportVotersdata::select('gender')->groupBy('gender')->orderByDesc('id')->get();
         $getAllemp = ImportVotersdata::select('employ_status')->groupBy('employ_status')->orderByDesc('id')->get();
 
+        $votersData = ImportVotersdata::orderByDesc('id')->get();
+
+        return view('admin.managevotersdata.list', compact('stateList', 'senatorialList', 'federalList', 'localConList', 'wardList', 'staList', 'pollingList', 'getAllgender', 'getAllemp', 'votersData'));
+    }
+
+    public function filterList(Request $request)
+    {
+        $stateList = State::where('state', '!=', '')->orderBy('state')->get();
+        $senatorialList = Senatorial_state::where('sena_district', '!=', '')->orderBy('sena_district')->get();
+        $federalList = Federal_constituency::where('federal_name', '!=', '')->orderBy('federal_name')->get();
+        $localConList = Local_constituency::where('lga', '!=', '')->orderBy('lga')->get();
+        $wardList = Ward::where('ward_details', '!=', '')->orderBy('ward_details')->get();
+        $staList = State_constituency::where('state_constituency', '!=', '')->orderBy('state_constituency')->get();
+        $pollingList = Polling_unit::where('polling_name', '!=', '')->orderBy('polling_name')->get();
+        $getAllgender = ImportVotersdata::select('gender')->groupBy('gender')->orderByDesc('id')->get();
+        $getAllemp = ImportVotersdata::select('employ_status')->groupBy('employ_status')->orderByDesc('id')->get();
+
         $whr = [];
 
         if ($request->has('search')) {
@@ -217,14 +234,11 @@ class ManageVotersDataController extends Controller
             }
         }
 
-        // $paged = $request->input('paged', 1);
-        // $perpage = 20;
-        // $startpoint = ($paged * $perpage) - $perpage;
-
-        $totrecord = ImportVotersdata::orderByDesc('id')->get();
         $votersData = ImportVotersdata::where($whr)->orderByDesc('id')->get();
+
         return view('admin.managevotersdata.list', compact('stateList', 'senatorialList', 'federalList', 'localConList', 'wardList', 'staList', 'pollingList', 'getAllgender', 'getAllemp', 'votersData'));
     }
+
 
     public function destroy($id)
     {
@@ -236,5 +250,115 @@ class ManageVotersDataController extends Controller
         $votersdata->delete(); // Delete the item
 
         return redirect()->route('managevotersdata.list')->with('message', 'VotersData deleted successfully.'); // Redirect to the index page with success message
+    }
+
+
+    public function getDistricts(Request $request)
+    {
+        $myresAry = [];
+
+        if ($request->input('state') != '') {
+            $state = State::where('state', $request->input('state'))->first();
+
+            if ($state) {
+                // Senatorial State
+                $senatorialStates = Senatorial_state::where('state_id', $state->id)->get();
+                $html1 = '<select name="senatorial_state" id="senatorial_state" data-rel="chosen" class="form-control">
+                    <option value="">--Search by Senatorial State--</option>';
+                if ($senatorialStates->count() > 0) {
+                    foreach ($senatorialStates as $value) {
+                        $html1 .= '<option value="' . $value->sena_district . '">' . $value->sena_district . '</option>';
+                    }
+                    $myresAry['status1'] = 1;
+                } else {
+                    $myresAry['status1'] = 2;
+                }
+                $html1 .= '</select>';
+                $myresAry['html1'] = $html1;
+
+                // Federal Constituency
+                $federalConstituencies = Federal_constituency::where('state_id', $state->id)->get();
+                $html2 = '<select name="federal_constituency" id="federal_constituency" data-rel="chosen" class="form-control">
+                    <option value="">--Search by Federal Constituency--</option>';
+                if ($federalConstituencies->count() > 0) {
+                    foreach ($federalConstituencies as $value) {
+                        $html2 .= '<option value="' . $value->federal_name . '">' . $value->federal_name . '</option>';
+                    }
+                    $myresAry['status2'] = 1;
+                } else {
+                    $myresAry['status2'] = 2;
+                }
+                $html2 .= '</select>';
+                $myresAry['html2'] = $html2;
+
+                // Local Constituency
+                $localConstituencies = Local_constituency::where('state_id', $state->id)->get();
+                $html3 = '<select name="local_constituency" id="local_constituency" data-rel="chosen" class="form-control">
+                    <option value="">--Search by LGA--</option>';
+                if ($localConstituencies->count() > 0) {
+                    foreach ($localConstituencies as $value) {
+                        $html3 .= '<option value="' . $value->lga . '">' . $value->lga . '</option>';
+                    }
+                    $myresAry['status3'] = 1;
+                } else {
+                    $myresAry['status3'] = 2;
+                }
+                $html3 .= '</select>';
+                $myresAry['html3'] = $html3;
+
+                // Ward
+                $wards = Ward::where('state_id', $state->id)->get();
+                $html4 = '<select name="ward" id="ward" data-rel="chosen" class="form-control">
+                    <option value="">--Search by Ward--</option>';
+                if ($wards->count() > 0) {
+                    foreach ($wards as $value) {
+                        $html4 .= '<option value="' . $value->ward_details . '">' . $value->ward_details . '</option>';
+                    }
+                    $myresAry['status4'] = 1;
+                } else {
+                    $myresAry['status4'] = 2;
+                }
+                $html4 .= '</select>';
+                $myresAry['html4'] = $html4;
+
+                // State Constituency
+                $stateConstituencies = State_constituency::where('state_id', $state->id)->get();
+                $html5 = '<select name="state_constituency" id="state_constituency" data-rel="chosen" class="form-control">
+                    <option value="">--Search by State Constituency--</option>';
+                if ($stateConstituencies->count() > 0) {
+                    foreach ($stateConstituencies as $value) {
+                        $html5 .= '<option value="' . $value->state_constituency . '">' . $value->state_constituency . '</option>';
+                    }
+                    $myresAry['status5'] = 1;
+                } else {
+                    $myresAry['status5'] = 2;
+                }
+                $html5 .= '</select>';
+                $myresAry['html5'] = $html5;
+
+                // Polling Unit
+                $pollingUnits = Polling_unit::where('state_id', $state->id)->get();
+                $html6 = '<select name="polling_unit" id="polling_unit" data-rel="chosen" class="form-control">
+                    <option value="">--Search by Polling Unit--</option>';
+                if ($pollingUnits->count() > 0) {
+                    foreach ($pollingUnits as $value) {
+                        $html6 .= '<option value="' . $value->polling_name . '">' . $value->polling_name . '</option>';
+                    }
+                    $myresAry['status6'] = 1;
+                } else {
+                    $myresAry['status6'] = 2;
+                }
+                $html6 .= '</select>';
+                $myresAry['html6'] = $html6;
+
+                $myresAry['status'] = 1;
+            } else {
+                $myresAry['status'] = 2;
+            }
+        } else {
+            $myresAry['status'] = 2;
+        }
+
+        return response()->json($myresAry);
     }
 }

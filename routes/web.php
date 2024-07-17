@@ -369,6 +369,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
   //Manage Contacts Data
   Route::get('manage-votersdata/list', [ManageVotersDataController::class, 'list'])->name('managevotersdata.list');
+  Route::post('manage-votersdata/list', [ManageVotersDataController::class, 'filterList'])->name('managevotersdata.filterList');
   Route::any('manage-votersdata/edit/{id}', [ManageVotersDataController::class, 'edit'])->name('managevotersdata.edit');
   Route::post('manage-votersdata/update/{id}', [ManageVotersDataController::class, 'update'])->name('managevotersdata.update');
   Route::any('manage-votersdata/destroy/{id}', [ManageVotersDataController::class, 'destroy'])->name('managevotersdata.destroy');
