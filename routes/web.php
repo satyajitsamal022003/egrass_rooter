@@ -157,6 +157,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
   //federal constituency
   Route::get('/federal-constituency/list', [ManagefederalconstituencyController::class, 'list'])->name('federalconst.list');
+  Route::get('/federal-constituency/getfederalconstituency', [ManagefederalconstituencyController::class, 'GetFederalConstituency'])->name('federalconst.getfederalconstituency');
   Route::get('/federal-constituency/create', [ManagefederalconstituencyController::class, 'create'])->name('federalconst.create');
   Route::post('/federal-constituency/store', [ManagefederalconstituencyController::class, 'store'])->name('federalconst.store');
   Route::any('/federal-constituency/edit/{id}', [ManagefederalconstituencyController::class, 'edit'])->name('federalconst.edit');
