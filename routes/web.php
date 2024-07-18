@@ -33,6 +33,7 @@ use App\Http\Controllers\Admin\ManageuserController;
 use App\Http\Controllers\Admin\ManagemenuController;
 use App\Http\Controllers\Admin\ManageelectioncountController;
 use App\Http\Controllers\Admin\ManageadminController;
+use App\Http\Controllers\Admin\ManageDashBoardMenuController;
 use App\Http\Controllers\Admin\ManageelectionresultController;
 use App\Http\Controllers\Admin\ManageVotersDataController;
 use Illuminate\Support\Facades\Route;
@@ -385,6 +386,16 @@ Route::prefix('admin')->middleware('auth')->group(function () {
   Route::get('manage-votersdata/ward-list', [ManageVotersDataController::class, 'getWardList'])->name('managevotersdata.wardlist');
   Route::get('manage-votersdata/state-constituency-list', [ManageVotersDataController::class, 'getStateConstituencyList'])->name('managevotersdata.stateconstituencylist');
   Route::get('manage-votersdata/polling-unit-list', [ManageVotersDataController::class, 'getPollingUnitList'])->name('managevotersdata.pollingunitlist');
+
+
+  // Manage Dashboard Menu
+  Route::get('/manage-dashboard-menu/list', [ManageDashBoardMenuController::class, 'list'])->name('managedashboardmenu.list');
+  Route::get('/manage-dashboard-menu/create', [ManageDashBoardMenuController::class, 'create'])->name('managedashboardmenu.create');
+  Route::post('/manage-dashboard-menu/store', [ManageDashBoardMenuController::class, 'store'])->name('managedashboardmenu.store');
+  Route::any('/manage-dashboard-menu/edit/{id}', [ManageDashBoardMenuController::class, 'edit'])->name('managedashboardmenu.edit');
+  Route::post('/manage-dashboard-menu/update/{id}', [ManageDashBoardMenuController::class, 'update'])->name('managedashboardmenu.update');
+  Route::any('/manage-dashboard-menu/destroy/{id}', [ManageDashBoardMenuController::class, 'destroy'])->name('managedashboardmenu.destroy');
+  Route::post('/manage-dashboard-menu/status', [ManageDashBoardMenuController::class, 'status'])->name('managedashboardmenu.status');
 
 
 

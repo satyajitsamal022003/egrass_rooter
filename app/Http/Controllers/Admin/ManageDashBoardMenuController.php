@@ -3,43 +3,45 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Adminmenu;
+use App\Models\Dashboardmenu;
 use Illuminate\Http\Request;
+use App\Models\Testimonial;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
-class AdminmenuController extends Controller
+class ManageDashBoardMenuController extends Controller
 {
     public function list()
     {
-        $menus = $this->getAdminMenuList();
-        return view('admin.manageadminmenu.list', compact('menus'));
+        $menus = $this->getDashboardMenuList();
+        return view('admin.managedashboardmenu.list', compact('menus'));
     }
 
-    private function getAdminMenuList($parent = 0, $level = 0, &$menuList = [])
+    private function getDashboardMenuList($parent = 0, $level = 0, &$menuList = [])
     {
-        $menus = Adminmenu::where('select_parent', $parent)
+        $menus = Dashboardmenu::where('select_parent', $parent)
             ->orderBy('order_no', 'asc')
             ->get();
 
         foreach ($menus as $menu) {
             $menu->level = $level;
             $menuList[] = $menu;
-            $this->getAdminMenuList($menu->id, $level + 1, $menuList);
+            $this->getDashboardMenuList($menu->id, $level + 1, $menuList);
         }
 
         return $menuList;
     }
 
+
     public function create()
     {
         $menuParents = $this->getMenuParents();
-        return view('admin.manageadminmenu.add', compact('menuParents'));
+        return view('admin.managedashboardmenu.add', compact('menuParents'));
     }
 
     private function getMenuParents($editid = '', $parentid = 0, $level = 0, $selectval = 0)
     {
-        $query = Adminmenu::where('select_parent', $parentid);
+        $query = Dashboardmenu::where('select_parent', $parentid);
 
         if ($editid != '') {
             $query->where('id', '!=', $editid)
@@ -64,12 +66,23 @@ class AdminmenuController extends Controller
     }
     public function store(Request $request)
     {
+        // Validate incoming request data
+        // $validatedData = $request->validate([
+        //     'menu_name' => 'required|string',
+        //     'menu_type' => 'required|integer',
+        //     'menu_link' => 'required|string',
+        //     'select_parent' => 'required|integer',
+        //     'menu_class' => 'nullable|string',
+        //     'order_no' => 'required|integer',
+        //     'status' => 'nullable|boolean',
+        // ]);
+
         if (!Auth::check() || Auth::user()->id !== 1) {
             return redirect()->route('admin.dashboard')->with('error', 'You do not have permission to perform this action. Please contact with superadmin');
         }
 
         // Check if menu already exists
-        $existingMenu = Adminmenu::where('menu_name', $request->menu_name)
+        $existingMenu = Dashboardmenu::where('menu_name', $request->menu_name)
             ->where('select_parent', $request->select_parent)
             ->exists();
 
@@ -80,26 +93,26 @@ class AdminmenuController extends Controller
         }
 
         // Create new Dashboardmenu instance and save
-        $adminmenu = new Adminmenu();
-        $adminmenu->menu_name = addslashes($request['menu_name']);
-        $adminmenu->menu_type = $request['menu_type'];
-        $adminmenu->menu_link = $request['menu_link'];
-        $adminmenu->select_parent = $request['select_parent'];
-        $adminmenu->menu_class = $request['menu_class'];
-        $adminmenu->order_no = $request['order_no'];
-        $adminmenu->status = $request['status'] ?? 0; // Default to 0 if status is not provided
-        $adminmenu->created = now();
-        $adminmenu->modified = now();
-        $adminmenu->save();
+        $dashboardmenu = new Dashboardmenu();
+        $dashboardmenu->menu_name = addslashes($request['menu_name']);
+        $dashboardmenu->menu_type = $request['menu_type'];
+        $dashboardmenu->menu_link = $request['menu_link'];
+        $dashboardmenu->select_parent = $request['select_parent'];
+        $dashboardmenu->menu_class = $request['menu_class'];
+        $dashboardmenu->order_no = $request['order_no'];
+        $dashboardmenu->status = $request['status'] ?? 0; // Default to 0 if status is not provided
+        $dashboardmenu->created = now();
+        $dashboardmenu->modified = now();
+        $dashboardmenu->save();
 
         return redirect()->back()->with('message', 'Menu Created Successfully');
     }
 
     public function edit($id)
     {
-        $editmanagemenu = Adminmenu::find($id);
+        $editmanagemenu = Dashboardmenu::find($id);
         $menuParents = $this->getMenuParents($id, 0, 0, $editmanagemenu->select_parent);
-        return view('admin.manageadminmenu.edit', compact('editmanagemenu', 'menuParents'));
+        return view('admin.managedashboardmenu.edit', compact('editmanagemenu', 'menuParents'));
     }
 
     public function update(Request $request, $id)
@@ -116,17 +129,17 @@ class AdminmenuController extends Controller
         // if ($existingMenu) {
         //     return redirect()->back()->with('error', 'This menu Title already exists');
         // }
-        $adminmenu = Adminmenu::findOrFail($id);
-        $adminmenu->menu_name = addslashes($request['menu_name']);
-        $adminmenu->menu_type = $request['menu_type'];
-        $adminmenu->menu_link = $request['menu_link'];
-        $adminmenu->select_parent = $request['select_parent'];
-        $adminmenu->menu_class = $request['menu_class'];
-        $adminmenu->order_no = $request['order_no'];
-        $adminmenu->status = $request['status'] ?? 0; // Default to 0 if status is not provided
-        $adminmenu->created = now();
-        $adminmenu->modified = now();
-        $adminmenu->save();
+        $dashboardmenu = Dashboardmenu::findOrFail($id);
+        $dashboardmenu->menu_name = addslashes($request['menu_name']);
+        $dashboardmenu->menu_type = $request['menu_type'];
+        $dashboardmenu->menu_link = $request['menu_link'];
+        $dashboardmenu->select_parent = $request['select_parent'];
+        $dashboardmenu->menu_class = $request['menu_class'];
+        $dashboardmenu->order_no = $request['order_no'];
+        $dashboardmenu->status = $request['status'] ?? 0; // Default to 0 if status is not provided
+        $dashboardmenu->created = now();
+        $dashboardmenu->modified = now();
+        $dashboardmenu->save();
 
         return redirect()->back()->with('message', 'Menu Updated Successfully');
     }
@@ -134,20 +147,20 @@ class AdminmenuController extends Controller
 
     public function destroy($id)
     {
-        $adminmenu = Adminmenu::find($id); // Find the item by its ID
-        if (!$adminmenu) {
+        $dashboardmenu = Dashboardmenu::find($id); // Find the item by its ID
+        if (!$dashboardmenu) {
             return redirect()->back()->with('error', 'Item not found.'); // Redirect back if item does not exist
         }
 
-        $adminmenu->delete(); // Delete the item
+        $dashboardmenu->delete(); // Delete the item
 
-        return redirect()->route('adminmenu.list')->with('success', 'Admin Menu deleted successfully.'); // Redirect to the index page with success message
+        return redirect()->route('managedashboardmenu.list')->with('success', 'Dashboard Menu deleted successfully.'); // Redirect to the index page with success message
     }
 
     public function status(Request $request)
     {
         $get_id = $request->id;
-        $catstatus = DB::table('adminmenus')
+        $catstatus = DB::table('dashboardmenu')
             ->select('status')
             ->where('id', '=', $get_id)
             ->first();
@@ -159,7 +172,7 @@ class AdminmenuController extends Controller
         } else {
             $astatus = '1';
         }
-        $statusupdate = DB::table('adminmenus')
+        $statusupdate = DB::table('dashboardmenu')
             ->where('id', $get_id)
             ->update(array('status' => $astatus));
 
