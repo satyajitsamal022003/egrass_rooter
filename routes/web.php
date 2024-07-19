@@ -379,7 +379,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
   Route::get('manage-votersdata/addimport', [ManageVotersDataController::class, 'addImport'])->name('managevotersdata.addImport');
   Route::post('manage-votersdata/import', [ManageVotersDataController::class, 'importVotersData'])->name('managevotersdata.import');
   Route::post('manage-votersdata/get-districts', [ManageVotersDataController::class, 'getDistricts'])->name('managevotersdata.getDistricts');
-  
+
   Route::get('manage-votersdata/state-list', [ManageVotersDataController::class, 'getStateList'])->name('managevotersdata.statelist');
   Route::get('manage-votersdata/senatorial-list', [ManageVotersDataController::class, 'getSenatorialList'])->name('managevotersdata.senatoriallist');
   Route::get('manage-votersdata/federal-list', [ManageVotersDataController::class, 'getFederalList'])->name('managevotersdata.federallist');

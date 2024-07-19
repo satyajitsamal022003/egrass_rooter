@@ -89,11 +89,11 @@
       <div class="main-header">
         <h4>Manage Menus</h4>
         <ol class="breadcrumb breadcrumb-title breadcrumb-arrow">
-          <li class="breadcrumb-item"><a href="index.html"><i class="icofont icofont-home"></i></a>
+          <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}"><i class="icofont icofont-home"></i></a>
           </li>
-          <li class="breadcrumb-item"><a href="#">Forms Components</a>
+          <li class="breadcrumb-item"><a href="#">Manage Menus</a>
           </li>
-          <li class="breadcrumb-item"><a href="form-elements-bootstrap.html">General Elements</a>
+          <li class="breadcrumb-item"><a>List</a>
           </li>
         </ol>
       </div>
@@ -147,7 +147,7 @@
                     N/A
                     @endif
                   </td>
-                  <td class="center">
+                  <td class="center" style="width: 128px;">
                     <a class="btn btn-info" href="{{route('managemenu.edit',$menu->id)}}" title="Edit"><i class="fa fa-edit"></i></a>
                     <a class="btn btn-danger" href="{{route('managemenu.destroy',$menu->id)}}" onclick="return confirm('Are you sure to delete!');" title="Delete"><i class="fa fa-remove"></i></a>
                   </td>

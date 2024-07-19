@@ -96,5 +96,4 @@ class ManagewardController extends Controller
 
         return redirect()->route('manageward.list')->with('message', 'Ward Removed successfully !.'); // Redirect to the index page with success message
     }
-
 }

@@ -18,13 +18,13 @@
          <div class="row">
             <div class="col-sm-12 p-0">
                <div class="main-header">
-                  <h4>General Elements</h4>
+                  <h4>Edit Menu</h4>
                   <ol class="breadcrumb breadcrumb-title breadcrumb-arrow">
-                     <li class="breadcrumb-item"><a href="index.html"><i class="icofont icofont-home"></i></a>
+                     <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}"><i class="icofont icofont-home"></i></a>
                      </li>
-                     <li class="breadcrumb-item"><a href="#">Forms Components</a>
+                     <li class="breadcrumb-item"><a href="{{route('adminmenu.list')}}">Manage Menu</a>
                      </li>
-                     <li class="breadcrumb-item"><a href="form-elements-bootstrap.html">General Elements</a>
+                     <li class="breadcrumb-item"><a>Edit Menu</a>
                      </li>
                   </ol>
                </div>

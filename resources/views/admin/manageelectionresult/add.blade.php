@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Election Result</title>
 </head>
+
 <body>
     @extends('layouts.admin.layout')
     @section('section')
@@ -15,11 +17,14 @@
             <div class="row">
                 <div class="col-sm-12 p-0">
                     <div class="main-header">
-                        <h4>General Elements</h4>
+                        <h4>Add Election Result</h4>
                         <ol class="breadcrumb breadcrumb-title breadcrumb-arrow">
-                            <li class="breadcrumb-item"><a href="index.html"><i class="icofont icofont-home"></i></a></li>
-                            <li class="breadcrumb-item"><a href="#">Forms Components</a></li>
-                            <li class="breadcrumb-item"><a href="form-elements-bootstrap.html">General Elements</a></li>
+                            <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}"><i class="icofont icofont-home"></i></a>
+                            </li>
+                            <li class="breadcrumb-item"><a href="{{route('manageelectionresult.list')}}">Manage Election Result</a>
+                            </li>
+                            <li class="breadcrumb-item"><a>Add Election Result</a>
+                            </li>
                         </ol>
                     </div>
                 </div>
@@ -40,7 +45,7 @@
                                     <select name="pollingunit" id="pollingunit" class="form-control">
                                         <option value="">--Select--</option>
                                         @foreach (App\Models\Polling_unit::all() as $polling)
-                                            <option value="{{ $polling->id }}">{{ $polling->polling_name }}</option>
+                                        <option value="{{ $polling->id }}">{{ $polling->polling_name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -63,7 +68,7 @@
                                     <select name="party" id="party" class="form-control">
                                         <option value="">--Select--</option>
                                         @foreach (App\Models\Party::where('is_active', 1)->get() as $party)
-                                            <option value="{{ $party->id }}">{{ $party->party_name }}</option>
+                                        <option value="{{ $party->id }}">{{ $party->party_name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -81,5 +86,6 @@
         <!-- Main content ends -->
     </div>
 </body>
+
 </html>
 @endsection

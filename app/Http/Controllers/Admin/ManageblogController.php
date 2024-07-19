@@ -119,8 +119,6 @@ class ManageblogController extends Controller
         $blogdata->save();
 
         return back()->with('message', 'Blog updated Successfully !');
-
-
     }
 
 
@@ -155,7 +153,6 @@ class ManageblogController extends Controller
     public function commentlist($id)
     {
         dd($id);
-
     }
 
     public function destroy($id)
@@ -225,6 +222,4 @@ class ManageblogController extends Controller
             ]);
         }
     }
-
-
 }

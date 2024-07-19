@@ -1,101 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Party</title>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Edit Party</title>
 </head>
 @extends('layouts.admin.layout')
-@section('section') 
+@section('section')
+
 <body>
- <div class="container-fluid">
-            <!-- Main content starts -->
-            <div>
-               <!-- Row Starts -->
-               <div class="row">
-                  <div class="col-sm-12 p-0">
-                     <div class="main-header">
-                        <h4>General Elements</h4>
-                        <ol class="breadcrumb breadcrumb-title breadcrumb-arrow">
-                           <li class="breadcrumb-item"><a href="index.html"><i class="icofont icofont-home"></i></a>
-                           </li>
-                           <li class="breadcrumb-item"><a href="#">Forms Components</a>
-                           </li>
-                           <li class="breadcrumb-item"><a href="form-elements-bootstrap.html">General Elements</a>
-                           </li>
-                        </ol>
-                     </div>
-                  </div>
+   <div class="container-fluid">
+      <!-- Main content starts -->
+      <div>
+         <!-- Row Starts -->
+         <div class="row">
+            <div class="col-sm-12 p-0">
+               <div class="main-header">
+                  <h4>General Elements</h4>
+                  <ol class="breadcrumb breadcrumb-title breadcrumb-arrow">
+                     <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}"><i class="icofont icofont-home"></i></a>
+                     </li>
+                     <li class="breadcrumb-item"><a href="{{route('manageparty.list')}}">Manage Party</a>
+                     </li>
+                     <li class="breadcrumb-item"><a>Edit Party</a>
+                     </li>
+                  </ol>
                </div>
-               <!-- Row end -->
+            </div>
+         </div>
+         <!-- Row end -->
 
-              
-               <div class="col-lg-8">
-                     <div class="card">
-                        <div class="card-header">
-                           <h5 class="card-header-text">Edit Party</h5>
-                        </div>
-                        <div class="card-block">
-                           <form action="{{route('manageparty.update',$editparty->id)}}" method="post" enctype="multipart/form-data">
-                              @csrf
-                              <div class="form-group row">
-                                 <label for="example-text-input" class="col-xs-3 col-form-label form-control-label">Party Name*</label>
-                                 <div class="col-sm-10">
-                                    <input class="form-control" type="text" name="party_name" value="{{$editparty->party_name}}" id="party_name" required>
-                                 </div>
-                              </div>
-                              <div class="form-group row">
-                                 <label for="example-text-input" class="col-xs-3 col-form-label form-control-label">Party chairman name</label>
-                                 <div class="col-sm-10">
-                                 <input class="form-control" type="text" name="chairman_name" id="chairman_name" value="{{$editparty->party_name}}" required>
-                                 </div>
-                              </div>
-                              <div class="form-group row">
-                                 <label for="example-text-input" class="col-xs-3 col-form-label form-control-label">Color *</label>
-                                 <div class="col-sm-10">
-                                    <input class="form-control" type="text" name="color" id="color" value="{{$editparty->party_name}}" required>
-                                 </div>
-                              </div>
-                              <div class="form-group row">
-                                 <label for="example-text-input" class="col-xs-3 col-form-label form-control-label">Party Image</label>
-                                 <div class="col-sm-10">
-                                    <input class="form-control" type="file" name="party_image" id="imageInput" accept="image/*">
-                                    <img id="imagePreview" class="img-fluid mt-2" style="height: 138px;width: 256px;" src="{{ asset('images/parties/' . $editparty->party_img)}}" alt="Preview">
-                                 </div>
-                              </div>
-                              <div class="form-group row">
-                                 <label for="example-text-input" class="col-xs-3 col-form-label form-control-label">Candidate Image</label>
-                                 <div class="col-sm-10">
-                                    <input class="form-control" type="file" name="candidate_img" id="bannerImageInput" accept="image/*">
-                                    <img id="bannerImagePreview" class="img-fluid mt-2" style="height: 138px;width: 256px;" src="{{ asset('images/parties/' . $editparty->candidate_img)}}" alt="Preview">
-                                 </div>
-                              </div>
-                              <div class="form-group row">
-                                 <label for="example-email-input" class="col-xs-3 col-form-label form-control-label">Status</label>
-                                 <div class="col-sm-10">
-                                    <select class="form-control" name="status" id="status">
-                                        <option value="1" {{$editparty->is_active=='1'?'selected':''}}>Publish</option>
-                                        <option value="0" {{$editparty->is_active=='0'?'selected':''}}>UnPublish</option>
-                                    </select>
-                                 </div>
-                              </div>
-                              <div class="form-group row">
-                                 <div class="col-sm-10 offset-sm-2">
-                                       <button type="submit" class="btn btn-primary">Submit</button>
-                                 </div>
-                              </div>
-                           </form>
+
+         <div class="col-lg-8">
+            <div class="card">
+               <div class="card-header">
+                  <h5 class="card-header-text">Edit Party</h5>
+               </div>
+               <div class="card-block">
+                  <form action="{{route('manageparty.update',$editparty->id)}}" method="post" enctype="multipart/form-data">
+                     @csrf
+                     <div class="form-group row">
+                        <label for="example-text-input" class="col-xs-3 col-form-label form-control-label">Party Name*</label>
+                        <div class="col-sm-10">
+                           <input class="form-control" type="text" name="party_name" value="{{$editparty->party_name}}" id="party_name" required>
                         </div>
                      </div>
-                  </div>
-             
+                     <div class="form-group row">
+                        <label for="example-text-input" class="col-xs-3 col-form-label form-control-label">Party chairman name</label>
+                        <div class="col-sm-10">
+                           <input class="form-control" type="text" name="chairman_name" id="chairman_name" value="{{$editparty->party_name}}" required>
+                        </div>
+                     </div>
+                     <div class="form-group row">
+                        <label for="example-text-input" class="col-xs-3 col-form-label form-control-label">Color *</label>
+                        <div class="col-sm-10">
+                           <input class="form-control" type="text" name="color" id="color" value="{{$editparty->party_name}}" required>
+                        </div>
+                     </div>
+                     <div class="form-group row">
+                        <label for="example-text-input" class="col-xs-3 col-form-label form-control-label">Party Image</label>
+                        <div class="col-sm-10">
+                           <input class="form-control" type="file" name="party_image" id="imageInput" accept="image/*">
+                           <img id="imagePreview" class="img-fluid mt-2" style="height: 138px;width: 256px;" src="{{ asset('images/parties/' . $editparty->party_img)}}" alt="Preview">
+                        </div>
+                     </div>
+                     <div class="form-group row">
+                        <label for="example-text-input" class="col-xs-3 col-form-label form-control-label">Candidate Image</label>
+                        <div class="col-sm-10">
+                           <input class="form-control" type="file" name="candidate_img" id="bannerImageInput" accept="image/*">
+                           <img id="bannerImagePreview" class="img-fluid mt-2" style="height: 138px;width: 256px;" src="{{ asset('images/parties/' . $editparty->candidate_img)}}" alt="Preview">
+                        </div>
+                     </div>
+                     <div class="form-group row">
+                        <label for="example-email-input" class="col-xs-3 col-form-label form-control-label">Status</label>
+                        <div class="col-sm-10">
+                           <select class="form-control" name="status" id="status">
+                              <option value="1" {{$editparty->is_active=='1'?'selected':''}}>Publish</option>
+                              <option value="0" {{$editparty->is_active=='0'?'selected':''}}>UnPublish</option>
+                           </select>
+                        </div>
+                     </div>
+                     <div class="form-group row">
+                        <div class="col-sm-10 offset-sm-2">
+                           <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                     </div>
+                  </form>
+               </div>
             </div>
-
-            <!-- Main content ends -->
          </div>
 
-    <!-- image upload -->
-    <script>
+      </div>
+
+      <!-- Main content ends -->
+   </div>
+
+   <!-- image upload -->
+   <script>
       document.addEventListener('DOMContentLoaded', function() {
          const imageInput = document.getElementById('imageInput');
          const imagePreview = document.getElementById('imagePreview');
@@ -111,18 +113,18 @@
 
          function displayImagePreview(input, preview) {
             if (input.files && input.files[0]) {
-                  const reader = new FileReader();
-                  reader.onload = function(e) {
-                     preview.src = e.target.result;
-                  };
-                  reader.readAsDataURL(input.files[0]);
+               const reader = new FileReader();
+               reader.onload = function(e) {
+                  preview.src = e.target.result;
+               };
+               reader.readAsDataURL(input.files[0]);
             } else {
-                  preview.src = '#';
+               preview.src = '#';
             }
          }
       });
    </script>
 
-  
+
 </html>
 @endsection

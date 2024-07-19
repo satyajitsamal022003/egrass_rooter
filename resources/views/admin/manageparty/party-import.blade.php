@@ -19,11 +19,11 @@
                     <div class="main-header">
                         <h4>General Elements</h4>
                         <ol class="breadcrumb breadcrumb-title breadcrumb-arrow">
-                            <li class="breadcrumb-item"><a href="index.html"><i class="icofont icofont-home"></i></a>
+                            <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}"><i class="icofont icofont-home"></i></a>
                             </li>
-                            <li class="breadcrumb-item"><a href="#">Forms Components</a>
+                            <li class="breadcrumb-item"><a href="{{route('manageparty.list')}}">Manage Party</a>
                             </li>
-                            <li class="breadcrumb-item"><a href="form-elements-bootstrap.html">General Elements</a>
+                            <li class="breadcrumb-item"><a>Import political Parties</a>
                             </li>
                         </ol>
                     </div>

@@ -6,9 +6,12 @@
             <div class="main-header">
                 <h4>Manage Polling Unit</h4>
                 <ol class="breadcrumb breadcrumb-title breadcrumb-arrow">
-                    <li class="breadcrumb-item"><a href="index.html"><i class="icofont icofont-home"></i></a></li>
-                    <li class="breadcrumb-item"><a href="#">Forms Components</a></li>
-                    <li class="breadcrumb-item"><a href="form-elements-bootstrap.html">General Elements</a></li>
+                    <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}"><i class="icofont icofont-home"></i></a>
+                    </li>
+                    <li class="breadcrumb-item"><a href="#">Manage Polling Unit</a>
+                    </li>
+                    <li class="breadcrumb-item"><a>List</a>
+                    </li>
                 </ol>
             </div>
         </div>
@@ -50,15 +53,40 @@
                 url: "{{ route('managepollings.getlist') }}",
                 type: 'GET'
             },
-            columns: [
-                { data: 'id', name: 'id' },
-                { data: 'state_name', name: 'state_name' },
-                { data: 'lga', name: 'lga' },
-                { data: 'ward_id', name: 'ward_id' },
-                { data: 'polling_name', name: 'polling_name' },
-                { data: 'polling_capacity', name: 'polling_capacity' },
-                { data: 'created_at', name: 'created_at' },
-                { data: 'actions', name: 'actions', orderable: false, searchable: false }
+            columns: [{
+                    data: 'id',
+                    name: 'id'
+                },
+                {
+                    data: 'state_name',
+                    name: 'state_name'
+                },
+                {
+                    data: 'lga',
+                    name: 'lga'
+                },
+                {
+                    data: 'ward_id',
+                    name: 'ward_id'
+                },
+                {
+                    data: 'polling_name',
+                    name: 'polling_name'
+                },
+                {
+                    data: 'polling_capacity',
+                    name: 'polling_capacity'
+                },
+                {
+                    data: 'created_at',
+                    name: 'created_at'
+                },
+                {
+                    data: 'actions',
+                    name: 'actions',
+                    orderable: false,
+                    searchable: false
+                }
             ],
         });
     });
