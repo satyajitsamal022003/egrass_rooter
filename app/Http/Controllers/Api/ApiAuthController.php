@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Campaign_user;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class ApiAuthController extends Controller
 {
@@ -19,12 +21,10 @@ class ApiAuthController extends Controller
                 'election_date' => 'required|date_format:m/d/Y',
                 'email' => 'required|string|email|max:255|unique:campaign_users,email_id',
                 'phone_number' => 'required|string|max:15|unique:campaign_users,telephone',
-                'pass' => 'required|string|confirmed|min:8', // Assuming password confirmation is sent as `pass_confirmation`
+                'pass' => 'required|string|confirmed|min:8',
             ]);
 
-            // Generate a unique username
             $username = $validatedData['first_name'] . time();
-            // Create the new user
             $user = Campaign_user::create([
                 'first_name' => $validatedData['first_name'],
                 'last_name' => $validatedData['last_name'],
@@ -39,27 +39,62 @@ class ApiAuthController extends Controller
                 'updated_at' => NOW(),
             ]);
 
-            // Generate an API token for the user
             $token = $user->createToken('auth_token')->plainTextToken;
 
-            // Return success response
             return response()->json([
                 'success' => true,
                 'message' => 'User registered successfully',
                 'token' => $token
             ], 201);
         } catch (\Illuminate\Validation\ValidationException $e) {
-            // Return validation error response
             return response()->json([
                 'success' => false,
                 'message' => 'Validation error',
-                 'errors' => $e->errors()
+                'errors' => $e->errors()
             ], 422);
         } catch (\Exception $e) {
-            // Return general error response
             return response()->json([
                 'success' => false,
                 'message' => 'Registration failed',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function login(Request $request)
+    {
+        try {
+            $credentials = $request->validate([
+                'email' => 'required|string|email',
+                'pass' => 'required|string',
+            ]);
+
+            $user = Campaign_user::where('email_id', $credentials['email'])->first();
+
+            if (!$user || !Hash::check($credentials['pass'], $user->pass)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Invalid credentials',
+                ], 401);
+            }
+
+            $token = $user->createToken('auth_token')->plainTextToken;
+
+            return response()->json([
+                'success' => true,
+                'message' => 'User logged in successfully',
+                'token' => $token
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation error',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Login failed',
                 'error' => $e->getMessage()
             ], 500);
         }
