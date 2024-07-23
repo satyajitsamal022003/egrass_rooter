@@ -22,6 +22,7 @@ use App\Http\Controllers\Api\ApiAuthController;
 // Public routes
 Route::post('/register', [ApiAuthController::class, 'register']);
 Route::post('/login', [ApiAuthController::class, 'login']);
+Route::get('/activate', [ApiAuthController::class, 'activate']);
 
 // Protected routes with auth:sanctum middleware
 Route::middleware('auth:sanctum')->group(function () {
@@ -30,6 +31,13 @@ Route::middleware('auth:sanctum')->group(function () {
         return $request->user();
     });
 
-    // Example of a logout route
+    // Change password route
+    Route::post('change-password', [ApiAuthController::class, 'changePassword']);
+
+    // logout route
     Route::post('logout', [ApiAuthController::class, 'logout']);
+
+    
+    Route::get('editprofile/{id}', [ApiAuthController::class, 'getProfile']);
+    Route::post('updateprofile', [ApiAuthController::class, 'updateProfile']);
 });

@@ -15,24 +15,26 @@ class Campaign_user extends Model
      *
      * @var array
      */
-    protected $fillable = [
-        'first_name',
-        'last_name',
-        'user_type',
-        'election_type',
-        'election_date',
-        'email_id',
-        'telephone',
-        'pass',
-        'username',
-    ];
+    // protected $fillable = [
+    //     'first_name',
+    //     'last_name',
+    //     'user_type',
+    //     'election_type',
+    //     'election_date',
+    //     'email_id',
+    //     'telephone',
+    //     'pass',
+    //     'username',
+    // ];
 
     /**
      * The attributes that should be hidden for arrays.
      *
      * @var array
      */
-    protected $hidden = [
-        'pass',
-    ];
+    // protected $hidden = [
+    //     'pass',
+    // ];
+
+    protected $guarded = [];
 }
