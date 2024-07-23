@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Api\BlogController;
+use App\Http\Controllers\Api\PageController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ApiAuthController;
@@ -23,6 +25,8 @@ use App\Http\Controllers\Api\ApiAuthController;
 Route::post('/register', [ApiAuthController::class, 'register']);
 Route::post('/login', [ApiAuthController::class, 'login']);
 Route::get('/activate', [ApiAuthController::class, 'activate']);
+Route::get('/pages/{id}', [PageController::class, 'getPageData']);
+Route::get('/blogs', [BlogController::class, 'index']);
 
 // Protected routes with auth:sanctum middleware
 Route::middleware('auth:sanctum')->group(function () {
