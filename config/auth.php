@@ -42,9 +42,8 @@ return [
         ],
 
         'api' => [
-            'driver' => 'sanctum',
-            'provider' => 'api_users', // Use your custom provider here
-            'hash' => false,
+            'driver' => 'jwt',
+            'provider' => 'campaign_users',
         ],
     ],
 
@@ -71,9 +70,9 @@ return [
             'model' => App\Models\User::class,
         ],
 
-        'api_users' => [
+        'campaign_users' => [
             'driver' => 'eloquent',
-            'model' => App\Models\Models\ApiUser::class, // Replace with your custom user model
+            'model' => App\Models\Campaign_user::class, // Replace with your custom user model
         ],
 
         // 'users' => [

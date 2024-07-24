@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class ApiAuthController extends Controller
 {
@@ -209,7 +210,13 @@ class ApiAuthController extends Controller
             // Notification::create($notificationData);
 
             // Generate token
-            $token = $user->createToken('auth_token')->plainTextToken;
+            // $token = $user->createToken('auth_token')->plainTextToken;
+            if (!$token = JWTAuth::fromUser($user)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Could not create token',
+                ], 500);
+            }
 
             return response()->json([
                 'success' => true,
@@ -291,13 +298,6 @@ class ApiAuthController extends Controller
 
             $user = Campaign_user::where('email_id', $credentials['email'])->first();
 
-            // if (!$user || !Hash::check($credentials['pass'], $user->pass)) {
-            //     return response()->json([
-            //         'success' => false,
-            //         'message' => 'Invalid credentials',
-            //     ], 401);
-            // }
-
             if (!$user || md5($credentials['pass']) !== $user->pass) {
                 return response()->json([
                     'success' => false,
@@ -305,7 +305,14 @@ class ApiAuthController extends Controller
                 ], 401);
             }
 
-            $token = $user->createToken('auth_token')->plainTextToken;
+            // Generate JWT token
+            if (!$token = JWTAuth::fromUser($user)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Could not create token',
+                ], 500);
+            }
+            // dd($token);
 
             return response()->json([
                 'success' => true,
