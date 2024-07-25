@@ -54,11 +54,25 @@ class MemberController extends Controller
     {
         $request->validate([
             'user_id' => 'required|exists:campaign_users,id',
-            'cat_id' => 'required|exists:category,id',
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'slug' => 'required|string|unique:blogs,slug',
-            'blog_image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'role_type' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
+            'gender' => 'required|string|max:255',
+            'phone_number' => 'required|string|max:15',
+            'email_id' => 'required|string|email|max:255|unique:add_members,email_id',
+            'dob' => 'required|date',
+            'voters_id_number' => 'required|string|max:255',
+            'state' => 'required|exists:states,id',
+            'senatorial' => 'required|string|max:255',
+            'voting_local_govt' => 'required|string|max:255',
+            'voting_registration_area' => 'required|string|max:255',
+            'polling_unit' => 'required|string|max:255',
+            'code' => 'required|string|max:255',
+            'occupation' => 'required|string|max:255',
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
+            'date_of_registration' => 'required|date',
+            'address' => 'nullable|string|max:255',
+            'political_party' => 'required|exists:parties,id',
             'is_active' => 'required|boolean',
         ]);
 
@@ -83,6 +97,7 @@ class MemberController extends Controller
         $member->date_of_registration = $request->input('date_of_registration');
         $member->address = $request->input('address');
         $member->political_party = $request->input('political_party');
+        $member->is_active = $request->input('is_active');
         $member->created = now();
         $member->modified = now();
 
@@ -90,6 +105,7 @@ class MemberController extends Controller
 
         return response()->json(['message' => 'Member created successfully', 'data' => $member], 201);
     }
+
 
     public function edit($id)
     {
