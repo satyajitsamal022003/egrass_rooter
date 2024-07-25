@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ApiAuthController;
 use App\Http\Controllers\Api\EventController;
+use App\Http\Controllers\Api\MemberController;
+use App\Http\Controllers\Api\RoleController;
 
 /*
 |--------------------------------------------------------------------------
@@ -56,4 +58,15 @@ Route::middleware('auth:api')->group(function () {
     Route::post('event-update', [EventController::class, 'update']);
     Route::post('event-delete', [EventController::class, 'destroy']);
     Route::post('event-status', [EventController::class, 'updateStatus']);
+
+    //Role List Api
+    Route::get('/rolelist/{userid}', [RoleController::class, 'index']);
+
+    //Member Api
+    Route::get('/member/{userid}', [MemberController::class, 'index']);
+    Route::post('member-add/', [MemberController::class, 'store']);
+    Route::get('member-edit/{id}', [MemberController::class, 'edit']);
+    Route::post('member-update', [MemberController::class, 'update']);
+    Route::post('member-delete', [MemberController::class, 'destroy']);
+
 });

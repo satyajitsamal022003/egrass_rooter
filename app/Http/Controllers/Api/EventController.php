@@ -107,7 +107,7 @@ class EventController extends Controller
 
         // Get email addresses and names of contacts
         $contact_ids = ImportVotersdata::where('user_id', $userid)->get(['email', 'name']);
-        dd($contact_ids);
+        // dd($contact_ids);
         $allemails = $contact_ids->pluck('email')->toArray();
         // dd($allemails);
         $allnames = $contact_ids->pluck('name')->toArray();
@@ -150,78 +150,107 @@ class EventController extends Controller
 
     public function edit($id)
     {
-        // Find the blog by its ID
-        $blog = Blog::find($id);
+        // Check if the user is authenticated
+        $user = Auth::guard('api')->user();
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
 
-        // Check if the blog exists
-        if (!$blog) {
+        // Find the event by ID
+        $event = EventWebsite::where('user_id', $user->id)->find($id);
+        if (!$event) {
             return response()->json([
                 'success' => false,
                 'message' => 'Blog not found'
             ], 404);
         }
 
-        // Retrieve the category details
-        $category = Category::find($blog->cat_id);
-
         // Prepare the blog data with category and image
-        $blog_data = [
-            'cat_id' => $blog->cat_id,
-            'category' => $category ? $category->title : 'Category not found',
-            'title' => $blog->title,
-            'slug' => $blog->slug,
-            'description' => $blog->description,
-            'is_active' => $blog->is_active,
-            'trending' => $blog->trending,
-            'blog_image' => $blog->blog_image ? asset('images/blog/' . $blog->blog_image) : asset('images/blog/noimage.jpg'),
+        $event_data = [
+            'title' => $event->title,
+            'slug' => $event->slug,
+            'description' => $event->description,
+            'video_url' => $event->video_url,
+            'event_type' => $event->event_type,
+            'event_url' => $event->event_url,
+            'event_date' => $event->event_date,
+            'event_time' => $event->event_time,
+            'address' => $event->address,
+            'is_active' => $event->is_active,
+            'trending' => $event->trending,
+            'event_image' => $event->event_image ? asset('images/eventwebsite/' . $event->event_image) : asset('images/blog/noimage.jpg'),
         ];
 
         // Return the response with blog data
         return response()->json([
             'success' => true,
-            'blog_data' => $blog_data
+            'event_data' => $event_data
         ]);
     }
 
 
     public function update(Request $request)
     {
+        // Check if the user is authenticated
+        $user = Auth::guard('api')->user();
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        // Validate the incoming request data
         $request->validate([
             'id' => 'required',
-            'cat_id' => 'required|exists:category,id',
             'title' => 'required|string|max:255',
-            'description' => 'required|string',
             'slug' => 'required|string',
-            'blog_image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'event_image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'event_type' => 'required|string',
+            'event_url' => 'required',
+            'event_date' => 'required|date_format:m/d/y',
+            'event_time' => 'required|string',
+            'address' => 'required|string',
             'is_active' => 'required|boolean',
-            'trending' => 'nullable|boolean',
+            'description' => 'required|string',
         ]);
 
-        $blog = Blog::find($request->id);
+        $eventDate = \DateTime::createFromFormat('m/d/y', $request->input('event_date'));
+        if (!$eventDate) {
+            return response()->json(['message' => 'Invalid date format. Expected format is mm/dd/yy'], 422);
+        }
+        $formattedEventDate = $eventDate->format('Y-m-d');
 
-        if (!$blog) {
-            return response()->json(['message' => 'Blog not found'], 404);
+        // Find the event by ID
+        $event = EventWebsite::where('user_id', $user->id)->find($request->id);
+        if (!$event) {
+            return response()->json(['message' => 'Event not found'], 404);
         }
 
-        $blog->cat_id = $request->input('cat_id');
-        $blog->title = $request->input('title');
-        $blog->description = $request->input('description');
-        $blog->slug = $request->input('slug');
-        $blog->is_active = $request->input('is_active');
-        $blog->trending = $request->input('trending', 0);
-        // $blog->created = now();
-        $blog->modified = now();
+        // Update the event details
+        $event->title = $request->input('title', '');
+        $event->slug = $request->input('slug', '');
+        $event->description = $request->input('description', '');
+        $event->video_url = $request->input('video_url', '');
+        $event->event_type = $request->input('event_type', '');
+        $event->event_url = $request->input('event_url', '');
+        $event->event_date = $formattedEventDate;  // Use formatted date
+        $event->event_time = $request->input('event_time');
+        $event->address = $request->input('address', '');
+        $event->is_active = $request->input('is_active', '0');
+        $event->modified = now();
 
-        if ($request->hasFile('blog_image')) {
-            $image = $request->file('blog_image');
+        // Handle file upload if provided
+        if ($request->hasFile('event_image')) {
+            $image = $request->file('event_image');
             $imageName = time() . '.' . $image->getClientOriginalExtension();
-            $image->move(public_path('images/blog'), $imageName);
-            $blog->blog_image = $imageName;
+            $image->move(public_path('images/eventwebsite'), $imageName);
+            $event->event_image = $imageName;
         }
 
-        $blog->save();
-
-        return response()->json(['message' => 'Blog updated successfully', 'data' => $blog], 200);
+        // Save the updated event and handle success or failure
+        if ($event->save()) {
+            return response()->json(['message' => 'Event updated successfully'], 200);
+        } else {
+            return response()->json(['message' => 'Failed to update event! Please try again'], 500);
+        }
     }
 
     public function destroy(Request $request)
@@ -230,26 +259,26 @@ class EventController extends Controller
             'id' => 'required',
         ]);
 
-        $blog = Blog::find($request->id);
+        $event = EventWebsite::find($request->id);
 
-        if (!$blog) {
+        if (!$event) {
             return response()->json([
                 'success' => false,
-                'message' => 'Blog not found'
+                'message' => 'Event not found'
             ], 404);
         }
 
         // Delete the blog image from storage if it exists
-        if ($blog->blog_image && file_exists(public_path('images/blog/' . $blog->blog_image))) {
-            unlink(public_path('images/blog/' . $blog->blog_image));
+        if ($event->event_image && file_exists(public_path('images/eventwebsite/' . $event->event_image))) {
+            unlink(public_path('images/eventwebsite/' . $event->event_image));
         }
 
         // Delete the blog
-        $blog->delete();
+        $event->delete();
 
         return response()->json([
             'success' => true,
-            'message' => 'Blog deleted successfully'
+            'message' => 'Event deleted successfully'
         ]);
     }
 
@@ -260,55 +289,23 @@ class EventController extends Controller
             'is_active' => 'required|boolean',
         ]);
 
-        $blog = Blog::find($request->id);
+        $event = EventWebsite::find($request->id);
 
-        if (!$blog) {
+        if (!$event) {
             return response()->json([
                 'success' => false,
-                'message' => 'Blog not found'
+                'message' => 'Event not found'
             ], 404);
         }
 
-        $blog->is_active = $request->input('is_active');
-        $blog->modified = now();
-        $blog->save();
+        $event->is_active = $request->input('is_active');
+        $event->modified = now();
+        $event->save();
 
         return response()->json([
             'success' => true,
-            'message' => 'Blog status updated successfully',
-            'data' => $blog
+            'message' => 'Event status updated successfully',
+            'data' => $event
         ]);
-    }
-
-    public function saveBlogcategory(Request $request)
-    {
-        $request->validate([
-            'user_id' => 'required|exists:campaign_users,id',
-            'title' => 'required|string|max:255',
-            'slug' => 'required|string|unique:blogs,slug',
-            'category_image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-            'description' => 'required|string',
-            'is_active' => 'required|boolean',
-        ]);
-
-        $blog = new Category();
-        $blog->user_id = $request->input('user_id');
-        $blog->title = $request->input('title');
-        $blog->slug = $request->input('slug');
-        $blog->description = $request->input('description');
-        $blog->is_active = $request->input('is_active');
-        $blog->created = now();
-        $blog->modified = now();
-
-        if ($request->hasFile('category_image')) {
-            $image = $request->file('category_image');
-            $imageName = time() . '.' . $image->getClientOriginalExtension();
-            $image->move(public_path('images/blog'), $imageName);
-            $blog->category_image = $imageName;
-        }
-
-        $blog->save();
-
-        return response()->json(['message' => 'Blog Category created successfully', 'data' => $blog], 201);
     }
 }
