@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\ApiAuthController;
 use App\Http\Controllers\Api\EventController;
 use App\Http\Controllers\Api\MemberController;
 use App\Http\Controllers\Api\RoleController;
+use App\Http\Controllers\Api\TeamController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,6 +25,8 @@ use App\Http\Controllers\Api\RoleController;
 Route::post('/register', [ApiAuthController::class, 'register']);
 Route::post('/login', [ApiAuthController::class, 'login']);
 Route::get('/activate', [ApiAuthController::class, 'activate']);
+Route::get('/activate-invite-team', [TeamController::class, 'inviteteamActivate']);
+Route::get('/activate-volunteer', [TeamController::class, 'volunteerActivate']);
 Route::get('/pages/{id}', [PageController::class, 'getPageData']);
 
 // Protected routes with auth:api middleware
@@ -69,4 +72,12 @@ Route::middleware('auth:api')->group(function () {
     Route::post('member-update', [MemberController::class, 'update']);
     Route::post('member-delete', [MemberController::class, 'destroy']);
 
+    //Team Api
+    Route::get('/team/{userid}', [TeamController::class, 'index']);
+    Route::post('team-add/', [TeamController::class, 'store']);
+    Route::get('team-edit/{id}', [TeamController::class, 'edit']);
+    Route::post('team-update', [TeamController::class, 'update']);
+    Route::post('team-delete', [TeamController::class, 'destroy']);
+    Route::post('invite-team', [TeamController::class, 'inviteTeam']);
+    Route::get('list-members/{id}', [TeamController::class, 'listMember']);
 });

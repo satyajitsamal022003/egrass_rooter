@@ -5,9 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Team extends Model
+class TeamInvite extends Model
 {
     use HasFactory;
-    protected $table = 'team';
+    protected $table = 'team_invite';
     public $timestamps = false;
 }
