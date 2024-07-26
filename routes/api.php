@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\BlogController;
+use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\PageController;
 use App\Http\Controllers\Api\SurveyController;
 use Illuminate\Http\Request;
@@ -88,4 +89,9 @@ Route::middleware('auth:api')->group(function () {
     Route::get('survey-edit/{id}', [SurveyController::class, 'edit']);
     Route::post('survey-update', [SurveyController::class, 'update']);
     Route::post('survey-delete', [SurveyController::class, 'destroy']);
+    
+    //Notification Api
+    Route::get('/notifications/{userid}', [NotificationController::class, 'index']);
+    Route::post('/notifications/{id}/status', [NotificationController::class, 'changeSingleNotifyStatus']);
+    Route::post('/notifications/status/admin', [NotificationController::class, 'changeNotifyStatusAdmin']);
 });
