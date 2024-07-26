@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\BlogController;
 use App\Http\Controllers\Api\PageController;
+use App\Http\Controllers\Api\SurveyController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ApiAuthController;
@@ -80,4 +81,11 @@ Route::middleware('auth:api')->group(function () {
     Route::post('team-delete', [TeamController::class, 'destroy']);
     Route::post('invite-team', [TeamController::class, 'inviteTeam']);
     Route::get('list-members/{id}', [TeamController::class, 'listMember']);
+
+    //Survey Api
+    Route::get('/survey/{userid}', [SurveyController::class, 'index']);
+    Route::post('survey-add/', [SurveyController::class, 'store']);
+    Route::get('survey-edit/{id}', [SurveyController::class, 'edit']);
+    Route::post('survey-update', [SurveyController::class, 'update']);
+    Route::post('survey-delete', [SurveyController::class, 'destroy']);
 });
