@@ -55,7 +55,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('blogs-delete', [BlogController::class, 'destroy']);
     Route::post('blogs-status', [BlogController::class, 'updateStatus']);
     Route::post('blog-category-add/', [BlogController::class, 'saveBlogcategory']);
-    
+
     //Event Api
     Route::get('/event/{userid}', [EventController::class, 'index']);
     Route::post('event-add/', [EventController::class, 'store']);
@@ -89,7 +89,12 @@ Route::middleware('auth:api')->group(function () {
     Route::get('survey-edit/{id}', [SurveyController::class, 'edit']);
     Route::post('survey-update', [SurveyController::class, 'update']);
     Route::post('survey-delete', [SurveyController::class, 'destroy']);
-    
+    Route::post('survey-questionadd/{id}', [SurveyController::class, 'addSurveyQuestion']);
+    Route::get('edit-survey-questions/{surveyid}/{id}', [SurveyController::class, 'editSurveyQuestion']);
+    Route::post('update-survey-questions/{surveyid}/{id}', [SurveyController::class, 'updateSurveyQuestion']);
+    Route::post('delete-survey-questions/{surveyid}/{id}', [SurveyController::class, 'deleteSurveyQuestion']);
+    Route::get('survey-questions/{id}', [SurveyController::class, 'surveyQuestionsList']);
+
     //Notification Api
     Route::get('/notifications/{userid}', [NotificationController::class, 'index']);
     Route::post('/notifications/{id}/status', [NotificationController::class, 'changeSingleNotifyStatus']);

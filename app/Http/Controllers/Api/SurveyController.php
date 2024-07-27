@@ -8,6 +8,7 @@ use App\Models\Notification;
 use App\Models\Role;
 use App\Models\State;
 use App\Models\Survey;
+use App\Models\SurveyQuestion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -132,7 +133,7 @@ class SurveyController extends Controller
             return response()->json(['message' => 'Survey not found'], 404);
         }
 
-        
+
         $survey->slug = trim($request->input('slug'));
         $survey->title = $request->input('title');
         $survey->description = $request->input('description');
@@ -166,5 +167,170 @@ class SurveyController extends Controller
             'success' => true,
             'message' => 'Survey deleted successfully'
         ]);
+    }
+
+    public function addSurveyQuestion(Request $request, $id)
+    {
+        // dd($request->all());
+        // Check if the user is authenticated
+        $user = Auth::guard('api')->user();
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        // Get the authenticated user's ID
+        $userId = $user->id;
+
+        // Find the survey by ID
+        $survey = Survey::find($id);
+        if (!$survey) {
+            return response()->json(['message' => 'Survey not found'], 404);
+        }
+
+        // Validate the request input
+        $request->validate([
+            'questions' => 'required|string|max:255',
+            'options' => 'required|array',
+            'answer' => 'required|array'
+        ]);
+
+        // Prepare data for the survey question
+        $data = $request->all();
+        $data['created'] = now();
+        $data['questions'] = $request->questions;
+        $data['options'] = implode(",", $data['options']);
+        $data['answer'] = implode(",", $data['answer']);
+        $data['survey_id'] = $survey->id;
+        $data['user_id'] = $userId;
+        $data['is_active'] = $request->has('is_active') ? $request->is_active : '0';
+
+        // Create a new survey question
+        $surveyQuestion = new SurveyQuestion($data);
+
+        if ($surveyQuestion->save()) {
+            return response()->json([
+                'message' => 'Survey question created successfully',
+                'question' => $surveyQuestion
+            ], 201);
+        } else {
+            return response()->json(['message' => 'Failed to create survey question! Please try again'], 500);
+        }
+    }
+
+    public function surveyQuestionsList(Request $request, $id)
+    {
+        $user = Auth::guard('api')->user();
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        $userId = $user->id;
+
+        $questionsDet = SurveyQuestion::where('user_id', $userId)
+            ->where('survey_id', $id)
+            ->orderBy('id', 'desc')
+            ->get();
+
+        $questionsDet = $questionsDet->map(function ($question) {
+            $question->options = explode(",", $question->options);
+            $question->answer = explode(",", $question->answer);
+            return $question;
+        });
+
+        return response()->json([
+            'questionsDet' => $questionsDet
+        ]);
+    }
+
+    public function editSurveyQuestion(Request $request, $surveyid, $id)
+    {
+        $user = Auth::guard('api')->user();
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        $userId = $user->id;
+
+        $surveyQuestion = SurveyQuestion::where('id', $id)
+            ->where('user_id', $userId)
+            ->where('survey_id', $surveyid)
+            ->first();
+
+        if (!$surveyQuestion) {
+            return response()->json(['message' => 'Survey question not found'], 404);
+        }
+
+        return response()->json([
+            'question' => $surveyQuestion
+        ]);
+    }
+
+    public function updateSurveyQuestion(Request $request, $surveyid, $id)
+    {
+        $user = Auth::guard('api')->user();
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        $userId = $user->id;
+
+        $surveyQuestion = SurveyQuestion::where('id', $id)
+            ->where('user_id', $userId)
+            ->where('survey_id', $surveyid)
+            ->first();
+
+        if (!$surveyQuestion) {
+            return response()->json(['message' => 'Survey question not found'], 404);
+        }
+
+        $request->validate([
+            'questions' => 'required|string|max:255',
+            'options' => 'required|array',
+            'answer' => 'required|array'
+        ]);
+
+        $surveyQuestion->questions = $request->questions;
+        $surveyQuestion->options = implode(",", $request['options']);
+        $surveyQuestion->answer = implode(",", $request['answer']);
+        $surveyQuestion->is_active = $request->has('is_active') ? $request->is_active : '0';
+        $surveyQuestion->modified = now();
+
+        if ($surveyQuestion->save()) {
+            return response()->json([
+                'message' => 'Survey question updated successfully',
+                'question' => $surveyQuestion
+            ]);
+        } else {
+            return response()->json(['message' => 'Failed to update survey question! Please try again'], 500);
+        }
+    }
+
+    public function deleteSurveyQuestion(Request $request, $surveyid, $id)
+    {
+        // Check if the user is authenticated
+        $user = Auth::guard('api')->user();
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        // Get the authenticated user's ID
+        $userId = $user->id;
+
+        // Find the survey question
+        $surveyQuestion = SurveyQuestion::where('id', $id)
+            ->where('user_id', $userId)
+            ->where('survey_id', $surveyid)
+            ->first();
+
+        if (!$surveyQuestion) {
+            return response()->json(['message' => 'Survey question not found'], 404);
+        }
+
+        // Delete the survey question
+        if ($surveyQuestion->delete()) {
+            return response()->json(['message' => 'Survey question deleted successfully']);
+        } else {
+            return response()->json(['message' => 'Failed to delete survey question! Please try again'], 500);
+        }
     }
 }
