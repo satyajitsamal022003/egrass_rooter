@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\SurveyController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ApiAuthController;
+use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\EventController;
 use App\Http\Controllers\Api\MemberController;
 use App\Http\Controllers\Api\RoleController;
@@ -94,9 +95,14 @@ Route::middleware('auth:api')->group(function () {
     Route::post('update-survey-questions/{surveyid}/{id}', [SurveyController::class, 'updateSurveyQuestion']);
     Route::post('delete-survey-questions/{surveyid}/{id}', [SurveyController::class, 'deleteSurveyQuestion']);
     Route::get('survey-questions/{id}', [SurveyController::class, 'surveyQuestionsList']);
+    Route::get('/feedback-questions-list/{userid}', [SurveyController::class, 'feedbackQuestionsList']);
+    Route::post('/survey-reply', [SurveyController::class, 'surveyReply']);
 
     //Notification Api
     Route::get('/notifications/{userid}', [NotificationController::class, 'index']);
     Route::post('/notifications/{id}/status', [NotificationController::class, 'changeSingleNotifyStatus']);
     Route::post('/notifications/status/admin', [NotificationController::class, 'changeNotifyStatusAdmin']);
+
+    //Dashboard Api
+    Route::get('/dashboard/get-data/{userid}', [DashboardController::class, 'getDashData']);
 });

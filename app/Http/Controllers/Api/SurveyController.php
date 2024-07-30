@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\AddMember;
+use App\Models\Campaign_user;
+use App\Models\GrassrooterFeedback;
+use App\Models\ImportVotersdata;
 use App\Models\Notification;
 use App\Models\Role;
 use App\Models\State;
@@ -333,4 +336,174 @@ class SurveyController extends Controller
             return response()->json(['message' => 'Failed to delete survey question! Please try again'], 500);
         }
     }
+
+
+    public function feedbackQuestionsList(Request $request, $userid)
+    {
+
+        $user = Campaign_user::find($userid);
+        // dd($user);
+
+        if ($user && $user->user_type == '2') {
+            $questions = SurveyQuestion::where('user_id', $userid)
+                ->orderBy('id', 'desc')
+                ->get();
+
+            $questions_data = [];
+
+            if (!$questions->isEmpty()) {
+                foreach ($questions as $key => $question) {
+                    $createdDate = date('d-m-Y', strtotime($question->created));
+                    $questions_data[$key] = [
+                        'id' => $question->id,
+                        'questions' => $question->questions ?? '',
+                        'created' => $createdDate ?? null,
+                    ];
+                }
+            }
+
+            return response()->json(['data' => $questions_data], 200);
+        }
+
+        return response()->json(['data' => []], 200);
+    }
+
+    public function surveyReply(Request $request)
+    {
+        $user = Auth::guard('api')->user();
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        $userId = $user->id;
+
+        $getVoter = ImportVotersdata::where('user_id', $userId)->first();
+        // If no voter is found, set the voters_id to null
+        $voterId = $getVoter ? $getVoter->id : null;
+
+        $questionId = $request->input('question_id');
+        $surveyId = $request->input('survey_id');
+
+        $check = GrassrooterFeedback::where([
+            ['voters_id', $voterId],
+            ['question_id', $questionId],
+            ['survey_id', $surveyId],
+        ])->first();
+
+        if ($check) {
+            return response()->json(['message' => 'Your response is already available for this survey'], 409);
+        }
+
+        $data = [];
+        $data['voters_id'] = $voterId;
+        $data['options'] = $request->input('answer');
+        $data['created'] = now();
+        $data['question_id'] = $questionId;
+        $data['grassrooters_id'] = $userId;
+        $data['modified'] = now();
+        $data['survey_id'] = $surveyId;
+        $data['status'] = '1';
+
+        $postres = $request->input('answer');
+
+        if ($request->has('answer')) {
+            $questionsDet = SurveyQuestion::where([
+                ['id', $questionId],
+                ['survey_id', $surveyId],
+                ['user_id', $userId],
+            ])->first();
+
+            if ($questionsDet) {
+                // Decode the answer and options as arrays
+                $responseArray = explode(",", $questionsDet->answer);
+                $optionsArray = explode(",", $questionsDet->options);
+
+                if (is_array($optionsArray) && is_array($responseArray)) {
+                    $index = array_search($postres, $optionsArray);
+                    if ($index !== false && isset($responseArray[$index])) {
+                        // Ensure response is an integer
+                        $data['response'] = intval($responseArray[$index]);
+                    } else {
+                        $data['response'] = null;
+                    }
+                } else {
+                    return response()->json(['message' => 'Invalid question options or answers'], 400);
+                }
+            }
+        }
+
+        $feedback = new GrassrooterFeedback($data);
+        if ($feedback->save()) {
+            return response()->json(['message' => 'Feedback updated successfully'], 200);
+        } else {
+            return response()->json(['message' => 'Failed to update Questions! please try again'], 500);
+        }
+    }
+
+    // public function surveyReply(Request $request)
+    // {
+    //     $user = Auth::guard('api')->user();
+    //     if (!$user) {
+    //         return response()->json(['message' => 'Unauthorized'], 401);
+    //     }
+
+    //     $userId = $user->id;
+
+    //     $getVoter = ImportVotersdata::where('user_id', $userId)->first();
+
+    //     // If no voter is found, set the voters_id to null
+    //     $voterId = $getVoter ? $getVoter->id : null;
+
+    //     $questionId = $request->input('question_id');
+    //     $surveyId = $request->input('survey_id');
+
+    //     $check = GrassrooterFeedback::where([
+    //         ['voters_id', $voterId],
+    //         ['question_id', $questionId],
+    //         ['survey_id', $surveyId],
+    //     ])->first();
+
+    //     if ($check) {
+    //         return response()->json(['message' => 'Your response is already available for this survey'], 409);
+    //     }
+
+    //     $data = $request->all();
+    //     $data['voters_id'] = $voterId;
+    //     $data['options'] = $request->input('options');
+    //     $data['created'] = now();
+    //     $data['grassrooters_id'] = $userId;
+    //     $data['survey_id'] = $surveyId;
+    //     $data['modified'] = now();
+    //     $data['status'] = '1';
+
+    //     if ($request->has('options')) {
+    //         $questionsDet = SurveyQuestion::where([
+    //             ['id', $questionId],
+    //             ['survey_id', $surveyId],
+    //             ['user_id', $userId],
+    //         ])->first();
+
+    //         if ($questionsDet) {
+    //             $responseArray = explode(",", $questionsDet->answer);
+    //             $optionsArray = explode(",", $questionsDet->options);
+
+    //             if (is_array($optionsArray) && is_array($responseArray)) {
+    //                 $index = array_search($request->input('options'), $optionsArray);
+    //                 if ($index !== false) {
+    //                     $data['response'] = $responseArray[$index];
+    //                 }
+    //             } else {
+    //                 // Handle the case where decoding fails or arrays are not valid
+    //                 return response()->json(['message' => 'Invalid question options or answers'], 400);
+    //             }
+    //         }
+    //     }
+
+    //     $feedback = new GrassrooterFeedback($data);
+    //     if ($feedback->save()) {
+    //         return response()->json(['message' => 'Feedback updated successfully'], 200);
+    //     } else {
+    //         return response()->json(['message' => 'Failed to update Questions! please try again'], 500);
+    //     }
+    // }
 }
