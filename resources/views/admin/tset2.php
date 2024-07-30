@@ -1,21 +1,23 @@
 <?php
-
-//Federal Constituency
-$federal_constituency_id = $campain_details->federal_constituency_id;
-$federalconst__zones = FederalConstituency::find([
-	'conditions' => 'id = :federalconstituency_id:',
-	'bind'       => ['federalconstituency_id' => $federal_constituency_id]
-]);
-if ($federal_constituency_id->count() > 0) {
+if ($senatorial_zones->count() > 0) {
     $federal_total_local_constituency_count = 0;
     $federal_total_ward_count = 0;
     $federal_total_polling_unit_count = 0;
     $federal_total_polling_agent_count = 0;
     $total_federal_constituency_count = 0;
 
+	//Fetch the count of Federal constituencies for each senatorial zone
+	foreach($senatorial_zones as $lgahrc){
+		$houseofrepresentative = FederalConstituency::find([
+			 'conditions' => 'senatorial_state_id = :senatorial_state_id:',
+			 'bind'       => ['senatorial_state_id' => $lgahrc->id]
+			]);
+			
+	    $total_federal_constituency_count += count($houseofrepresentative);
+			
 	
     // Fetch the count of local constituencies for each senatorial zone
-    foreach ($federalconst__zones as $federal_zone) {
+    foreach ($houseofrepresentative as $federal_zone) {
         $federal_local_constituencies = LocalConstituency::find([
             'conditions' => 'federal_constituency_id = :federal_id:',
             'bind'       => ['federal_id' => $federal_zone->id]
@@ -52,7 +54,5 @@ if ($federal_constituency_id->count() > 0) {
         }
     }
   }
-//End Federal Constituency
-
-
+}
  ?>

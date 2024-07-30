@@ -66,8 +66,8 @@
                     name: 'lga'
                 },
                 {
-                    data: 'ward_id',
-                    name: 'ward_id'
+                    data: 'ward_details',
+                    name: 'ward_details'
                 },
                 {
                     data: 'polling_name',

@@ -36,6 +36,7 @@ use App\Http\Controllers\Admin\ManageadminController;
 use App\Http\Controllers\Admin\ManageDashBoardMenuController;
 use App\Http\Controllers\Admin\ManageelectionresultController;
 use App\Http\Controllers\Admin\ManageVotersDataController;
+use App\Http\Controllers\Admin\DonationController;
 use Illuminate\Support\Facades\Route;
 
 use function PHPUnit\Framework\returnSelf;
@@ -54,11 +55,6 @@ use function PHPUnit\Framework\returnSelf;
 Route::get('/', function () {
   return redirect('/admin/login');
 });
-
-// Route::get('/registration', function () {
-//     return view('registration');
-// });
-
 
 
 Route::prefix('admin')->middleware('auth')->group(function () {
@@ -293,6 +289,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
   //Manage Team
   Route::get('/manage-team/list', [ManageTeamController::class, 'list'])->name('manageteam.list');
+  Route::get('/manage-team/members/{id}', [ManageTeamController::class, 'sucessmember'])->name('manageteam.sucessmember');
   Route::any('/manage-team/destroy/{id}', [ManageTeamController::class, 'destroy'])->name('manageteam.destroy');
 
   // Manage Survey List
@@ -302,8 +299,6 @@ Route::prefix('admin')->middleware('auth')->group(function () {
   //Issue
   Route::get('/report-issue/list', [ManageTeamController::class, 'reportissuelist'])->name('reportissue.list');
   Route::any('/report-issue/destroy/{id}', [ManageTeamController::class, 'reportissuedestroy'])->name('reportissue.destroy');
-
-
 
   //Manage Users
   Route::get('manage-users/list', [ManageuserController::class, 'list'])->name('manageusers.list');
@@ -345,10 +340,12 @@ Route::prefix('admin')->middleware('auth')->group(function () {
   //Manage Election Result
   Route::get('manage-election-result/list', [ManageelectionresultController::class, 'list'])->name('manageelectionresult.list');
   Route::get('manage-election-result/create', [ManageelectionresultController::class, 'create'])->name('manageelectionresult.create');
+  Route::get('/electpollingunits', [ManageelectionresultController::class, 'electPollingUnits'])->name('electpollingunits');
   Route::post('manage-election-result/store', [ManageelectionresultController::class, 'store'])->name('manageelectionresult.store');
   Route::any('manage-election-result/edit/{id}', [ManageelectionresultController::class, 'edit'])->name('manageelectionresult.edit');
   Route::post('manage-election-result/update/{id}', [ManageelectionresultController::class, 'update'])->name('manageelectionresult.update');
   Route::any('manage-election-result/destroy/{id}', [ManageelectionresultController::class, 'destroy'])->name('manageelectionresult.destroy');
+
   Route::get('/api/manage-election-result/fetch-polling-units', [ManageelectionresultController::class, 'fetchPollingUnits'])->name('api.fetchPollingUnits');
 
 
@@ -397,6 +394,11 @@ Route::prefix('admin')->middleware('auth')->group(function () {
   Route::post('/manage-dashboard-menu/update/{id}', [ManageDashBoardMenuController::class, 'update'])->name('managedashboardmenu.update');
   Route::any('/manage-dashboard-menu/destroy/{id}', [ManageDashBoardMenuController::class, 'destroy'])->name('managedashboardmenu.destroy');
   Route::post('/manage-dashboard-menu/status', [ManageDashBoardMenuController::class, 'status'])->name('managedashboardmenu.status');
+
+
+  //Donations
+  Route::get('/donations/list', [DonationController::class, 'list'])->name('donation.list');
+  Route::POST('/donate/status', [DonationController::class, 'status'])->name('donation.status');
 
 
 

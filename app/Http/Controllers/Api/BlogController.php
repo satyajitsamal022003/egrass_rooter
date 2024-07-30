@@ -13,7 +13,6 @@ class BlogController extends Controller
 {
     public function index(Request $request, $userid)
     {
-        // Enable query logging
         DB::enableQueryLog();
         $blogs = Blog::where('user_id', $userid)
             ->orderBy('id', 'desc')
@@ -30,12 +29,6 @@ class BlogController extends Controller
                 $blog_data[$key]['description'] = isset($blog->description) ? $blog->description : "";
                 $blog_data[$key]['slug'] = isset($blog->slug) ? $blog->slug : "";
                 $blog_data[$key]['blog_image'] = isset($blog->blog_image) ? asset('images/blog/' . $blog->blog_image) : "";
-                // $filePath = asset('/images/blog/' . $blog->blog_image);
-                // if (file_exists($filePath) && $blog->blog_image != "") {
-                //     $blog_data[$key]['blog_image'] = asset('/images/blog/' . $blog->blog_image);
-                // } else {
-                //     $blog_data[$key]['blog_image'] = asset('/images/blog/noimage.jpg');
-                // }
 
                 if ($blog->is_active = 1) {
                     $blog_data[$key]['is_active'] = 'Publish';

@@ -51,10 +51,12 @@
                     <?php
                     $user_id = $sur['user_id'];
                     $user = \App\Models\Campaign_user::where('id', $user_id)->orderBy('id', 'desc')->first();
+                      if ($user && $user->f_name) {
+                          echo $user->f_name;
+                      } else {
+                          echo 'N/A';
+                      }
                     ?>
-                    @if($user)
-                    {{ $user->first_name.' '.$user->first_name }}
-                    @endif
                   </td>
                   <td>
                     @if (!empty($sur->created) && $sur->created != '0000-00-00 00:00:00')

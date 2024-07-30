@@ -5,6 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Election Result</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0/js/select2.min.js"></script>
 </head>
 
 <body>
@@ -19,12 +22,9 @@
                     <div class="main-header">
                         <h4>Add Election Result</h4>
                         <ol class="breadcrumb breadcrumb-title breadcrumb-arrow">
-                            <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}"><i class="icofont icofont-home"></i></a>
-                            </li>
-                            <li class="breadcrumb-item"><a href="{{route('manageelectionresult.list')}}">Manage Election Result</a>
-                            </li>
-                            <li class="breadcrumb-item"><a>Add Election Result</a>
-                            </li>
+                            <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}"><i class="icofont icofont-home"></i></a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('manageelectionresult.list') }}">Manage Election Result</a></li>
+                            <li class="breadcrumb-item"><a>Add Election Result</a></li>
                         </ol>
                     </div>
                 </div>
@@ -44,9 +44,6 @@
                                 <div class="col-sm-10">
                                     <select name="pollingunit" id="pollingunit" class="form-control">
                                         <option value="">--Select--</option>
-                                        @foreach (App\Models\Polling_unit::all() as $polling)
-                                        <option value="{{ $polling->id }}">{{ $polling->polling_name }}</option>
-                                        @endforeach
                                     </select>
                                 </div>
                             </div>
@@ -86,6 +83,36 @@
         <!-- Main content ends -->
     </div>
 </body>
+
+<script>
+$(document).ready(function() {
+    $('#pollingunit').select2({
+        ajax: {
+            url: "{{ route('electpollingunits') }}",
+            dataType: 'json',
+            delay: 250,
+            data: function(params) {
+                return {
+                    q: params.term // Query parameter
+                };
+            },
+            processResults: function(data) {
+                return {
+                    results: data.map(function(item) {
+                        return {
+                            id: item.id,
+                            text: item.polling_name
+                        };
+                    })
+                };
+            },
+            cache: true
+        },
+        placeholder: 'Select a polling unit',
+        minimumInputLength: 1
+    });
+});
+</script>
 
 </html>
 @endsection

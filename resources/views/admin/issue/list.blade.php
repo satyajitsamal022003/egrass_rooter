@@ -48,7 +48,14 @@
                   <td><?php
                       $voters = $sur['voter'];
                       $voter = \App\Models\Voter::where('id', $voters)->orderBy('id', 'desc')->first();
+
+                      if ($voter && $voter->name) {
+                        echo $voter->name;
+                    } else {
+                        echo 'Not available'; // Or any other default message or value
+                    }
                       ?>
+                      
                   </td>
                   <td>{{$sur->issue}}</td>
                   <td>
@@ -58,6 +65,8 @@
                     ?>
                     @if($user)
                     {{ $user->first_name.' '.$user->first_name }}
+                    @else
+                    {{'admin'}}
                     @endif
                   </td>
                   <td>

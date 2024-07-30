@@ -36,7 +36,22 @@ class ManageelectionresultController extends Controller
     }
 
     public function create(){
+        
         return view('admin.manageelectionresult.add');
+    }
+
+    public function electpollingunits(Request $request)
+    {
+        $search = $request->get('q');
+        
+        $pollingUnits = Polling_unit::query()
+            ->when($search, function ($query, $search) {
+                return $query->where('polling_name', 'like', "%{$search}%");
+            })
+            ->select('id', 'polling_name')
+            ->get();
+        
+        return response()->json($pollingUnits);
     }
 
     public function store(Request $request){

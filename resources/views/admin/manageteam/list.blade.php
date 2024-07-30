@@ -35,7 +35,7 @@
                   <th>SL#</th>
                   <th>Name</th>
                   <th>Description</th>
-                  <th>Assign member</th>
+                  <!-- <th>Assign member</th> -->
                   <th>Created By</th>
                   <th>Created</th>
                   <th>Action</th>
@@ -48,7 +48,7 @@
                   <td>{{++$i}}</td>
                   <td>{{$tl->name}}</td>
                   <td>{{$tl->description}}</td>
-                  <td></td>
+                  <!-- <td></td> -->
                   <td>
                     <?php
                     $user_id = $tl['user_id'];
@@ -56,6 +56,8 @@
                     ?>
                     @if($user)
                     {{ $user->first_name.' '.$user->first_name }}
+                    @else
+                    {{'N/A'}}
                     @endif
                   </td>
                   <td>
@@ -67,24 +69,13 @@
                   </td>
 
                   <td class="center">
-                    <a class="btn btn-info" href="" title="Team Member"><i class="fa fa-user"></i></a>
+                    <a class="btn btn-info" href="{{route('manageteam.sucessmember',$tl->id)}}" title="Team Member"><i class="fa fa-user"></i></a>
                     <a class="btn btn-danger" href="{{route('manageteam.destroy',$tl->id)}}" onclick="return confirm('Are you sure to delete!');" title="Delete"><i class="fa fa-remove"></i></a>
                   </td>
                 </tr>
                 @endforeach
 
               </tbody>
-              <tfoot>
-                <tr>
-                  <th>SL#</th>
-                  <th>Name</th>
-                  <th>Description</th>
-                  <th>Assign member</th>
-                  <th>Created By</th>
-                  <th>Created</th>
-                  <th>Action</th>
-                </tr>
-              </tfoot>
             </table>
           </div>
           <!-- /.card-body -->

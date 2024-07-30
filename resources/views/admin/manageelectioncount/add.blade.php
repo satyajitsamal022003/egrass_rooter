@@ -66,7 +66,7 @@
                      <div class="form-group row">
                         <label for="example-text-input" class="col-xs-2 col-form-label form-control-label">Vote Value *</label>
                         <div class="col-sm-10">
-                           <input class="form-control" type="text" name="votevalue" id="votevalue" required>
+                           <input class="form-control" type="number" min="0" name="votevalue" id="votevalue" required>
                         </div>
                      </div>
                      <div class="form-group row">

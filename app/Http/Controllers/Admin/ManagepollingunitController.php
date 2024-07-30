@@ -23,8 +23,8 @@ class ManagepollingunitController extends Controller
 
         return DataTables::of($pollingUnits)
             ->addColumn('actions', function ($row) {
-                $btn = '<a href="' . route('managepollings.edit', $row->id) . '" class="edit btn btn-info btn-sm">Edit</a>';
-                $btn .= ' <a href="' . route('managepollings.destroy', $row->id) . '" class="delete btn btn-danger btn-sm" onclick="return confirm(\'Are you sure to delete!\');">Delete</a>';
+                $btn = '<a href="' . route('managepollings.edit', $row->id) . '" class="edit btn btn-info btn-sm"><i class="fa fa-edit"></i></a>';
+                $btn .= ' <a href="' . route('managepollings.destroy', $row->id) . '" class="delete btn btn-danger btn-sm" onclick="return confirm(\'Are you sure to delete!\');"><i class="fa fa-remove"></i></a>';
                 return $btn;
             })
             ->editColumn('created_at', function ($row) {

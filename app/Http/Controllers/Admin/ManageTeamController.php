@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Team;
 use App\Models\Survey;
 use App\Models\Issue;
+use App\Models\TeamInvite;
 
 
 class ManageTeamController extends Controller
@@ -16,6 +17,18 @@ class ManageTeamController extends Controller
         $team = Team::get();
         return view('admin.manageteam.list',compact('team'));
     }
+
+    public function sucessmember($id){
+        $team = TeamInvite::where('team_id', $id)->get();
+        $memberids = [];
+        foreach ($team as $t) {
+            $memberids[] = $t->member_id;
+        }
+        // dd($memberids);
+        return view('admin.manageteam.successmember',compact('team','memberids'));
+    }
+
+
 
     public function destroy($id)
     {
@@ -50,6 +63,7 @@ class ManageTeamController extends Controller
     public function reportissuelist(){
 
         $issue = Issue::get();
+        // dd($issue);
         return view('admin.issue.list',compact('issue'));
     }
 
