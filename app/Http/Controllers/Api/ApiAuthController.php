@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Mail\ForgotPassword;
 use App\Mail\RegistrationEmail;
 use Illuminate\Http\Request;
 use App\Models\Campaign_user;
@@ -482,6 +483,143 @@ class ApiAuthController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to update profile'
+            ], 500);
+        }
+    }
+
+
+    public function forgotPasswordSendMail(Request $request)
+    {
+        try {
+            $request->validate([
+                'email_id' => 'required|string|email',
+            ]);
+
+            $email = $request->input('email_id');
+            $user = Campaign_user::where('email_id', $email)->where('is_active', 1)->first();
+            // dd($user);
+
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'A user with this email address was not found.',
+                ], 404);
+            }
+
+            $siteAdmin = Sitesetting::find(1);
+            if (!$siteAdmin) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Site settings not found.',
+                ], 500);
+            }
+
+            $resetLink = url('/api/reset-password/' . base64_encode($user->id));
+
+            $body = "
+            <table width='100%'  style='line-height:20px; font-size:12px'>
+              <thead>
+                  <th style='height:80px; font-size:24px; background:#'>
+                      <center>Welcome To Campaign Software</center>
+                  </th>
+              </thead>
+            </table>
+            <table width='100%'  style='line-height:20px; font-size:12px'>
+              <tr>
+                  <td><h4 style='font-weight:bold;'>Hi " . stripslashes(ucwords($user->first_name)) . ",</h4></td>
+              </tr>
+               <tr>
+                  <td><strong>You have requested for your login credential</strong></td>
+              </tr>
+               <tr>
+                  <td>&nbsp;</td>
+              </tr>
+              <tr>
+                  <td><strong>Login ID: </strong>" . $user->email_id . "</td>
+              </tr>
+              <tr>
+                  <td>Please click the below link to set new password.<br>
+                    " . $resetLink . "
+                  </td>
+              </tr>
+              <tr>
+                  <td>&nbsp;</td>
+              </tr>
+              <tr>
+                  <td ><strong>Thanking You,</strong></td>
+              </tr>
+              <tr>
+                  <td style='color:#78b454;'>Campaign Software Team</td>
+              </tr>
+            </table>";
+
+            Mail::to($email)->send(new ForgotPassword($body));
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Your Password request sent successfully. Please check your E-Mail to get the credentials.',
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation error',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Password reset failed',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function resetPassword(Request $request, $userid)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'email' => 'required|string|email',
+                'npwd' => 'required|string|min:6',
+                'cpwd' => 'required|string|same:npwd',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Validation error',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            $decodedUserId = base64_decode($userid);
+            $user = Campaign_user::where('id', $decodedUserId)
+                ->where('email_id', $request->input('email'))
+                ->first();
+
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Wrong Username. Please try again'
+                ], 404);
+            }
+
+            $user->pass = md5($request->input('npwd'));
+            if ($user->save()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Password Changed Successfully'
+                ]);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to change the Password'
+                ], 500);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Password change failed',
+                'error' => $e->getMessage()
             ], 500);
         }
     }

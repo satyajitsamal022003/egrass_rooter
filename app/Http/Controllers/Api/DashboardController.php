@@ -31,113 +31,130 @@ class DashboardController extends Controller
         $senatorialState = Senatorial_state::where('id', $campaign_details->senatorial_district_id)
             ->orderBy('id', 'desc')
             ->first();
-        // dd($party_detail->party_name);
 
-        if ($popupcampaignname) {
-            $dashboard_data['campaignName'] = $popupcampaignname->title;
-        } else {
-            $dashboard_data['campaignName'] = null;
-        }
+        $dashboard_data['campaignName'] = $popupcampaignname ? $popupcampaignname->title : null;
 
         if ($campaign_details) {
-            $campaign_type = '';
-            switch ($campaign_details->campaign_type) {
-                case 1:
-                    $campaign_type = 'Presidential Election Campaign';
-                    break;
-                case 2:
-                    $campaign_type = 'Senate Election Campaign';
-                    break;
-                case 3:
-                    $campaign_type = 'House of Representative Campaign';
-                    break;
-                case 4:
-                    $campaign_type = 'Governorship Campaign';
-                    break;
-                case 5:
-                    $campaign_type = 'House of Assembly Campaign';
-                    break;
-                case 6:
-                    $campaign_type = 'Chairman/Councillor Campaign';
-                    break;
-                case 7:
-                    $campaign_type = 'Pressure Group/NGO';
-                    break;
-                default:
-                    $campaign_type = 'N/A';
-                    break;
-            }
+            $campaign_type = match ($campaign_details->campaign_type) {
+                1 => 'Presidential Election Campaign',
+                2 => 'Senate Election Campaign',
+                3 => 'House of Representative Campaign',
+                4 => 'Governorship Campaign',
+                5 => 'House of Assembly Campaign',
+                6 => 'Chairman/Councillor Campaign',
+                7 => 'Pressure Group/NGO',
+                default => 'N/A',
+            };
             $dashboard_data['campaignType'] = $campaign_type;
-        } else {
-            $dashboard_data['campaignType'] = 'N/A';
-        }
-
-        if ($campaign_details) {
             $dashboard_data['campaignManager'] = $campaign_details->first_name . ' ' . $campaign_details->last_name;
-        } else {
-            $dashboard_data['campaignManager'] = null;
-        }
 
-        if (!empty($campaign_details)) {
             if ($campaign_details->campaign_type != 7) {
-                if (!empty($party_detail)) {
-                    $dashboard_data['Party'] = $party_detail->party_name;
-                } else {
-                    $dashboard_data['Party'] = 'N/A';
-                }
+                $dashboard_data['Party'] = $party_detail ? $party_detail->party_name : 'N/A';
             } else {
                 $dashboard_data['Party'] = 'Pressure Group';
             }
-        }
 
-        if ($campaign_details->campaign_type == 1 || $campaign_details->campaign_type == 4 || $campaign_details->campaign_type == 5 || $campaign_details->campaign_type == 6) {
-            $dashboard_data['Area'] = 'N/A';
-        } elseif ($campaign_details->campaign_type == 2 || $campaign_details->campaign_type == 3 || $campaign_details->campaign_type == 7) {
-            if (!empty($senatorialState)) {
-                $dashboard_data['Area'] = $senatorialState->sena_district;
+            if (in_array($campaign_details->campaign_type, [2, 3, 7])) {
+                $dashboard_data['Area'] = $senatorialState ? $senatorialState->sena_district : 'N/A';
             } else {
                 $dashboard_data['Area'] = 'N/A';
             }
-        } else {
-            $dashboard_data['Area'] = 'N/A';
-        }
 
+            $stateId = $campaign_details->state;
+
+            if ($campaign_details->campaign_type == 1) {
+                $dashboard_data['States'] = State::where('states.id', $stateId)
+                    ->join('country', 'states.country_id', '=', 'country.id')
+                    ->count();
+            } elseif ($campaign_details->campaign_type == 7) {
+                $dashboard_data['States'] = State::where('states.id', $stateId)->count();
+            }
+
+            if ($campaign_details->campaign_type == 1) {
+                $dashboard_data['SenatorialStates'] = State::leftJoin('country', 'country.id', '=', 'states.country_id')
+                    ->leftJoin('senatorial_states', 'states.id', '=', 'senatorial_states.state_id')
+                    ->where('country.id', 158)
+                    ->select('senatorial_states.id as senatorialStateId')
+                    ->count();
+
+                $dashboard_data['FederalConstituencies'] = State::leftJoin('country', 'country.id', '=', 'states.country_id')
+                    ->leftJoin('federal_constituencies', 'federal_constituencies.state_id', '=', 'states.id')
+                    ->where('country.id', 158)
+                    ->select('federal_constituencies.id as federalConstituencyId')
+                    ->count();
+                $dashboard_data['LGAConstituencies'] = State::leftJoin('local_constituencies', 'local_constituencies.state_id', '=', 'states.id')
+                    ->where('states.country_id', 158)
+                    ->select('local_constituencies.id as localConstituencyId')
+                    ->count();
+                $dashboard_data['WardConstituencies'] = State::leftJoin('local_constituencies', 'local_constituencies.state_id', '=', 'states.id')
+                    ->leftJoin('wards', 'wards.lga_id', '=', 'local_constituencies.id')
+                    ->where('states.country_id', 158)
+                    ->select('wards.id as wardId')
+                    ->count();
+                $dashboard_data['PollingUnits'] = State::leftJoin('polling_units', 'polling_units.state_id', '=', 'states.id')
+                    ->where('states.country_id', 158)
+                    ->select('polling_units.id as pollingUnitId')
+                    ->count();
+                $dashboard_data['PollingAgents'] = State::leftJoin('polling_agent', 'polling_agent.state', '=', 'states.id')
+                    ->where('states.country_id', 158)
+                    ->whereNotNull('polling_agent.state')
+                    ->select('polling_agent.id as pollingAgentId')
+                    ->count();
+            } elseif ($campaign_details->campaign_type == 7) {
+                $dashboard_data['SenatorialStates'] = State::leftJoin('country', 'country.id', '=', 'states.country_id')
+                    ->leftJoin('senatorial_states', 'states.id', '=', 'senatorial_states.state_id')
+                    ->where('states.id', $campaign_details->state)
+                    ->select('senatorial_states.id as senatorialStateId')
+                    ->count();
+
+                $dashboard_data['FederalConstituencies'] = State::leftJoin('country', 'country.id', '=', 'states.country_id')
+                    ->leftJoin('federal_constituencies', 'federal_constituencies.state_id', '=', 'states.id')
+                    ->where('states.id', $campaign_details->state)
+                    ->select('federal_constituencies.id as federalConstituencyId')
+                    ->count();
+                $dashboard_data['LGAConstituencies'] = State::leftJoin('local_constituencies', 'local_constituencies.state_id', '=', 'states.id')
+                    ->where('states.id', $campaign_details->state)
+                    ->select('local_constituencies.id as localConstituencyId')
+                    ->count();
+                $dashboard_data['WardConstituencies'] = State::leftJoin('local_constituencies', 'local_constituencies.state_id', '=', 'states.id')
+                    ->leftJoin('wards', 'wards.lga_id', '=', 'local_constituencies.id')
+                    ->where('states.id', $campaign_details->state)
+                    ->select('wards.id as wardId')
+                    ->count();
+                $dashboard_data['PollingUnits'] = State::leftJoin('polling_units', 'polling_units.state_id', '=', 'states.id')
+                    ->where('states.id', $campaign_details->state)
+                    ->select('polling_units.id as pollingUnitId')
+                    ->count();
+                $dashboard_data['PollingAgents'] = State::leftJoin('polling_agent', 'polling_agent.state', '=', 'states.id')
+                    ->where('states.id', $campaign_details->state)
+                    ->whereNotNull('polling_agent.state')
+                    ->select('polling_agent.id as pollingAgentId')
+                    ->count();
+            }
+        } else {
+            $dashboard_data['campaignType'] = 'N/A';
+            $dashboard_data['campaignManager'] = null;
+            $dashboard_data['Party'] = 'N/A';
+            $dashboard_data['Area'] = 'N/A';
+            $dashboard_data['States'] = null;
+            $dashboard_data['SenatorialStates'] = null;
+            $dashboard_data['FederalConstituencies'] = null;
+            $dashboard_data['LGAConstituencies'] = null;
+            $dashboard_data['WardConstituencies'] = null;
+            $dashboard_data['PollingUnits'] = null;
+            $dashboard_data['PollingAgents'] = null;
+        }
 
         $grassrooters = AddMember::where([
             ['role_type', '=', 2],
             ['is_active', '=', 1],
             ['user_id', '=', $userid]
         ])->orderBy('id', 'desc')->get();
-        // dd($grassrooters);
 
         $contactNumbers = AddMember::where('user_id', $userid)->orderBy('id', 'desc')->get();
 
-        if ($grassrooters) {
-            $dashboard_data['Grassrooters'] = $grassrooters->count();
-        } else {
-            $dashboard_data['Grassrooters'] = null;
-        }
-
-        if ($contactNumbers) {
-            $dashboard_data['NumberOfContacts'] = $contactNumbers->count();
-        } else {
-            $dashboard_data['NumberOfContacts'] = null;
-        }
-
-
-        if ($campaign_details) {
-            $stateId = $campaign_details->state;
-
-            if ($campaign_details->campaign_type == 1) {
-                $dashboard_data['States'] = State::where('id', $stateId)
-                    ->join('country', 'states.country_id', '=', 'country.id')
-                    ->count();
-            } elseif ($campaign_details->campaign_type == 7) {
-                $dashboard_data['States'] = State::where('id', $stateId)->count();
-            }
-        } else {
-            $dashboard_data['States'] = null;
-        }
+        $dashboard_data['Grassrooters'] = $grassrooters ? $grassrooters->count() : null;
+        $dashboard_data['NumberOfContacts'] = $contactNumbers ? $contactNumbers->count() : null;
 
         return response()->json(['data' => $dashboard_data], 200);
     }

@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\ApiAuthController;
 use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\EventController;
 use App\Http\Controllers\Api\MemberController;
+use App\Http\Controllers\Api\NewsletterController;
 use App\Http\Controllers\Api\RoleController;
 use App\Http\Controllers\Api\TeamController;
 
@@ -31,6 +32,10 @@ Route::get('/activate', [ApiAuthController::class, 'activate']);
 Route::get('/activate-invite-team', [TeamController::class, 'inviteteamActivate']);
 Route::get('/activate-volunteer', [TeamController::class, 'volunteerActivate']);
 Route::get('/pages/{id}', [PageController::class, 'getPageData']);
+Route::get('/contact-us', [PageController::class, 'getcontactUsData']);
+Route::post('/contact-us-form', [PageController::class, 'contactUsStore']);
+Route::post('/donation-form', [PageController::class, 'donationDataStore']);
+Route::post('/newsletter-sent', [NewsletterController::class, 'subscribenewsletter']);
 
 // Protected routes with auth:api middleware
 Route::middleware('auth:api')->group(function () {
@@ -38,6 +43,10 @@ Route::middleware('auth:api')->group(function () {
     Route::get('user', function (Request $request) {
         return $request->user();
     });
+
+    //Forgot Password Api
+    Route::post('forgot-password', [ApiAuthController::class, 'forgotPasswordSendMail']);
+    Route::post('/reset-password/{userid}', [ApiAuthController::class, 'resetPassword']);
 
     // Change password route
     Route::post('change-password', [ApiAuthController::class, 'changePassword']);
