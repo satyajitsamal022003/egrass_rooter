@@ -32,10 +32,34 @@ Route::get('/activate', [ApiAuthController::class, 'activate']);
 Route::get('/activate-invite-team', [TeamController::class, 'inviteteamActivate']);
 Route::get('/activate-volunteer', [TeamController::class, 'volunteerActivate']);
 Route::get('/pages/{id}', [PageController::class, 'getPageData']);
+
+//Home Page CMS
+Route::get('/get-homedata', [PageController::class, 'getHomePageData']);
+
+//About Us Page CMS
+Route::get('/get-aboutdata', [PageController::class, 'getAboutUsPageData']);
+
+// Contact Us Page
 Route::get('/contact-us', [PageController::class, 'getcontactUsData']);
 Route::post('/contact-us-form', [PageController::class, 'contactUsStore']);
+
+// Donation Page
 Route::post('/donation-form', [PageController::class, 'donationDataStore']);
+
+//Newsletter
 Route::post('/newsletter-sent', [NewsletterController::class, 'subscribenewsletter']);
+
+// Blog Cms Page
+Route::get('/get-blogs', [BlogController::class, 'getAllBlogs']);
+Route::get('/categories', [BlogController::class, 'getBlogCategories']);
+Route::get('/latest-blogs', [BlogController::class, 'getLatestBlogs']);
+Route::get('/popular-blogs', [BlogController::class, 'getPopularBlogs']);
+Route::get('/recent-blogs', [BlogController::class, 'getRecentBlogs']);
+Route::get('/related-blogs/{id}', [BlogController::class, 'getRelatedBlogs']);
+Route::get('/blog-details/{id}', [BlogController::class, 'getBlogDetails']);
+
+//Site Setting Data
+Route::get('/get-sitedata', [PageController::class, 'getSiteData']);
 
 // Protected routes with auth:api middleware
 Route::middleware('auth:api')->group(function () {

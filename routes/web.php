@@ -22,6 +22,7 @@ use App\Http\Controllers\Admin\ManagepollingunitController;
 use App\Http\Controllers\Admin\ManageSociallinkController;
 use App\Http\Controllers\Admin\ManageFeatureController;
 use App\Http\Controllers\Admin\AdminmenuController;
+use App\Http\Controllers\admin\CmspageController;
 use App\Http\Controllers\Admin\ManageclientController;
 use App\Http\Controllers\Admin\ManagecampaignorganizationController;
 use App\Http\Controllers\Admin\ManageQuickSoftwareController;
@@ -409,6 +410,28 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
   //Dashboard Menu
   Route::resource('/dashboard-menu', DashboardmenuController::class);
+
+  //CMS Settings
+  Route::resource('cmspages', CmspageController::class);
+  Route::post('cms-update/{id}', [CmspageController::class, 'update'])->name('cms-update');
+
+  //CMS Home Page
+  Route::get('home-list', [CmspageController::class, 'homeList'])->name('home-list');
+  Route::get('edit-home/{id}', [CmspageController::class, 'editHome'])->name('edit-home');
+  Route::post('update-home/{id}', [CmspageController::class, 'updateHome'])->name('update-home');
+
+
+  //CMS Home Banner
+  Route::post('store-homebanner', [CmspageController::class, 'storeHomeBanner'])->name('store-homebanner');
+  Route::get('edit-homebanner/{id}', [CmspageController::class, 'editHomeBanner'])->name('edit-homebanner');
+  Route::post('update-homebanner/{id}', [CmspageController::class, 'updateHomeBanner'])->name('update-homebanner');
+  Route::delete('homebanner-destroy/{id}', [CmspageController::class, 'destroyHomeBanner'])->name('homebanner-destroy');
+
+
+  //CMS About Page
+  Route::get('about-list', [CmspageController::class, 'aboutList'])->name('about-list');
+  Route::get('edit-about/{id}', [CmspageController::class, 'editAbout'])->name('edit-about');
+  Route::post('update-about/{id}', [CmspageController::class, 'updateAbout'])->name('update-about');
 });
 
 

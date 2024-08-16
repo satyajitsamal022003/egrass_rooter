@@ -5,10 +5,17 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Mail\AdminContactRequestMail;
 use App\Mail\UserContactRequestMail;
+use App\Models\AboutusPage;
 use App\Models\Contactus;
 use App\Models\Donation;
+use App\Models\Feature_section;
+use App\Models\HomeBanner;
+use App\Models\Homepage;
 use App\Models\Page;
+use App\Models\Service;
 use App\Models\Sitesetting;
+use App\Models\Testimonial;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
@@ -162,5 +169,155 @@ class PageController extends Controller
         } else {
             return response()->json(['message' => 'Failed to save Donation Please try again.'], 500);
         }
+    }
+
+
+    public function getSiteData()
+    {
+        $sitesetting = Sitesetting::find(1);
+
+        if (!$sitesetting) {
+            return response()->json(['message' => 'Site Data not found'], 404);
+        }
+
+
+        return response()->json($sitesetting, 200);
+    }
+
+    public function getHomePageData()
+    {
+        $homecontents = Homepage::find(1);
+
+        if (!$homecontents) {
+            return response()->json(['message' => 'Home Page Data not found'], 404);
+        }
+
+        $home_contents = [
+            'id' => $homecontents->id,
+            'about_heading' => $homecontents->about_heading ?? "",
+            'about_title' => $homecontents->about_title ?? "",
+            'about_desc' => $homecontents->about_desc ?? "",
+            'about_btn' => $homecontents->about_btn ?? "",
+            'about_btn_url' => $homecontents->about_btn_url ?? "",
+            'about_image' => $homecontents->about_image ? asset('homepage/' . $homecontents->about_image) : "",
+            'why_choose_us_title' => $homecontents->why_choose_us_title ?? "",
+            'why_choose_us_desc' => $homecontents->why_choose_us_desc ?? "",
+            'why_choose_us_image' => $homecontents->why_choose_us_image ? asset('homepage/' . $homecontents->why_choose_us_image) : "",
+            'runforoffice_title' => $homecontents->runforoffice_title ?? "",
+            'runforoffice_desc' => $homecontents->runforoffice_desc ?? "",
+            'overview_title' => $homecontents->overview_title ?? "",
+            'overview_desc' => $homecontents->overview_desc ?? "",
+            'created_at' => Carbon::parse($homecontents->created_at)->format('F d, Y H:i:s'),
+        ];
+
+        $homeBanners = HomeBanner::where('is_active', 1)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $homeBannerData = [];
+        foreach ($homeBanners as $key => $banner) {
+            $homeBannerData[$key] = [
+                'id' => $banner->id,
+                'banner_title' => $banner->banner_title ?? "",
+                'banner_desc' => $banner->banner_desc ?? "",
+                'banner_button_name' => $banner->banner_button_name ?? "",
+                'banner_button_url' => $banner->banner_button_url ?? "",
+                'banner_image' => $banner->banner_image ? asset('homebanner/' . $banner->banner_image) : "",
+                'created_at' => Carbon::parse($banner->created_at)->format('F d, Y'),
+            ];
+        }
+
+
+        $services = Service::where('is_active', 1)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $servicesData = [];
+        foreach ($services as $key => $service) {
+            $servicesData[$key] = [
+                'id' => $service->id,
+                'title' => $service->title ?? "",
+                'content' => $service->content ?? "",
+                'icon' => $service->icon ?? "",
+                // 'icon' => $service->icon ? asset('services/' . $banner->icon) : "",
+                'created_at' => Carbon::parse($banner->created_at)->format('F d, Y'),
+            ];
+        }
+
+        $features = Feature_section::where('is_active', 1)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $featuresData = [];
+        foreach ($features as $key => $feature) {
+            $featuresData[$key] = [
+                'id' => $feature->id,
+                'title' => $feature->title ?? "",
+                'slug' => $feature->slug ?? "",
+                'description' => $feature->description ?? "",
+                'icon' => $feature->icon ?? "",
+                'created_at' => Carbon::parse($feature->created_at)->format('F d, Y'),
+            ];
+        }
+
+        $testimonials = Testimonial::where('is_active', 1)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $testimonialsData = [];
+        foreach ($testimonials as $key => $testimonial) {
+            $testimonialsData[$key] = [
+                'id' => $testimonial->id,
+                'client_name' => $testimonial->client_name ?? "",
+                'position' => $testimonial->position ?? "",
+                'description' => $testimonial->description ?? "",
+                'client_image' => $testimonial->client_image ? asset('images/testimonials/' . $testimonial->client_image) : "",
+                'created_at' => Carbon::parse($banner->created_at)->format('F d, Y'),
+            ];
+        }
+
+        $response = [
+            'home_contents' => $home_contents,
+            'home_banners' => $homeBannerData,
+            'services' => $servicesData,
+            'features' => $featuresData,
+            'testimonials' => $testimonialsData,
+        ];
+
+        return response()->json($response, 200);
+    }
+
+
+    public function getAboutUsPageData()
+    {
+        $aboutusData = AboutusPage::find(1);
+
+        if (!$aboutusData) {
+            return response()->json(['message' => 'About Us Data not found'], 404);
+        }
+
+        $aboutus_data = [
+            'id' => $aboutusData->id,
+            'page_name' => $aboutusData->page_name ?? "",
+            'banner_image' => $aboutusData->banner_image ? asset('aboutuspage/' . $aboutusData->banner_image) : "",
+            'who_we_are_heading' => $aboutusData->who_we_are_heading ?? "",
+            'who_we_are_title' => $aboutusData->who_we_are_title ?? "",
+            'who_we_are_desc1' => $aboutusData->who_we_are_desc1 ?? "",
+            'who_we_are_desc2' => $aboutusData->who_we_are_desc2 ?? "",
+            'who_we_are_image1' => $aboutusData->who_we_are_image1 ? asset('aboutuspage/' . $aboutusData->who_we_are_image1) : "",
+            'who_we_are_image2' => $aboutusData->who_we_are_image2 ? asset('aboutuspage/' . $aboutusData->who_we_are_image2) : "",
+            'year_of_exp' => $aboutusData->year_of_exp ?? "",
+            'revenue_count' => $aboutusData->revenue_count ?? "",
+            'revenue_image' => $aboutusData->revenue_image ? asset('aboutuspage/' . $aboutusData->revenue_image) : "",
+            'sales_count' => $aboutusData->sales_count ?? "",
+            'sales_image' => $aboutusData->sales_image ? asset('aboutuspage/' . $aboutusData->sales_image) : "",
+            'slogan_heading' => $aboutusData->slogan_heading ?? "",
+            'slogan_title' => $aboutusData->slogan_title ?? "",
+            'slogan_bg_image' => $aboutusData->slogan_bg_image ? asset('aboutuspage/' . $aboutusData->slogan_bg_image) : "",
+            'slogan_video_url' => $aboutusData->slogan_video_url ?? null,
+            'created_at' => Carbon::parse($aboutusData->created_at)->format('F d, Y H:i:s'),
+        ];
+
+        return response()->json($aboutus_data, 200);
     }
 }
