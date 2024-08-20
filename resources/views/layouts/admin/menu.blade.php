@@ -45,6 +45,12 @@
                  </ul>
              </li>
 
+             <li class="treeview"><a class="waves-effect waves-dark" href="#!"><i class="fa fa-files-o" aria-hidden="true"></i><span> Manage CMS Pages</span><i class="icon-arrow-down"></i></a>
+                <ul class="treeview-menu">
+                    <li class="child-sub-menu"><a class="waves-effect waves-dark" href="{{route('cmspages.index')}}"><i class="icon-arrow-right"></i> Manage CMS Pages</a></li>
+                </ul>
+            </li>
+
              <li class="treeview"><a class="waves-effect waves-dark" href="#!"><i class="fa fa-files-o" aria-hidden="true"></i><span> Pages</span><i class="icon-arrow-down"></i></a>
                  <ul class="treeview-menu">
                      <li class="child-sub-menu"><a class="waves-effect waves-dark" href="{{route('pages.index')}}"><i class="icon-arrow-right"></i> Manage Pages</a></li>
