@@ -125,7 +125,7 @@
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="{{ url('/') }}/datatables/plugins/fontawesome-free/css/all.min.css">
-
+ 
     <!-- DataTables -->
     <link rel="stylesheet" href="{{ url('/') }}/datatables/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" href="{{ url('/') }}/datatables/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
@@ -223,12 +223,12 @@
             <!-- Sidebar chat end-->
             <div class="content-wrapper">
                 <!-- Container-fluid starts -->
-                @yield('section')
+            @yield('section')
                 <!-- Container-fluid ends -->
             </div>
         </div>
         <!-- Required Jqurey -->
-        <script src="{{ url('/') }}/assets/plugins/Jquery/dist/jquery.min.js"></script>
+        <!-- <script src="{{ url('/') }}/assets/plugins/Jquery/dist/jquery.min.js"></script> -->
 
         <!-- <script src="{{ asset('assets/plugins/ckeditor/ckeditor.js') }}"></script>
         <script src="{{ asset('assets/plugins/ckeditor/plugins/colorbutton/plugin.js') }}"></script>
@@ -237,37 +237,23 @@
         <script src="{{ asset('assets/plugins/ckeditor/plugins/panelbutton/plugin.js') }}"></script>
         <script src="{{ asset('assets/plugins/ckeditor/plugins/imageuploader/plugin.js') }}"></script> -->
 
-        <script src="{{ url('/') }}/assets/plugins/jquery-ui/jquery-ui.min.js"></script>
-        <script src="{{ url('/') }}/assets/plugins/tether/dist/js/tether.min.js"></script>
+        <!-- <script src="{{ url('/') }}/assets/plugins/jquery-ui/jquery-ui.min.js"></script> -->
+        <!-- <script src="{{ url('/') }}/assets/plugins/tether/dist/js/tether.min.js"></script> -->
 
         <!-- Required Fremwork -->
-        <script src="{{ url('/') }}/assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+        <!-- <script src="{{ url('/') }}/assets/plugins/bootstrap/js/bootstrap.min.js"></script> -->
 
         <!-- custom js -->
         <script type="text/javascript" src="{{ url('/') }}/assets/js/main.min.js"></script>
-        <script type="text/javascript" src="{{ url('/') }}/assets/pages/dashboard.js"></script>
-        <script type="text/javascript" src="{{ url('/') }}/assets/pages/elements.js"></script>
-        <script src="{{ url('/') }}/assets/js/menu.min.js"></script>
+        <!-- <script type="text/javascript" src="{{ url('/') }}/assets/pages/dashboard.js"></script> -->
+        <!-- <script type="text/javascript" src="{{ url('/') }}/assets/pages/elements.js"></script> -->
+        <!-- <script src="{{ url('/') }}/assets/js/menu.min.js"></script> -->
 
         <!-- Scrollbar JS-->
-        <script src="{{ url('/') }}/assets/plugins/jquery-slimscroll/jquery.slimscroll.js"></script>
-        <script src="{{ url('/') }}/assets/plugins/jquery.nicescroll/jquery.nicescroll.min.js"></script>
+        <!-- <script src="{{ url('/') }}/assets/plugins/jquery-slimscroll/jquery.slimscroll.js"></script>
+        <script src="{{ url('/') }}/assets/plugins/jquery.nicescroll/jquery.nicescroll.min.js"></script> -->
 
-        <!--classic JS-->
-        <script src="{{ url('/') }}/assets/plugins/classie/classie.js"></script>
-
-        <!-- notification -->
-        <script src="{{ url('/') }}/assets/plugins/notification/js/bootstrap-growl.min.js"></script>
-
-        <!-- Sparkline charts -->
-        <script src="{{ url('/') }}/assets/plugins/jquery-sparkline/dist/jquery.sparkline.js"></script>
-
-        <!-- Counter js  -->
-        <script src="{{ url('/') }}/assets/plugins/waypoints/jquery.waypoints.min.js"></script>
-        <script src="{{ url('/') }}/assets/plugins/countdown/js/jquery.counterup.js"></script>
-
-        <!-- Echart js -->
-        <script src="{{ url('/') }}/assets/plugins/charts/echarts/js/echarts-all.js"></script>
+        
 
         <!-- <script src="https://code.highcharts.com/highcharts.js"></script>
    <script src="https://code.highcharts.com/modules/exporting.js"></script>
@@ -296,7 +282,7 @@
         <!-- datatables -->
         <!-- jQuery -->
         <!-- comment because of not scrolling down -->
-        <script src="{{ url('/') }}/datatables/plugins/jquery/jquery.min.js"></script>
+        <!-- <script src="{{ url('/') }}/datatables/plugins/jquery/jquery.min.js"></script> -->
 
 
         <!-- SweetAlert2 CSS -->
@@ -307,12 +293,12 @@
 
 
         <!-- Bootstrap 4 -->
-        <script src="{{ url('/') }}/datatables/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+        <!-- <script src="{{ url('/') }}/datatables/plugins/bootstrap/js/bootstrap.bundle.min.js"></script> -->
         <!-- DataTables -->
         <script src="{{ url('/') }}/datatables/plugins/datatables/jquery.dataTables.min.js"></script>
         <script src="{{ url('/') }}/datatables/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
         <script src="{{ url('/') }}/datatables/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
-        <script src="{{ url('/') }}/datatables/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+        <!-- <script src="{{ url('/') }}/datatables/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script> -->
         <script>
             $(function() {
                 $('#datatable').DataTable({

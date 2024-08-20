@@ -6,8 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Election Result</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0/css/select2.min.css" rel="stylesheet" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0/js/select2.min.js"></script>
 </head>
 
 <body>
@@ -82,37 +80,43 @@
         </div>
         <!-- Main content ends -->
     </div>
-</body>
 
-<script>
-$(document).ready(function() {
-    $('#pollingunit').select2({
-        ajax: {
-            url: "{{ route('electpollingunits') }}",
-            dataType: 'json',
-            delay: 250,
-            data: function(params) {
-                return {
-                    q: params.term // Query parameter
-                };
-            },
-            processResults: function(data) {
-                return {
-                    results: data.map(function(item) {
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0/js/select2.min.js"></script>
+    <script>
+    $(document).ready(function() {
+        if (typeof $.fn.select2 !== 'undefined') {
+            $('#pollingunit').select2({
+                ajax: {
+                    url: "{{ route('electpollingunits') }}",
+                    dataType: 'json',
+                    delay: 250,
+                    data: function(params) {
                         return {
-                            id: item.id,
-                            text: item.polling_name
+                            q: params.term
                         };
-                    })
-                };
-            },
-            cache: true
-        },
-        placeholder: 'Select a polling unit',
-        minimumInputLength: 1
+                    },
+                    processResults: function(data) {
+                        return {
+                            results: data.map(function(item) {
+                                return {
+                                    id: item.id,
+                                    text: item.polling_name
+                                };
+                            })
+                        };
+                    },
+                    cache: true
+                },
+                placeholder: 'Select a polling unit',
+                minimumInputLength: 1
+            });
+        } else {
+            console.log('Select2 is not loaded properly.');
+        }
     });
-});
-</script>
+    </script>
+</body>
 
 </html>
 @endsection
