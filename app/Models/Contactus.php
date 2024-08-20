@@ -5,9 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class GrassrooterFeedback extends Model
+class Contactus extends Model
 {
     use HasFactory;
-    protected $guarded = [];
+
+    protected $table = 'contactus';
     public $timestamps = false;
 }

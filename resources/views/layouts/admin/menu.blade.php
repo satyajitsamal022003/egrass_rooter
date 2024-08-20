@@ -55,6 +55,11 @@
              <li class="treeview"><a class="waves-effect waves-dark" href="{{route('donation.list')}}"><i style="font-size:20px" class="fa">&#xf087;</i>
              <span> Donation</span></a>
              </li>
+             <li class="treeview"><a class="waves-effect waves-dark" href="#!"><i class="fa fa-files-o" aria-hidden="true"></i><span> Manage CMS Pages</span><i class="icon-arrow-down"></i></a>
+                <ul class="treeview-menu">
+                    <li class="child-sub-menu"><a class="waves-effect waves-dark" href="{{route('cmspages.index')}}"><i class="icon-arrow-right"></i> Manage CMS Pages</a></li>
+                </ul>
+            </li>
 
              <li class="treeview"><a class="waves-effect waves-dark" href="#!"><i class="fa fa-bars" aria-hidden="true"></i><span> Manage Menu</span><i class="icon-arrow-down"></i></a>
                  <ul class="treeview-menu">
