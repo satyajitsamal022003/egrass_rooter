@@ -102,7 +102,6 @@ class BlogController extends Controller
         // Retrieve the category details
         $category = Category::find($blog->cat_id);
 
-        // Prepare the blog data with category and image
         $blog_data = [
             'cat_id' => $blog->cat_id,
             'category' => $category ? $category->title : 'Category not found',
@@ -318,7 +317,7 @@ class BlogController extends Controller
     //             $popular_blog_data[$key]['author_name'] = $blog->author_name ?? 'N/A';
     //         }
     //     }
-
+ 
 
     //     $recent_blogs = Blog::where('created', '>=', now()->subDays(7))->orderBy('created', 'desc')->get();
     //     $recent_blog_data = [];

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Mail\AdminContactRequestMail;
 use App\Mail\UserContactRequestMail;
 use App\Models\AboutusPage;
+use App\Models\Blog;
 use App\Models\Contactus;
 use App\Models\Donation;
 use App\Models\Feature_section;
@@ -15,9 +16,13 @@ use App\Models\Page;
 use App\Models\Service;
 use App\Models\Sitesetting;
 use App\Models\Testimonial;
+use App\Models\Party;
+use App\Models\Menu;
+use App\Models\Stayupdate;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Validator;
 
 class PageController extends Controller
 {
@@ -95,7 +100,7 @@ class PageController extends Controller
         $request->validate([
             'contact_name' => 'required|string|max:255',
             'contact_email' => 'required|email|max:255',
-            'contact_phone' => 'required|string|max:15',
+            'contact_subject' => 'required|string|max:15',
             'message' => 'required|string|max:1000',
         ]);
 
@@ -103,7 +108,7 @@ class PageController extends Controller
         $contactdata = new Contactus();
         $contactdata->contact_name = $request->input('contact_name');
         $contactdata->contact_email = $request->input('contact_email');
-        $contactdata->contact_phone = $request->input('contact_phone');
+        $contactdata->contact_subject = $request->input('contact_subject');
         $contactdata->message = $request->input('message');
         $contactdata->is_active = $request->input('is_active', '0');
         $contactdata->sent_date = now();
@@ -120,7 +125,7 @@ class PageController extends Controller
             $adminEmail = new AdminContactRequestMail(
                 $contactdata->contact_name,
                 $contactdata->contact_email,
-                $contactdata->contact_phone,
+                $contactdata->contact_subject,
                 $siteAdmin->site_title,
                 file_exists(public_path('images/siteimage/' . $siteAdmin->logo)) ? asset('images/siteimage/' . $siteAdmin->logo) : asset('images/logo.jpg')
             );
@@ -276,12 +281,41 @@ class PageController extends Controller
             ];
         }
 
+        // Get the latest 4 parties
+        $latestParties = Party::where('is_active', 1)->latest()->take(4)->get();
+
+        $latest_parties = $latestParties->map(function ($party) {
+            return [
+                'id' => $party->id ?? "",
+                'political_party_name' => $party->party_name ?? "",
+                'party_owner_name' => $party->owner_name ?? "",
+                'political_party_logo' => $party->party_img ?? "",
+                'candidate_image' => $party->candidate_img ?? "",
+                'party_color' => $party->color ?? "",
+            ];
+        });
+
+        // Get Latest 3  Blogs
+        $latestblogs = Blog::where('is_active', 1)->orderBy('created', 'desc')->take(4)->get();
+
+        $latest_blogs = $latestblogs->map(function ($blogs) {
+            return [
+                'id' => $blogs->id ?? "",
+                'date' => date('d M Y', strtotime($blogs->created)) ?? "",
+                'name' => $blogs->author_name ?? "",
+                'title' => $blogs->title ?? "",
+                'description' => $blogs->description ?? "",
+            ];
+        });
+
         $response = [
             'home_contents' => $home_contents,
             'home_banners' => $homeBannerData,
             'services' => $servicesData,
             'features' => $featuresData,
             'testimonials' => $testimonialsData,
+            'latest_parties' => $latest_parties,
+            'latest_blogs' => $latest_blogs
         ];
 
         return response()->json($response, 200);
@@ -291,6 +325,7 @@ class PageController extends Controller
     public function getAboutUsPageData()
     {
         $aboutusData = AboutusPage::find(1);
+        // dd($aboutusData);
 
         if (!$aboutusData) {
             return response()->json(['message' => 'About Us Data not found'], 404);
@@ -318,6 +353,101 @@ class PageController extends Controller
             'created_at' => Carbon::parse($aboutusData->created_at)->format('F d, Y H:i:s'),
         ];
 
-        return response()->json($aboutus_data, 200);
+
+
+        //Quick Links
+        // $menus = Menu::where('is_active', 1)->get();
+
+        // $allmenus = $menus->map(function ($menu) {
+        //     return [
+        //         'id' => $menu->id ?? "",
+        //         'menu_name' => $menu->menu_name ?? "",
+        //         'menu_link' => $menu->menu_link ?? "",
+        //     ];
+        // });
+
+
+        // Return the combined data as JSON
+        return response()->json([
+            'about_us' => $aboutus_data,
+            // 'allmenus'=> $allmenus,
+        ], 200);
+    }
+
+    public function allparties()
+    {
+        // Get all parties
+        $allParties = Party::where('is_active', 1)->get();
+
+        $all_parties = $allParties->map(function ($party) {
+            return [
+                'id' => $party->id ?? "",
+                'political_party_name' => $party->party_name ?? "",
+                'party_owner_name' => $party->owner_name ?? "",
+                'political_party_logo' => $party->party_img ?? "",
+                'candidate_image' => $party->candidate_img ?? "",
+                'party_color' => $party->color ?? "",
+            ];
+        });
+
+        return response()->json([
+            'all_parties' => $all_parties,
+        ], 200);
+    }
+
+    public function getallblogs()
+    {
+        // Get all parties
+        $allblogs = Blog::where('is_active', 1)->get();
+
+        $all_blogs = $allblogs->map(function ($blogs) {
+            return [
+                'id' => $blogs->id ?? "",
+                'date' => date('d M Y', strtotime($blogs->created)) ?? "",
+                'name' => $blogs->author_name ?? "",
+                'title' => $blogs->title ?? "",
+                'description' => $blogs->description ?? "",
+            ];
+        });
+
+        return response()->json([
+            'all_blogs' => $all_blogs,
+        ], 200);
+    }
+
+
+    public function stayupdatewithus(Request $request)
+    {
+        $messages = [
+            'email_id.required' => 'Please Enter Your Email Id.',
+            'email_id.email' => 'Please provide a valid email address.',
+            'email_id.unique' => 'This email is already subscribed.'
+        ];
+
+        $validator = Validator::make($request->all(), [
+            'email_id' => 'required|email|unique:stayupdates,email_id'
+        ],$messages);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'errors' => $validator->errors()
+            ], 400);
+        }
+
+        $stayupdate = new Stayupdate();
+        $stayupdate->email_id = $request->input('email_id');
+
+        if ($stayupdate->save()) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Thank You, You Will recieve the latest updates.'
+            ], 201);
+        } else {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to add email.'
+            ], 500);
+        }
     }
 }

@@ -4,8 +4,13 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\AddMember;
+use App\Models\Local_constituency;
+use App\Models\Party;
+use App\Models\Polling_unit;
 use App\Models\Role;
+use App\Models\Senatorial_state;
 use App\Models\State;
+use App\Models\Ward;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -233,6 +238,121 @@ class MemberController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Member deleted successfully'
+        ]);
+    }
+
+    public function addmember()
+    {
+        $user = Auth::guard('api')->user();
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        $getroletype = Role::select('id', 'role')->where('is_active', 1)->get();
+
+        $getroletypedata = $getroletype->map(function ($roledata) {
+            return [
+                'role_id' => $roledata->id,
+                'role_name' => $roledata->role
+            ];
+        });
+
+        if ($user->campaign_type != 1) {
+            $states = State::where('id', $user->state)->first();
+
+            $statedata = [
+                'id' => $states->id,
+                'state_name' => $states->state ?? '',
+            ];
+        } else {
+            $states = State::get();
+
+            $statedata = $states->map(function ($state) {
+                return [
+                    'id' => $state->id,
+                    'state_name' => $state->state ?? '',
+                ];
+            });
+        }
+
+        $party = Party::where('is_active', 1)->get();
+        $partydata = $party->map(function ($p) {
+            return [
+                'id' => $p->id,
+                'party_name' => $p->party_name ?? '',
+            ];
+        });
+
+        return response()->json([
+            'role_type' => $getroletypedata,
+            'statedata' => $statedata,
+            'partydata' => $partydata,
+        ], 200);
+    }
+
+
+    public function getsenatorialstates($stateid)
+    {
+        $senatorialstates = Senatorial_state::where('state_id', $stateid)->get();
+
+        $senatorialstatedata = $senatorialstates->map(function ($senastate) {
+            return [
+                'id' => $senastate->id,
+                'senatorial_state_name' => $senastate->sena_district ?? '',
+            ];
+        });
+
+        return response()->json([
+            'senatorialstatedata' => $senatorialstatedata
+        ], 200);
+    }
+
+    public function getlga($stateid)
+    {
+        $lgalist = Local_constituency::where('state_id', $stateid)
+            ->get()
+            ->map(function ($edata) {
+                return [
+                    'id' => $edata->id,
+                    'lga_name' => $edata->lga,
+                ];
+            });
+
+        return response()->json([
+            'statewiselga' => $lgalist,
+        ]);
+    }
+
+    public function getward($lgaid)
+    {
+        $wardlist = Ward::where('lga_id', $lgaid)
+            ->get()
+            ->map(function ($warddata) {
+                return [
+                    'id' => $warddata->id,
+                    'ward_name' => $warddata->ward_details,
+                ];
+            });
+
+        return response()->json([
+            'lgawiseward' => $wardlist,
+        ]);
+    }
+
+
+    public function getpu($wardid)
+    {
+        $pollinglist = Polling_unit::where('ward_id', $wardid)
+            ->get()
+            ->map(function ($pudata) {
+                return [
+                    'id' => $pudata->id,
+                    'polling_unit_name' => $pudata->polling_name,
+                ];
+            });
+
+        return response()->json([
+            'wardwise_pollingunit' => $pollinglist,
         ]);
     }
 }

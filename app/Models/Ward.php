@@ -13,4 +13,9 @@ class Ward extends Model
     {
         return $this->belongsTo(Local_constituency::class, 'lga_id');
     }
+
+    public function pollingUnits() {
+    return $this->hasMany(Polling_unit::class, 'ward_id');
+}
+
 }

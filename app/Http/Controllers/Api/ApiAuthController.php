@@ -15,59 +15,123 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use App\Models\Party;
+use App\Models\State;
+use App\Models\Senatorial_state;
+use App\Models\Federal_constituency;
+use App\Models\Local_constituency;
+use App\Models\ElectionType;
+use App\Models\Role;
 
 class ApiAuthController extends Controller
 {
-    // public function register(Request $request)
-    // {
-    //     try {
-    //         $validatedData = $request->validate([
-    //             'first_name' => 'required|string|max:255',
-    //             'last_name' => 'required|string|max:255',
-    //             'user_type' => 'required|string|max:255',
-    //             'election_type' => 'required|string|max:255',
-    //             'election_date' => 'required|date_format:m/d/Y',
-    //             'email' => 'required|string|email|max:255|unique:campaign_users,email_id',
-    //             'phone_number' => 'required|string|max:15|unique:campaign_users,telephone',
-    //             'pass' => 'required|string|confirmed|min:8',
-    //         ]);
+    public function getcampaign()
+    {
+        $politicalparties = Party::where('is_active', 1)->get();
 
-    //         $username = $validatedData['first_name'] . time();
-    //         $user = Campaign_user::create([
-    //             'first_name' => $validatedData['first_name'],
-    //             'last_name' => $validatedData['last_name'],
-    //             'user_type' => $validatedData['user_type'],
-    //             'election_type' => $validatedData['election_type'],
-    //             'election_date' => $validatedData['election_date'],
-    //             'email_id' => $validatedData['email'],
-    //             'telephone' => $validatedData['phone_number'],
-    //             'pass' => bcrypt($validatedData['pass']),
-    //             'username' =>  $username,
-    //             'created_at' => NOW(),
-    //             'updated_at' => NOW(),
-    //         ]);
+        $partydata = [];
+        foreach ($politicalparties as $party) {
+            $partydata[] = [
+                'id' => $party->id,
+                'party_name' => $party->party_name,
+                'party_name' => $party->party_name,
+                'owner_name' => $party->owner_name,
+                'party_img' => $party->party_img,
+                'candidate_img' => $party->candidate_img,
+                'color' => $party->color,
+            ];
+        }
 
-    //         $token = $user->createToken('auth_token')->plainTextToken;
+        $states = State::get();
 
-    //         return response()->json([
-    //             'success' => true,
-    //             'message' => 'User registered successfully',
-    //             'token' => $token
-    //         ], 201);
-    //     } catch (\Illuminate\Validation\ValidationException $e) {
-    //         return response()->json([
-    //             'success' => false,
-    //             'message' => 'Validation error',
-    //             'errors' => $e->errors()
-    //         ], 422);
-    //     } catch (\Exception $e) {
-    //         return response()->json([
-    //             'success' => false,
-    //             'message' => 'Registration failed',
-    //             'error' => $e->getMessage()
-    //         ], 500);
-    //     }
-    // }
+        $statedata = [];
+        foreach ($states as $s) {
+            $statedata[] = [
+                'id' => $s->id,
+                'name' => $s->state,
+            ];
+        }
+
+        $electiontype = ElectionType::get();
+
+        $electiontypedata = [];
+        foreach ($electiontype as $s) {
+            $electiontypedata[] = [
+                'id' => $s->id,
+                'electiontype' => $s->type,
+            ];
+        }
+
+        $roles = Role::where('is_active', 1)->get();
+
+        $role_type = [];
+        foreach ($roles as $r) {
+            $role_type[] = [
+                'id' => $r->id,
+                'role_name' => $r->role,
+            ];
+        }
+
+        return response()->json([
+            'partydata' => $partydata,
+            'statedata' => $statedata,
+            'electiontypedata' => $electiontypedata,
+            'role_type_data' => $role_type
+        ]);
+    }
+
+    public function getsenatorialstates($stateid)
+    {
+        $senatorialstates = Senatorial_state::where('state_id', $stateid)->get();
+
+        $senatorialstatedata = [];
+        foreach ($senatorialstates as $s) {
+            $senatorialstatedata[] = [
+                'id' => $s->id,
+                'name' => $s->sena_district,
+            ];
+        }
+
+        return response()->json([
+            'senatorialstatedata' => $senatorialstatedata
+        ]);
+    }
+
+    public function getfederalconstituency($stateid)
+    {
+        $federalconstituency = Federal_constituency::where('state_id', $stateid)->get();
+
+        $federalconstituencydata = [];
+        foreach ($federalconstituency as $s) {
+            $federalconstituencydata[] = [
+                'id' => $s->id,
+                'name' => $s->federal_name,
+            ];
+        }
+
+        return response()->json([
+            'federalconstituencydata' => $federalconstituencydata
+        ]);
+    }
+
+    public function getlocalconstituency($stateid)
+    {
+        $localconstituency = Local_constituency::where('state_id', $stateid)->get();
+
+        $localconstituencydata = [];
+        foreach ($localconstituency as $s) {
+            $localconstituencydata[] = [
+                'id' => $s->id,
+                'name' => $s->lga,
+            ];
+        }
+
+        return response()->json([
+            'localconstituencydata' => $localconstituencydata
+        ]);
+    }
+
+
 
     public function register(Request $request)
     {
@@ -84,6 +148,15 @@ class ApiAuthController extends Controller
                 'slug' => 'required|string|max:255',
                 'campaign_type' => 'required|string|max:255',
             ]);
+
+            $campaignname = $validatedData['title'];
+            $existingcampaignname = Campaign_user::where('title', $campaignname)->first();
+            if ($existingcampaignname) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Campaign Name Already Taken!',
+                ], 409);
+            }
 
             $email = $validatedData['email'];
             $existingUser = Campaign_user::where('email_id', $email)->first();
@@ -212,17 +285,17 @@ class ApiAuthController extends Controller
 
             // Generate token
             // $token = $user->createToken('auth_token')->plainTextToken;
-            if (!$token = JWTAuth::fromUser($user)) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Could not create token',
-                ], 500);
-            }
+            // if (!$token = JWTAuth::fromUser($user)) {
+            //     return response()->json([
+            //         'success' => false,
+            //         'message' => 'Could not create token',
+            //     ], 500);
+            // }
 
             return response()->json([
                 'success' => true,
-                'message' => 'User registered successfully',
-                'token' => $token
+                'message' => 'User registered successfully, Please check and Verify your Mail',
+                // 'token' => $token
             ], 201);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
@@ -257,49 +330,41 @@ class ApiAuthController extends Controller
                             $user->is_mail_verified = 1;
                             $user->save();
 
-                            return response()->json([
-                                'success' => true,
-                                'message' => 'Account Verified Successfully',
-                            ], 200);
+                            // Redirect to the Next.js URL with a success message
+                            return redirect('http://localhost:3000/login?status=success&message=Account%20Verified%20Successfully');
                         } else {
-                            return response()->json([
-                                'success' => false,
-                                'message' => 'Account is already verified.',
-                            ], 200);
+                            // Redirect to the Next.js URL with an already verified message
+                            return redirect('http://localhost:3000/login?status=error&message=Account%20is%20already%20verified');
                         }
                     } else {
-                        return response()->json([
-                            'success' => false,
-                            'message' => 'Invalid activation code or email.',
-                        ], 404);
+                        // Redirect to the Next.js URL with an invalid activation error message
+                        return redirect('http://localhost:3000/login?status=error&message=Invalid%20activation%20code%20or%20email');
                     }
                 }
             }
-            return response()->json([
-                'success' => false,
-                'message' => 'Invalid request.',
-            ], 400);
+
+            // Redirect to the Next.js URL with a general invalid request error message
+            return redirect('http://localhost:3000/login?status=error&message=Invalid%20request.%20Activation%20code%20and%20task%20are%20required');
         } catch (\Exception $e) {
             Log::error('Activation error: ' . $e->getMessage());
-            return response()->json([
-                'success' => false,
-                'message' => 'Activation failed.',
-                'error' => $e->getMessage(),
-            ], 500);
+
+            // Redirect to the Next.js URL with a generic error message
+            return redirect('http://localhost:3000/login?status=error&message=Activation%20failed');
         }
     }
+
 
     public function login(Request $request)
     {
         try {
             $credentials = $request->validate([
                 'email' => 'required|string|email',
-                'pass' => 'required|string',
+                'password' => 'required|string',
             ]);
 
             $user = Campaign_user::where('email_id', $credentials['email'])->first();
 
-            if (!$user || md5($credentials['pass']) !== $user->pass) {
+            if (!$user || md5($credentials['password']) !== $user->pass) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Invalid credentials',
@@ -313,12 +378,22 @@ class ApiAuthController extends Controller
                     'message' => 'Could not create token',
                 ], 500);
             }
-            // dd($token);
+            // $decodedToken = JWTAuth::setToken($token)->getPayload()->toArray();
+            // dd($decodedToken);
 
             return response()->json([
                 'success' => true,
                 'message' => 'User logged in successfully',
-                'token' => $token
+                'token' => $token,
+                'user_details' => [
+                    'id' => $user->id,
+                    'email_id' => $user->email_id,
+                    'first_name' => $user->first_name,
+                    'last_name' => $user->last_name,
+                    'user_type' => $user->user_type,
+                    'telephone' => $user->telephone,
+                    'campaign_type' => $user->campaign_type,
+                ],
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
@@ -514,7 +589,8 @@ class ApiAuthController extends Controller
                 ], 500);
             }
 
-            $resetLink = url('/api/reset-password/' . base64_encode($user->id));
+            // $resetLink = url('/api/reset-password/' . base64_encode($user->id));
+            $resetLink = url('/Reset-password/' . base64_encode($user->id));
 
             $body = "
             <table width='100%'  style='line-height:20px; font-size:12px'>
@@ -557,7 +633,7 @@ class ApiAuthController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Your Password request sent successfully. Please check your E-Mail to get the credentials.',
+                'message' => 'Your Password request sent successfully. Please check your E-Mail to get the Credentials.',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
@@ -578,7 +654,7 @@ class ApiAuthController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'email' => 'required|string|email',
+                // 'email' => 'required|string|email',
                 'npwd' => 'required|string|min:6',
                 'cpwd' => 'required|string|same:npwd',
             ]);
@@ -593,7 +669,7 @@ class ApiAuthController extends Controller
 
             $decodedUserId = base64_decode($userid);
             $user = Campaign_user::where('id', $decodedUserId)
-                ->where('email_id', $request->input('email'))
+                // ->where('email_id', $request->input('email'))
                 ->first();
 
             if (!$user) {
@@ -605,10 +681,11 @@ class ApiAuthController extends Controller
 
             $user->pass = md5($request->input('npwd'));
             if ($user->save()) {
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Password Changed Successfully'
-                ]);
+                return redirect('http://localhost:3000/login?status=success&message=Password%20Changed%20Successfully');
+                // return response()->json([
+                //     'success' => true,
+                //     'message' => 'Password Changed Successfully'
+                // ]);
             } else {
                 return response()->json([
                     'success' => false,
@@ -622,5 +699,46 @@ class ApiAuthController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
+    }
+
+
+    public function getslug(Request $request, $slug)
+    {
+        // Check if the slug already exists in the database
+        $existingSlug = Campaign_user::where('slug', $slug)->first();
+
+        if ($existingSlug) {
+            // If the slug already exists, return an error response
+            return response()->json([
+                'status' => 'error',
+                'message' => 'The slug is already in use. Please choose a different one.'
+            ], 409); // 409 Conflict
+        }
+
+        // If the slug is unique, you can proceed with your logic
+        return response()->json([
+            'status' => 'success',
+            'message' => 'The slug is unique and available for use.'
+        ], 200); // 200 OK
+    }
+
+    public function checkemail(Request $request, $email)
+    {
+        // Check if the slug already exists in the database
+        $existingemail = Campaign_user::where('email_id', $email)->first();
+
+        if ($existingemail) {
+            // If the slug already exists, return an error response
+            return response()->json([
+                'status' => 'error',
+                'message' => 'The Email ID is already in use. Please choose a different one.'
+            ], 409); // 409 Conflict
+        }
+
+        // If the slug is unique, you can proceed with your logic
+        return response()->json([
+            'status' => 'success',
+            'message' => 'The email is unique and available for use.'
+        ], 200); // 200 OK
     }
 }

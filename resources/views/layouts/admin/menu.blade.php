@@ -89,6 +89,13 @@
                  </ul>
              </li>
 
+             <li class="treeview"><a class="waves-effect waves-dark" href="#!"><i class="fa fa-quote-left" aria-hidden="true"></i><span> Manage News</span><i class="icon-arrow-down"></i></a>
+                 <ul class="treeview-menu">
+                     <li class="child-sub-menu"><a class="waves-effect waves-dark" href="{{route('news-list')}}"><i class="icon-arrow-right"></i> Manage News</a></li>
+                     <li class="child-sub-menu"><a class="waves-effect waves-dark" href="{{route('news-add')}}"><i class="icon-arrow-right"></i> Add news</a></li>
+                 </ul>
+             </li>
+
              <li class="treeview"><a class="waves-effect waves-dark" href="#!"><i class="fa fa-bars" aria-hidden="true"></i><span> Dashboard Menu</span><i class="icon-arrow-down"></i></a>
                  <ul class="treeview-menu">
                      <li class="child-sub-menu"><a class="waves-effect waves-dark" href="{{route('managedashboardmenu.list')}}"><i class="icon-arrow-right"></i> Dashboard Menu</a></li>

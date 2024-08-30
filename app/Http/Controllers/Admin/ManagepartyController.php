@@ -94,7 +94,6 @@ class ManagepartyController extends Controller
         $partyadd->owner_name = $request->input('chairman_name');
         $partyadd->color = $request->input('color');
         $partyadd->is_active = $request->input('status');
-        $partyadd->updated_at = now();
 
         if ($request->hasFile('party_image')) {
             // Generate a unique file name for the image

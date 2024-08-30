@@ -37,6 +37,8 @@ use App\Http\Controllers\Admin\ManageadminController;
 use App\Http\Controllers\Admin\ManageDashBoardMenuController;
 use App\Http\Controllers\Admin\ManageelectionresultController;
 use App\Http\Controllers\Admin\ManageVotersDataController;
+use App\Http\Controllers\Admin\NewsController;
+use App\Http\Controllers\PasswordController;
 use Illuminate\Support\Facades\Route;
 
 use function PHPUnit\Framework\returnSelf;
@@ -399,15 +401,6 @@ Route::prefix('admin')->middleware('auth')->group(function () {
   Route::any('/manage-dashboard-menu/destroy/{id}', [ManageDashBoardMenuController::class, 'destroy'])->name('managedashboardmenu.destroy');
   Route::post('/manage-dashboard-menu/status', [ManageDashBoardMenuController::class, 'status'])->name('managedashboardmenu.status');
 
-
-
-
-
-
-
-
-
-
   //Dashboard Menu
   Route::resource('/dashboard-menu', DashboardmenuController::class);
 
@@ -432,7 +425,22 @@ Route::prefix('admin')->middleware('auth')->group(function () {
   Route::get('about-list', [CmspageController::class, 'aboutList'])->name('about-list');
   Route::get('edit-about/{id}', [CmspageController::class, 'editAbout'])->name('edit-about');
   Route::post('update-about/{id}', [CmspageController::class, 'updateAbout'])->name('update-about');
+
+  //Manage News
+  Route::get('manage/news-list', [NewsController::class, 'newslist'])->name('news-list');
+  Route::get('add-news', [NewsController::class, 'newsadd'])->name('news-add');
+  Route::post('news-store', [NewsController::class, 'newsstore'])->name('news-store');
+  Route::get('edit-news/{id}', [NewsController::class, 'editnews'])->name('edit-news');
+  Route::post('update-news/{id}', [NewsController::class, 'updatenews'])->name('news-update');
+  Route::any('delete-news/{id}', [NewsController::class, 'deletenews'])->name('delete-news');
+  Route::post('/manage-news/status', [NewsController::class, 'status'])->name('news.status');
+
 });
+
+
+//for forget password api
+// web.php
+Route::get('/Reset-password/{userid}', [PasswordController::class, 'showResetForm'])->name('password.resett');
 
 
 

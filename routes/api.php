@@ -1,5 +1,4 @@
 <?php
-
 use App\Http\Controllers\Api\BlogController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\PageController;
@@ -13,6 +12,12 @@ use App\Http\Controllers\Api\MemberController;
 use App\Http\Controllers\Api\NewsletterController;
 use App\Http\Controllers\Api\RoleController;
 use App\Http\Controllers\Api\TeamController;
+use App\Http\Controllers\Api\PollingAgentController;
+use App\Http\Controllers\Api\ElectionCampaignController;
+use App\Http\Controllers\Api\BulkEmailController;
+use App\Http\Controllers\Api\ElectionResultController;
+use App\Http\Controllers\Api\NewsController;
+use App\Http\Controllers\Api\BulkSmsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,17 +32,37 @@ use App\Http\Controllers\Api\TeamController;
 
 // Public routes
 Route::post('/register', [ApiAuthController::class, 'register']);
+Route::get('/getcampaign', [ApiAuthController::class, 'getcampaign']);//satyajit
+Route::post('register/get-slug/{slug}', [ApiAuthController::class, 'getslug']);//satyajit
+Route::get('register/check-email/{email}', [ApiAuthController::class, 'checkemail']);//satyajit
+Route::get('/getsenatorial-states/{stateid}', [ApiAuthController::class, 'getsenatorialstates']);//satyajit
+Route::get('/getfederal-constituency/{stateid}', [ApiAuthController::class, 'getfederalconstituency']);//satyajit
+Route::get('/getlocal-constituency/{stateid}', [ApiAuthController::class, 'getlocalconstituency']);//satyajit
 Route::post('/login', [ApiAuthController::class, 'login']);
 Route::get('/activate', [ApiAuthController::class, 'activate']);
 Route::get('/activate-invite-team', [TeamController::class, 'inviteteamActivate']);
 Route::get('/activate-volunteer', [TeamController::class, 'volunteerActivate']);
 Route::get('/pages/{id}', [PageController::class, 'getPageData']);
 
+//News and news details
+Route::get('/news-details/{newsid}', [NewsController::class, 'newsdetails']);
+Route::get('/news', [NewsController::class, 'news']);
+Route::post('/updateandnews-subscription', [NewsController::class, 'latestupdateandnews']);
+
+//Forgot Password Api
+Route::post('forgot-password', [ApiAuthController::class, 'forgotPasswordSendMail']);
+
+Route::post('/reset-password/{userid}', [ApiAuthController::class, 'resetPassword']);
+
 //Home Page CMS
 Route::get('/get-homedata', [PageController::class, 'getHomePageData']);
+Route::get('/get-all-blogs', [PageController::class, 'getallblogs']);
+// Stay Update with Us
+Route::post('/stay-update/with-us', [PageController::class, 'stayupdatewithus']);
 
 //About Us Page CMS
 Route::get('/get-aboutdata', [PageController::class, 'getAboutUsPageData']);
+Route::get('/get-allparties', [PageController::class, 'allparties']);
 
 // Contact Us Page
 Route::get('/contact-us', [PageController::class, 'getcontactUsData']);
@@ -68,9 +93,6 @@ Route::middleware('auth:api')->group(function () {
         return $request->user();
     });
 
-    //Forgot Password Api
-    Route::post('forgot-password', [ApiAuthController::class, 'forgotPasswordSendMail']);
-    Route::post('/reset-password/{userid}', [ApiAuthController::class, 'resetPassword']);
 
     // Change password route
     Route::post('change-password', [ApiAuthController::class, 'changePassword']);
@@ -103,6 +125,11 @@ Route::middleware('auth:api')->group(function () {
 
     //Member Api
     Route::get('/member/{userid}', [MemberController::class, 'index']);
+    Route::get('add-member/', [MemberController::class, 'addmember']);
+    Route::get('member/get-senatorialstates/{stateid}', [MemberController::class, 'getsenatorialstates']);
+    Route::get('member/get-lga/{stateid}', [MemberController::class, 'getlga']);
+    Route::get('member/get-ward/{lgaid}', [MemberController::class, 'getward']);
+    Route::get('member/get-pollingunit/{wardid}', [MemberController::class, 'getpu']);
     Route::post('member-add/', [MemberController::class, 'store']);
     Route::get('member-edit/{id}', [MemberController::class, 'edit']);
     Route::post('member-update', [MemberController::class, 'update']);
@@ -138,4 +165,54 @@ Route::middleware('auth:api')->group(function () {
 
     //Dashboard Api
     Route::get('/dashboard/get-data/{userid}', [DashboardController::class, 'getDashData']);
+
+    //polling Agent Api
+    Route::get('/polling-agent-list', [PollingAgentController::class, 'pollingagentlist']);
+    Route::post('/polling-agent', [PollingAgentController::class, 'storepollingagent']);
+    Route::post('/polling-agent-email/vin', [PollingAgentController::class, 'pollingagentemailvin']);
+    Route::get('/edit-polling-agent/{pollingagentid}', [PollingAgentController::class, 'editpollingagent']);
+    Route::get('/polling-agent-getlga/{stateid}', [PollingAgentController::class, 'pollingagentgetlga']);
+    Route::get('/polling-agent-getward/{lgaid}', [PollingAgentController::class, 'pollingagentgetward']);
+    Route::post('/polling-agent-update/{pollingagentid}', [PollingAgentController::class, 'pollingagentupdate']);
+
+    //Election Campaign Api
+    Route::get('/election-campaign', [ElectionCampaignController::class, 'electioncampaignlist']);
+    Route::get('/election-campaign/states/{campaigntype}', [ElectionCampaignController::class, 'electioncampaignstatewise']);
+    Route::get('/election-campaign/lga/{stateid}', [ElectionCampaignController::class, 'statewiselga']);
+    Route::get('/election-campaign/ward/{lgaid}', [ElectionCampaignController::class, 'lgawiseward']);
+    Route::get('/election-campaign/polling-unit/{wardid}', [ElectionCampaignController::class, 'wardwisepu']);
+
+    //Bulk Email Api
+    Route::get('/send-email/role-type', [BulkEmailController::class, 'getroletype']);
+    Route::get('/contact-members/{role}', [BulkEmailController::class, 'getcontactmembers']);
+    Route::post('/send-email/team-members', [BulkEmailController::class, 'emailToTeamMembers']);
+
+    //Bulk SMS Api
+    Route::get('/send-sms/role-type', [BulkSmsController::class, 'getroletype']);
+    Route::get('/sms-contact-members/{role}', [BulkSmsController::class, 'getcontactmembers']);
+    // Route::post('/send-sms/team-members', [BulkSmsController::class, 'smsToTeamMembers']);
+    Route::post('/send-bulk-sms', [BulkSmsController::class, 'sendBulkSms']);
+
+    //Election Results Api
+    Route::get('/election-results', [ElectionResultController::class, 'electionresults']);
+    Route::post('/getyear-electiontype', [ElectionResultController::class, 'getyearontype']);
+    Route::post('/filter/election-results', [ElectionResultController::class, 'filterelectionresults']);
+    Route::post('/get-statevote-tooltip', [ElectionResultController::class, 'getstatevotetooltip']);
+    Route::post('/get-statevote-onclick', [ElectionResultController::class, 'getstatevoteonregionclick']);//pending
+
+    
+
+
 });
+
+
+
+    
+
+
+
+
+   
+
+
+
