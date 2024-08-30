@@ -107,6 +107,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/blogs/{userid}', [BlogController::class, 'index']);
     Route::post('blogs-add/', [BlogController::class, 'store']);
     Route::get('blogs-edit/{id}', [BlogController::class, 'edit']);
+    Route::get('blogs-category/', [BlogController::class, 'blogscategory']);
     Route::post('blogs-update', [BlogController::class, 'update']);
     Route::post('blogs-delete', [BlogController::class, 'destroy']);
     Route::post('blogs-status', [BlogController::class, 'updateStatus']);
@@ -131,6 +132,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('member/get-ward/{lgaid}', [MemberController::class, 'getward']);
     Route::get('member/get-pollingunit/{wardid}', [MemberController::class, 'getpu']);
     Route::post('member-add/', [MemberController::class, 'store']);
+
     Route::get('member-edit/{id}', [MemberController::class, 'edit']);
     Route::post('member-update', [MemberController::class, 'update']);
     Route::post('member-delete', [MemberController::class, 'destroy']);
@@ -190,7 +192,6 @@ Route::middleware('auth:api')->group(function () {
     //Bulk SMS Api
     Route::get('/send-sms/role-type', [BulkSmsController::class, 'getroletype']);
     Route::get('/sms-contact-members/{role}', [BulkSmsController::class, 'getcontactmembers']);
-    // Route::post('/send-sms/team-members', [BulkSmsController::class, 'smsToTeamMembers']);
     Route::post('/send-bulk-sms', [BulkSmsController::class, 'sendBulkSms']);
 
     //Election Results Api

@@ -317,7 +317,7 @@ class BlogController extends Controller
     //             $popular_blog_data[$key]['author_name'] = $blog->author_name ?? 'N/A';
     //         }
     //     }
- 
+
 
     //     $recent_blogs = Blog::where('created', '>=', now()->subDays(7))->orderBy('created', 'desc')->get();
     //     $recent_blog_data = [];
@@ -609,4 +609,21 @@ class BlogController extends Controller
             'next_blog' => $next_blog_data,
         ], 200);
     }
+
+
+    // public function blogscategory()
+    // {
+    //     $pollinglist = Polling_unit::where('ward_id', $wardid)
+    //         ->get()
+    //         ->map(function ($pudata) {
+    //             return [
+    //                 'id' => $pudata->id,
+    //                 'polling_unit_name' => $pudata->polling_name,
+    //             ];
+    //         });
+
+    //     return response()->json([
+    //         'wardwise_pollingunit' => $pollinglist,
+    //     ]);
+    // }
 }

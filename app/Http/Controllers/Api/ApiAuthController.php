@@ -140,7 +140,7 @@ class ApiAuthController extends Controller
                 'first_name' => 'required|string|max:255',
                 'last_name' => 'required|string|max:255',
                 'user_type' => 'required|string|max:255',
-                'date_of_registration' => 'required|date_format:m/d/Y',
+                'date_of_registration' => 'required',
                 'email' => 'required|string|email|max:255|unique:campaign_users,email_id',
                 'phone_number' => 'required|string|max:15|unique:campaign_users,telephone',
                 'pass' => 'required|string|confirmed|min:8',
@@ -193,7 +193,7 @@ class ApiAuthController extends Controller
                 'first_name' => $validatedData['first_name'],
                 'last_name' => $validatedData['last_name'],
                 'user_type' => $validatedData['user_type'],
-                'date_of_registration' => Carbon::createFromFormat('m/d/Y', $validatedData['date_of_registration'])->format('Y-m-d'),
+                'date_of_registration' => Carbon::createFromFormat('Y-m-d', $validatedData['date_of_registration'])->format('Y-m-d'),
                 'email_id' => $validatedData['email'],
                 'telephone' => $validatedData['phone_number'],
                 'pass' => md5($validatedData['pass']),
@@ -207,6 +207,7 @@ class ApiAuthController extends Controller
                 'senatorial_district_id' => $request->input('senatorial_district_id'),
                 'federal_constituency_id' => $request->input('federal_constituency_id'),
                 'local_constituency_id' => $request->input('local_constituency_id'),
+                'ngo_name' => $request->input('ngo'),
                 'political_party' => $request->input('political_party'),
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -223,7 +224,7 @@ class ApiAuthController extends Controller
             }
 
             // Create email content
-            $emailImgPath = asset('/images/email-conf.png');
+            $emailImgPath = asset('/egrassrooter.png');
             $emailContent = "<table width='650' style='background:#fff; margin:0px auto; font-family: Open Sans, sans-serif; font-size:13px; line-height:19px;border-collapse: collapse;' border='0' vspace='0'>
                 <tr>
                     <td align='center' style='border-bottom:4px solid #1abc9c; padding:15px 0px 15px;'>
