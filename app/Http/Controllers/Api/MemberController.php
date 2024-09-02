@@ -17,8 +17,14 @@ use Illuminate\Support\Facades\DB;
 
 class MemberController extends Controller
 {
-    public function index(Request $request, $userid)
+    public function index(Request $request)
     {
+        $user = Auth::guard('api')->user();
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        $userid = $user->id;
         // Enable query logging
         DB::enableQueryLog();
         $query = AddMember::where('user_id', $userid);

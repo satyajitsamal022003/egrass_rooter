@@ -38,6 +38,7 @@ use App\Http\Controllers\Admin\ManageDashBoardMenuController;
 use App\Http\Controllers\Admin\ManageelectionresultController;
 use App\Http\Controllers\Admin\ManageVotersDataController;
 use App\Http\Controllers\Admin\NewsController;
+use App\Http\Controllers\admin\UpcomingElectionController;
 use App\Http\Controllers\PasswordController;
 use Illuminate\Support\Facades\Route;
 
@@ -434,6 +435,17 @@ Route::prefix('admin')->middleware('auth')->group(function () {
   Route::post('update-news/{id}', [NewsController::class, 'updatenews'])->name('news-update');
   Route::any('delete-news/{id}', [NewsController::class, 'deletenews'])->name('delete-news');
   Route::post('/manage-news/status', [NewsController::class, 'status'])->name('news.status');
+
+  //Manage Upcoming Elections
+  Route::get('manage/upcoming-elections', [UpcomingElectionController::class, 'upcomingelections'])->name('upcomingelections');
+  Route::get('add/upcoming-elections', [UpcomingElectionController::class, 'addupcomingelections'])->name('addupcomingelections');
+  Route::post('store/upcoming-elections', [UpcomingElectionController::class, 'postupcomingelections'])->name('postupcomingelections');
+  Route::get('edit/upcoming-elections/{id}', [UpcomingElectionController::class, 'editupcomingelections'])->name('editupcomingelections');
+  Route::post('update/upcoming-elections/{id}', [UpcomingElectionController::class, 'updateupcomingelections'])->name('updateupcomingelection');
+  Route::get('destroy/upcoming-elections/{id}', [UpcomingElectionController::class, 'destroyupcomingelection'])->name('destroyupcomingelection');
+  Route::post('upcoming-elections/status', [UpcomingElectionController::class, 'upcomingstatus'])->name('upcomingstatus');
+
+
 
 });
 

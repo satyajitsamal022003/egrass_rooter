@@ -9,6 +9,6 @@ class AddMember extends Model
 {
     use HasFactory;
 
-    // protected $table = 'add_member';
+    protected $table = 'add_member';
     public $timestamps = false;
 }

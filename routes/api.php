@@ -18,6 +18,7 @@ use App\Http\Controllers\Api\BulkEmailController;
 use App\Http\Controllers\Api\ElectionResultController;
 use App\Http\Controllers\Api\NewsController;
 use App\Http\Controllers\Api\BulkSmsController;
+use App\Http\Controllers\Api\UpcomingElectionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -100,11 +101,12 @@ Route::middleware('auth:api')->group(function () {
     // Logout route
     Route::post('logout', [ApiAuthController::class, 'logout']);
 
+    Route::get('getprofile', [ApiAuthController::class, 'getProfiledata']);
     Route::get('editprofile/{id}', [ApiAuthController::class, 'getProfile']);
     Route::post('updateprofile', [ApiAuthController::class, 'updateProfile']);
 
     //Blog Api
-    Route::get('/blogs/{userid}', [BlogController::class, 'index']);
+    Route::get('/blogs', [BlogController::class, 'index']);
     Route::post('blogs-add/', [BlogController::class, 'store']);
     Route::get('blogs-edit/{id}', [BlogController::class, 'edit']);
     Route::get('blogs-category/', [BlogController::class, 'blogscategory']);
@@ -114,7 +116,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('blog-category-add/', [BlogController::class, 'saveBlogcategory']);
 
     //Event Api
-    Route::get('/event/{userid}', [EventController::class, 'index']);
+    Route::get('event/', [EventController::class, 'index']);
     Route::post('event-add/', [EventController::class, 'store']);
     Route::get('event-edit/{id}', [EventController::class, 'edit']);
     Route::post('event-update', [EventController::class, 'update']);
@@ -122,23 +124,22 @@ Route::middleware('auth:api')->group(function () {
     Route::post('event-status', [EventController::class, 'updateStatus']);
 
     //Role List Api
-    Route::get('/rolelist/{userid}', [RoleController::class, 'index']);
+    Route::get('/rolelist', [RoleController::class, 'index']);
 
     //Member Api
-    Route::get('/member/{userid}', [MemberController::class, 'index']);
+    Route::get('member/', [MemberController::class, 'index']);
     Route::get('add-member/', [MemberController::class, 'addmember']);
     Route::get('member/get-senatorialstates/{stateid}', [MemberController::class, 'getsenatorialstates']);
     Route::get('member/get-lga/{stateid}', [MemberController::class, 'getlga']);
     Route::get('member/get-ward/{lgaid}', [MemberController::class, 'getward']);
     Route::get('member/get-pollingunit/{wardid}', [MemberController::class, 'getpu']);
     Route::post('member-add/', [MemberController::class, 'store']);
-
     Route::get('member-edit/{id}', [MemberController::class, 'edit']);
     Route::post('member-update', [MemberController::class, 'update']);
     Route::post('member-delete', [MemberController::class, 'destroy']);
 
     //Team Api
-    Route::get('/team/{userid}', [TeamController::class, 'index']);
+    Route::get('team/', [TeamController::class, 'index']);
     Route::post('team-add/', [TeamController::class, 'store']);
     Route::get('team-edit/{id}', [TeamController::class, 'edit']);
     Route::post('team-update', [TeamController::class, 'update']);
@@ -147,7 +148,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('list-members/{id}', [TeamController::class, 'listMember']);
 
     //Survey Api
-    Route::get('/survey/{userid}', [SurveyController::class, 'index']);
+    Route::get('survey/', [SurveyController::class, 'index']);
     Route::post('survey-add/', [SurveyController::class, 'store']);
     Route::get('survey-edit/{id}', [SurveyController::class, 'edit']);
     Route::post('survey-update', [SurveyController::class, 'update']);
@@ -157,16 +158,16 @@ Route::middleware('auth:api')->group(function () {
     Route::post('update-survey-questions/{surveyid}/{id}', [SurveyController::class, 'updateSurveyQuestion']);
     Route::post('delete-survey-questions/{surveyid}/{id}', [SurveyController::class, 'deleteSurveyQuestion']);
     Route::get('survey-questions/{id}', [SurveyController::class, 'surveyQuestionsList']);
-    Route::get('/feedback-questions-list/{userid}', [SurveyController::class, 'feedbackQuestionsList']);
+    Route::get('feedback-questions-list/', [SurveyController::class, 'feedbackQuestionsList']);
     Route::post('/survey-reply', [SurveyController::class, 'surveyReply']);
 
     //Notification Api
-    Route::get('/notifications/{userid}', [NotificationController::class, 'index']);
+    Route::get('notifications/', [NotificationController::class, 'index']);
     Route::post('/notifications/{id}/status', [NotificationController::class, 'changeSingleNotifyStatus']);
     Route::post('/notifications/status/admin', [NotificationController::class, 'changeNotifyStatusAdmin']);
 
     //Dashboard Api
-    Route::get('/dashboard/get-data/{userid}', [DashboardController::class, 'getDashData']);
+    Route::get('dashboard/get-data/', [DashboardController::class, 'getDashData']);
 
     //polling Agent Api
     Route::get('/polling-agent-list', [PollingAgentController::class, 'pollingagentlist']);
@@ -201,10 +202,9 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/get-statevote-tooltip', [ElectionResultController::class, 'getstatevotetooltip']);
     Route::post('/get-statevote-onclick', [ElectionResultController::class, 'getstatevoteonregionclick']);//pending
 
-    
-
-
 });
+    //Upcoming Elections Api
+    Route::get('/upcoming-elections', [UpcomingElectionController::class, 'upcomingelection']);
 
 
 

@@ -21,8 +21,14 @@ use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
-    public function getDashData(Request $request, $userid)
+    public function getDashData(Request $request)
     {
+        $user = Auth::guard('api')->user();
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        $userid = $user->id;
         $dashboard_data = [];
 
         $popupcampaignname = UserWebsite::where('user_id', $userid)->first();

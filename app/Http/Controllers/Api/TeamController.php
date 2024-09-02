@@ -16,8 +16,14 @@ use Illuminate\Support\Facades\Mail;
 
 class TeamController extends Controller
 {
-    public function index(Request $request, $userid)
+    public function index()
     {
+        $user = Auth::guard('api')->user();
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        $userid = $user->id;
         // Enable query logging
         DB::enableQueryLog();
         $teamdetails = Team::where('user_id', $userid)->orderBy('id', 'desc')->get();

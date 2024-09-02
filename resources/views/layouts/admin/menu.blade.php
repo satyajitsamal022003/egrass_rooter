@@ -208,6 +208,13 @@
                  </ul>
              </li>
 
+             <li class="treeview"><a class="waves-effect waves-dark" href="#!"><i class="icon-briefcase"></i><span>Upcoming Election</span><i class="icon-arrow-down"></i></a>
+                 <ul class="treeview-menu">
+                     <li class="child-sub-menu"><a class="waves-effect waves-dark" href="{{route('upcomingelections')}}"><i class="icon-arrow-right"></i> Upcoming Elections</a></li>
+                     <li class="child-sub-menu"><a class="waves-effect waves-dark" href="{{route('addupcomingelections')}}"><i class="icon-arrow-right"></i>Add Upcoming Election</a></li>
+                 </ul>
+             </li>
+
              <li class="treeview"><a class="waves-effect waves-dark" href="#!"><i class="fa fa-file" aria-hidden="true"></i><span> Report</span><i class="icon-arrow-down"></i></a>
                  <ul class="treeview-menu">
                      <li class="child-sub-menu"><a class="waves-effect waves-dark" href="{{route('manageteam.list')}}"><i class="icon-arrow-right"></i> Manage Team</a></li>

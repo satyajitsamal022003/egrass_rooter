@@ -121,7 +121,7 @@
                   <th>Created Date</th>
                   <th>Actions</th>
                 </tr>
-              </thead>
+              </thead> 
               <tbody>
                 @php($i=0)
                 @foreach ($menulist as $menu)

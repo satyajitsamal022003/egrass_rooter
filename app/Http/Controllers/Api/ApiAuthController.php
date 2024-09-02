@@ -514,6 +514,36 @@ class ApiAuthController extends Controller
         ]);
     }
 
+    public function getProfiledata()
+    {
+        $user = Auth::guard('api')->user();
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        $electiontype = ElectionType::where('id',$user->campaign_type)->first();
+        $roletype = Role::where('id',$user->user_type)->first();
+        $politicalparty = Party::where('id',$user->political_party)->first();
+
+        $profiledata = [
+            'telephone' => $user->telephone,
+            'email_id' => $user->email_id,
+            'campaign_name' => $electiontype->type,
+            'role_type' => $roletype->role,
+            'political_party' => $politicalparty->party_name,
+            'political_party_acronym' => $politicalparty->party_acronym,
+            'political_party_logo' => $politicalparty->party_img ? asset('images/parties/' . $politicalparty->party_img) : asset('images/blog/noimage.jpg'),
+            'candidate_image' => $politicalparty->candidate_img ? asset('images/parties/' . $politicalparty->candidate_img) : asset('images/blog/noimage.jpg'),
+            'candidate_name' => $politicalparty->candidate_name,
+        ];
+
+        return response()->json([
+            'success' => true,
+            'message'=> 'Profile Details Retrieved Successfully',
+            'profile_data' => $profiledata
+        ]);
+    }
+
 
     public function updateProfile(Request $request)
     {

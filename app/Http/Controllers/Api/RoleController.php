@@ -10,8 +10,14 @@ use Illuminate\Support\Facades\DB;
 
 class RoleController extends Controller
 {
-    public function index(Request $request, $userid)
+    public function index()
     {
+        $user = Auth::guard('api')->user();
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        $userid = $user->id;
         // Enable query logging
         DB::enableQueryLog();
         $roles = Role::orderBy('id', 'desc')->get();

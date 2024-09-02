@@ -23,7 +23,7 @@
                             </li>
                             <li class="breadcrumb-item"><a href="{{route('news-list')}}">Manage News</a>
                             </li>
-                            <li class="breadcrumb-item"><a>Update News</a>
+                            <li class="breadcrumb-item"><a>Edit News</a>
                             </li>
                         </ol>
                     </div>
@@ -34,7 +34,7 @@
             <div class="col-lg-8">
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="card-header-text">Update News</h5>
+                        <h5 class="card-header-text">Edit News</h5>
                     </div>
                     <div class="card-block">
                         <form method="post" action="{{route('news-update', $editnewsdata->id)}}" enctype="multipart/form-data">
@@ -118,7 +118,7 @@
 
                             <div class="form-group row">
                                 <div class="col-sm-10 offset-sm-2">
-                                    <button type="submit" class="btn btn-primary">Update</button>
+                                    <button type="submit" class="btn btn-success">Update</button>
                                 </div>
                             </div>
                         </form>

@@ -85,7 +85,7 @@ class BulkEmailController extends Controller
 
             $emailAddresses = $members->toArray();
 
-            $allSent = true;
+            $allSent = true; 
 
             // Send emails using array_map
             $results = array_map(function ($email) use ($umsg, $subject) {

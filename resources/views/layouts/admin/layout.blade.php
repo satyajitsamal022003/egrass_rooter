@@ -211,6 +211,7 @@
                                         <div class="dropdown-divider m-0"></div>
                                     </li>
                                     @csrf
+                                    <form action="{{ route('logout') }}">
                                     <li><a href="{{ route('logout') }}" onclick="event.preventDefault();this.closest('form').submit();"><i class="icon-logout"></i> Logout</a></li>
                                     </form>
                                 </ul>

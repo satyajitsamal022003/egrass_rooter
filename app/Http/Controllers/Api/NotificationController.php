@@ -12,8 +12,14 @@ use Illuminate\Support\Facades\DB;
 
 class NotificationController extends Controller
 {
-    public function index(Request $request, $userid)
+    public function index()
     {
+        $user = Auth::guard('api')->user();
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        $userid = $user->id;
         // Fetch notifications with admin_status=2
         $notifications = Notification::where('user_id', $userid)->where('admin_status', 2)
             ->orderBy('id', 'desc')

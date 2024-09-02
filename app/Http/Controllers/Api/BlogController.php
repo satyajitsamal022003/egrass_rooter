@@ -5,21 +5,29 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 
 use App\Models\Blog;
+use App\Models\BlogCategory;
 use App\Models\Category;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class BlogController extends Controller
 {
-    public function index(Request $request, $userid)
+    public function index()
     {
+        $user = Auth::guard('api')->user();
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        $userid = $user->id;
         // Enable query logging
         DB::enableQueryLog();
         $blogs = Blog::where('user_id', $userid)
             ->orderBy('id', 'desc')
             ->get();
-        // dd($blogs);
+        // dd($blogs); 
 
         $blog_data = [];
         if (!$blogs->isEmpty()) {
@@ -611,19 +619,19 @@ class BlogController extends Controller
     }
 
 
-    // public function blogscategory()
-    // {
-    //     $pollinglist = Polling_unit::where('ward_id', $wardid)
-    //         ->get()
-    //         ->map(function ($pudata) {
-    //             return [
-    //                 'id' => $pudata->id,
-    //                 'polling_unit_name' => $pudata->polling_name,
-    //             ];
-    //         });
+    public function blogscategory()
+    {
+        $blogscategory = BlogCategory::where('is_active', 1)
+            ->get()
+            ->map(function ($blogdata) {
+                return [
+                    'id' => $blogdata->cat_id,
+                    'category_name' => $blogdata->cat_title,
+                ];
+            });
 
-    //     return response()->json([
-    //         'wardwise_pollingunit' => $pollinglist,
-    //     ]);
-    // }
+        return response()->json([
+            'blog_category' => $blogscategory,
+        ]);
+    }
 }

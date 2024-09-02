@@ -7,6 +7,7 @@ use App\Models\AddMember;
 use App\Models\Role;
 use App\Services\TwilioService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class BulkSmsController extends Controller
@@ -55,7 +56,7 @@ class BulkSmsController extends Controller
         $validator = Validator::make($request->all(), [
             'recipients_phonenumbers' => 'required|array',
             'recipients_phonenumbers.*' => 'required|string', // Each recipient should be a valid phone number
-            'message' => 'required|string'
+            'message' => 'required|string',
         ], [
             'recipients_phonenumbers.required' => 'Recipients phone numbers are required.',
             'recipients_phonenumbers.array' => 'Recipients phone numbers must be an array.',
@@ -73,9 +74,42 @@ class BulkSmsController extends Controller
 
         $recipients = $request->input('recipients_phonenumbers');
         $message = $request->input('message');
+        $roleType = $request->input('role_type');
+        $selectAll = $request->input('selectall');
+        $user = Auth::guard('api')->user();
+
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        $userid = $user->id;
 
         try {
-            $this->twilioService->sendBulkSMS($recipients, $message);
+            // Determine the members based on role_type and selectall
+            if ($roleType === 'ALL') {
+                $members = AddMember::where('user_id', $userid)
+                    ->pluck('phone_number');
+            } elseif ($selectAll) {
+                $members = AddMember::where('user_id', $userid)
+                    ->where('role_type', $roleType)
+                    ->pluck('phone_number');
+            } else {
+                $members = AddMember::where('user_id', $userid)
+                    ->whereIn('phone_number', $recipients)
+                    ->pluck('phone_number');
+            }
+
+            if ($members->isEmpty()) {
+                return response()->json([
+                    'message' => 'No Member Found!'
+                ]);
+            }
+
+            $phoneNumbers = $members->toArray();
+
+            // Send bulk SMS to filtered phone numbers
+            $this->twilioService->sendBulkSMS($phoneNumbers, $message);
+
             return response()->json(['message' => 'SMS Sent Successfully.'], 200);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
