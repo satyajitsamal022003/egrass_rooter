@@ -22,6 +22,7 @@ use App\Models\Federal_constituency;
 use App\Models\Local_constituency;
 use App\Models\ElectionType;
 use App\Models\Role;
+use Tymon\JWTAuth\Exceptions\JWTException;
 
 class ApiAuthController extends Controller
 {
@@ -521,9 +522,9 @@ class ApiAuthController extends Controller
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
-        $electiontype = ElectionType::where('id',$user->campaign_type)->first();
-        $roletype = Role::where('id',$user->user_type)->first();
-        $politicalparty = Party::where('id',$user->political_party)->first();
+        $electiontype = ElectionType::where('id', $user->campaign_type)->first();
+        $roletype = Role::where('id', $user->user_type)->first();
+        $politicalparty = Party::where('id', $user->political_party)->first();
 
         $profiledata = [
             'telephone' => $user->telephone,
@@ -539,7 +540,7 @@ class ApiAuthController extends Controller
 
         return response()->json([
             'success' => true,
-            'message'=> 'Profile Details Retrieved Successfully',
+            'message' => 'Profile Details Retrieved Successfully',
             'profile_data' => $profiledata
         ]);
     }
@@ -771,5 +772,26 @@ class ApiAuthController extends Controller
             'status' => 'success',
             'message' => 'The email is unique and available for use.'
         ], 200); // 200 OK
+    }
+
+    public function verifyToken($token)
+    {
+        try {
+            // Get the token from the request
+            $requestToken = $token;
+
+            // Get the token used to authenticate the user
+            $authenticatedToken = JWTAuth::getToken();
+
+            // dd($authenticatedToken);
+            // Verify the token
+            if ($requestToken == $authenticatedToken) {
+                return response()->json(['message' => 'Token is valid.'], 200);
+            } else {
+                return response()->json(['error' => 'Token does not match.'], 401);
+            }
+        } catch (JWTException $e) {
+            return response()->json(['error' => 'Token is invalid or expired.'], 401);
+        }
     }
 }

@@ -9,12 +9,13 @@ use App\Models\Newslatest_update;
 use Illuminate\Support\Facades\Validator;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class NewsController extends Controller
 {
-    public function newsdetails(Request $request, $newsid)
+    public function newsdetails(Request $request, $slug)
     {
-        $newdata = News_Social::where('id', $newsid)->first();
+        $newdata = News_Social::where('slug', $slug)->first();
 
         if (!$newdata) {
             return response()->json([
@@ -37,6 +38,8 @@ class NewsController extends Controller
             'news_image' => $newdata->image ? asset('images/news/' . $newdata->image) : "",
             'youtube_video_url' => $newdata->video_url,
             'date' => $newdata->created_at->format('d-M-Y'),
+            'slug' => $newdata->slug, // Added slug
+            'created_by' => $newdata->created_by,
         ];
 
         $categories = News_category::withCount('news')->get();
@@ -49,11 +52,22 @@ class NewsController extends Controller
             ];
         });
 
-
         $relatedPosts = News_Social::where('newscategory', $newdata->newscategory)
-            ->where('id', '!=', $newsid)
+            ->where('slug', '!=', $slug)
             ->limit(5)
-            ->get();
+            ->get()
+            ->map(function ($relatedPost) {
+                return [
+                    'news_id' => $relatedPost->id,
+                    'news_title' => $relatedPost->title,
+                    'news_description' => $relatedPost->description,
+                    'news_image' => $relatedPost->image ? asset('images/news/' . $relatedPost->image) : null,
+                    'date' => $relatedPost->created_at->format('d-M-Y'),
+                    'slug' => $relatedPost->slug, // Added slug
+                    'created_by' => $relatedPost->created_by,
+
+                ];
+            });
 
         $latestVideos = News_Social::whereNotNull('video_url')
             ->orderBy('created_at', 'desc')
@@ -68,12 +82,12 @@ class NewsController extends Controller
                 return [
                     'article_id' => $article->id,
                     'title' => $article->title,
-                    // 'description' => $article->description,
                     'image' => $article->image ? asset('images/news/' . $article->image) : null,
                     'date' => $article->created_at->format('d-M-Y'),
+                    'slug' => $article->slug, // Added slug
+                    'created_by' => $article->created_by,
                 ];
             });
-
 
         return response()->json([
             'newsdetails' => $newsdetails,
@@ -83,6 +97,7 @@ class NewsController extends Controller
             'popularArticles' => $popularArticles
         ]);
     }
+
 
     public function latestupdateandnews(Request $request)
     {
@@ -121,37 +136,53 @@ class NewsController extends Controller
 
     public function news()
     {
-        $newsdata = News_Social::where('status', 1)->get();
+        // Fetch news with active status and eager load the 'category' relationship
+        $newsdata = News_Social::where('status', 1)
+            ->with('category') // Eager loading the category
+            ->get();
 
+        // Map the news data for the slider, including category name and description
         $allslidenews = $newsdata->map(function ($news) {
             return [
                 'news_id' => $news->id,
                 'news_title' => $news->title,
-                'news_description' => $news->description
+                'news_description' => $news->description,
+                'category_name' => $news->category ? $news->category->name : null, // Including category name
+                'image' => $news->image ? asset('images/news/' . $news->image) : null,
+                'slug' => $news->slug,
+                'created_by' => $news->created_by,
             ];
         });
 
+        // Fetch latest posts with active status, including their categories
         $latestposts = News_Social::where('status', 1)
-            ->with('category')
+            ->with('category') // Eager loading the category
             ->orderBy('created_at', 'desc')
             ->get();
 
+        // Map the latest posts data, including category name and description
         $latestpostsdata = $latestposts->map(function ($latpost) {
             return [
                 'news_id' => $latpost->id,
-                'news_category' => $latpost->category['name'],
+                'news_category' => $latpost->category ? $latpost->category->name : null, // Including category name
                 'news_title' => $latpost->title,
                 'news_description' => $latpost->description,
+                'image' => $latpost->image ? asset('images/news/' . $latpost->image) : null,
                 'date' => $latpost->created_at->format('d-M-Y'),
+                'slug' => $latpost->slug,
+                'created_by' => $latpost->created_by,
             ];
         });
 
+        // Fetch latest videos with a limit of 3
         $latestVideos = News_Social::whereNotNull('video_url')
             ->orderBy('created_at', 'desc')
             ->limit(3)
             ->pluck('video_url');
 
+        // Fetch popular articles and map them, including category name and description
         $popularArticles = News_Social::where('is_popular', 1)
+            ->with('category') // Eager loading the category
             ->orderBy('created_at', 'desc')
             ->take(5)
             ->get()
@@ -159,26 +190,34 @@ class NewsController extends Controller
                 return [
                     'article_id' => $article->id,
                     'title' => $article->title,
-                    // 'description' => $article->description,
+                    'category_name' => $article->category ? $article->category->name : null, // Including category name
                     'image' => $article->image ? asset('images/news/' . $article->image) : null,
                     'date' => $article->created_at->format('d-M-Y'),
+                    'slug' => $article->slug,
+                    'created_by' => $article->created_by,
+                    'news_description' => $article->description,
                 ];
             });
 
-            $popularposts = News_Social::where('is_popular', 1)
+        // Fetch popular posts and map them, including category name and description
+        $popularposts = News_Social::where('is_popular', 1)
+            ->with('category') // Eager loading the category
             ->orderBy('created_at', 'desc')
             ->get()
             ->map(function ($article) {
                 return [
                     'article_id' => $article->id,
                     'title' => $article->title,
-                    // 'description' => $article->description,
+                    'category_name' => $article->category ? $article->category->name : null, // Including category name
                     'image' => $article->image ? asset('images/news/' . $article->image) : null,
                     'date' => $article->created_at->format('d-M-Y'),
+                    'slug' => $article->slug,
+                    'created_by' => $article->created_by,
+                    'news_description' => $article->description,
                 ];
             });
 
-
+        // Fetch categories and their news count
         $categories = News_category::withCount('news')->get();
 
         $categorycountdata = $categories->map(function ($category) {
@@ -189,7 +228,7 @@ class NewsController extends Controller
             ];
         });
 
-
+        // Return the response with all the collected data
         return response()->json([
             'allslidenews' => $allslidenews,
             'latestpostsdata' => $latestpostsdata,

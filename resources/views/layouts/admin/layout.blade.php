@@ -212,7 +212,7 @@
                                     </li>
                                     @csrf
                                     <form action="{{ route('logout') }}">
-                                    <li><a href="{{ route('logout') }}" onclick="event.preventDefault();this.closest('form').submit();"><i class="icon-logout"></i> Logout</a></li>
+                                        <li><a href="{{ route('logout') }}" onclick="event.preventDefault();this.closest('form').submit();"><i class="icon-logout"></i> Logout</a></li>
                                     </form>
                                 </ul>
                             </li>
@@ -274,7 +274,7 @@
    <script src="https://code.highcharts.com/modules/exporting.js"></script>
    <script src="https://code.highcharts.com/highcharts-3d.js"></script> -->
 
-        
+
         <script>
             var $window = $(window);
             var nav = $('.fixed-button');
@@ -343,6 +343,12 @@
             // Check if there's a success message
             @if(Session::has('message'))
             toastr.success("{{ session('message') }}");
+            @endif
+
+            @if($errors-> any())
+            @foreach($errors-> all() as $error)
+            toastr.error("{{ $error }}");
+            @endforeach
             @endif
         </script>
 

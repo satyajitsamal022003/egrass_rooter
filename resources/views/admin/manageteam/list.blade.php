@@ -67,7 +67,7 @@
                   </td>
 
                   <td class="center">
-                    <a class="btn btn-info" href="" title="Team Member"><i class="fa fa-user"></i></a>
+                    <a class="btn btn-info" href="{{route('manageteam.teammembers',$tl->id)}}" title="Team Members"><i class="fa fa-user"></i></a>
                     <a class="btn btn-danger" href="{{route('manageteam.destroy',$tl->id)}}" onclick="return confirm('Are you sure to delete!');" title="Delete"><i class="fa fa-remove"></i></a>
                   </td>
                 </tr>

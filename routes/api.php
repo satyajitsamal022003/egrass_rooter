@@ -18,6 +18,7 @@ use App\Http\Controllers\Api\BulkEmailController;
 use App\Http\Controllers\Api\ElectionResultController;
 use App\Http\Controllers\Api\NewsController;
 use App\Http\Controllers\Api\BulkSmsController;
+use App\Http\Controllers\Api\CanvassingController;
 use App\Http\Controllers\Api\UpcomingElectionController;
 
 /*
@@ -46,7 +47,7 @@ Route::get('/activate-volunteer', [TeamController::class, 'volunteerActivate']);
 Route::get('/pages/{id}', [PageController::class, 'getPageData']);
 
 //News and news details
-Route::get('/news-details/{newsid}', [NewsController::class, 'newsdetails']);
+Route::get('/news-details/{slug}', [NewsController::class, 'newsdetails']);
 Route::get('/news', [NewsController::class, 'news']);
 Route::post('/updateandnews-subscription', [NewsController::class, 'latestupdateandnews']);
 
@@ -142,8 +143,9 @@ Route::middleware('auth:api')->group(function () {
     Route::get('team/', [TeamController::class, 'index']);
     Route::post('team-add/', [TeamController::class, 'store']);
     Route::get('team-edit/{id}', [TeamController::class, 'edit']);
-    Route::post('team-update', [TeamController::class, 'update']);
-    Route::post('team-delete', [TeamController::class, 'destroy']);
+    Route::get('team-members-view/{id}', [TeamController::class, 'view']);
+    Route::post('team-update/{id}', [TeamController::class, 'update']);
+    Route::post('team-delete/{id}', [TeamController::class, 'destroy']);
     Route::post('invite-team', [TeamController::class, 'inviteTeam']);
     Route::get('list-members/{id}', [TeamController::class, 'listMember']);
 
@@ -168,6 +170,8 @@ Route::middleware('auth:api')->group(function () {
 
     //Dashboard Api
     Route::get('dashboard/get-data/', [DashboardController::class, 'getDashData']);
+
+    
 
     //polling Agent Api
     Route::get('/polling-agent-list', [PollingAgentController::class, 'pollingagentlist']);
@@ -202,9 +206,14 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/get-statevote-tooltip', [ElectionResultController::class, 'getstatevotetooltip']);
     Route::post('/get-statevote-onclick', [ElectionResultController::class, 'getstatevoteonregionclick']);//pending
 
+    // Canvassing Api
+    Route::get('/canvassing-statistics', [CanvassingController::class, 'getstatistics']);//pending
+
 });
     //Upcoming Elections Api
     Route::get('/upcoming-elections', [UpcomingElectionController::class, 'upcomingelection']);
+    Route::get('/verify-token/{token}', [ApiAuthController::class, 'verifytoken']);
+
 
 
 

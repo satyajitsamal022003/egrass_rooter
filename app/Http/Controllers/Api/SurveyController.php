@@ -15,6 +15,8 @@ use App\Models\SurveyQuestion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+
 
 class SurveyController extends Controller
 {
@@ -65,10 +67,20 @@ class SurveyController extends Controller
             'description' => 'required|string'
         ]);
 
+        $slug = Str::slug($request->input('title'), '-');
+
+        // Check for uniqueness
+        if (Survey::where('slug', $slug)->exists()) {
+            // If slug exists, return an error response or handle accordingly
+            return response()->json([
+                'error' => 'The slug has already been taken.'
+            ], 422);
+        }
+
         // Create a new survey
         $survey = new Survey();
         $survey->user_id = $userId;
-        $survey->slug = trim($request->input('slug'));
+        $survey->slug = $slug;
         $survey->title = $request->input('title');
         $survey->description = $request->input('description');
         $survey->is_active = $request->input('is_active', 0);
@@ -142,8 +154,19 @@ class SurveyController extends Controller
             return response()->json(['message' => 'Survey not found'], 404);
         }
 
+        // Generate the slug from the title
+        $slug = Str::slug($request->input('title'), '-');
 
-        $survey->slug = trim($request->input('slug'));
+        // Check for uniqueness except for the current record
+        if (Survey::where('slug', $slug)->where('id', '!=', $survey->id)->exists()) {
+            // If slug exists for a different record, return an error response or handle accordingly
+            return response()->json([
+                'error' => 'The slug has already been taken.'
+            ], 422);
+        }
+
+
+        $survey->slug = $slug;
         $survey->title = $request->input('title');
         $survey->description = $request->input('description');
         $survey->is_active = $request->input('is_active', 0);

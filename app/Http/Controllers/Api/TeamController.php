@@ -30,7 +30,6 @@ class TeamController extends Controller
         $team_data = [];
         if (!$teamdetails->isEmpty()) {
             foreach ($teamdetails as $key => $team) {
-
                 $team_data[$key] = [
                     'id' => $team->id,
                     'name' => $team->name ?? '',
@@ -109,22 +108,61 @@ class TeamController extends Controller
         ]);
     }
 
+    public function view($id)
+    {
+        // Step 1: Retrieve all member_id associated with the given team_id
+        $memberIds = TeamInvite::where('team_id', $id)->pluck('member_id');
 
-    public function update(Request $request)
+        // Step 2: Decode JSON-encoded member IDs
+        $decodedMemberIds = collect($memberIds)->map(function ($item) {
+            return json_decode($item);
+        })->flatten();
+
+        // Step 3: Fetch member details from AddMember model and join with Role model
+        $members = AddMember::whereIn('add_members.id', $decodedMemberIds) // Specify table name for id
+            ->leftJoin('role', 'role.id', '=', 'add_members.role_type') // Join with Role model
+            ->get([
+                'add_members.id',           // Member ID
+                'role.role as role_name',   // Role Name from Role model
+                'add_members.name',         // Name from AddMember model
+                'add_members.phone_number', // Phone Number from AddMember model
+                'add_members.email_id',     // Email ID from AddMember model
+                'add_members.address'       // Address from AddMember model
+            ]);
+
+        // Step 4: Return the fetched member details as a response
+        // Step 4: Check if any members were found and return the appropriate response
+        if ($members->isNotEmpty()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Members found.',
+                'data' => $members
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'No members found for the given team ID.'
+            ], 404);
+        }
+    }
+
+
+
+
+
+    public function update(Request $request, $id)
     {
         $request->validate([
-            'id' => 'required|exists:team,id',
             'name' => 'required|string|max:255',
             'description' => 'required|string|max:255',
             'task' => 'required|string|max:15',
         ]);
 
-        $team = Team::find($request->id);
+        $team = Team::find($id);
 
         if (!$team) {
             return response()->json(['message' => 'Team not found'], 404);
         }
-
 
         $team->name = $request->input('name');
         $team->description = $request->input('description');
@@ -140,13 +178,9 @@ class TeamController extends Controller
     }
 
 
-    public function destroy(Request $request)
+    public function destroy(Request $request, $id)
     {
-        $request->validate([
-            'id' => 'required',
-        ]);
-
-        $team = Team::find($request->id);
+        $team = Team::find($id);
 
         if (!$team) {
             return response()->json([

@@ -18,6 +18,7 @@ use App\Models\Sitesetting;
 use App\Models\Testimonial;
 use App\Models\Party;
 use App\Models\Menu;
+use App\Models\Quick_software;
 use App\Models\Stayupdate;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -249,6 +250,20 @@ class PageController extends Controller
             ];
         }
 
+        
+
+        $getquicksoftware = Quick_software::where('is_active', 1)
+            ->get()
+            ->map(function ($quicksoft) {
+                return [
+                    'id' => $quicksoft->id,
+                    'title' => $quicksoft->title ?? "",
+                    'Image' => $quicksoft->image ? asset('images/quick_software/' . $quicksoft->image) : "",
+                    'Created_at' => $quicksoft->created ?? "",
+                ];
+            });
+
+
         $features = Feature_section::where('is_active', 1)
             ->orderBy('created_at', 'desc')
             ->get();
@@ -289,8 +304,8 @@ class PageController extends Controller
                 'id' => $party->id ?? "",
                 'political_party_name' => $party->party_name ?? "",
                 'party_owner_name' => $party->owner_name ?? "",
-                'political_party_logo' => $party->party_img ?? "",
-                'candidate_image' => $party->candidate_img ?? "",
+                'political_party_logo' => $party->party_img ? asset('images/parties/' . $party->party_img) : "",
+                'candidate_image' => $party->candidate_img ? asset('images/parties/' . $party->candidate_img) : "",
                 'party_color' => $party->color ?? "",
             ];
         });
@@ -315,7 +330,8 @@ class PageController extends Controller
             'features' => $featuresData,
             'testimonials' => $testimonialsData,
             'latest_parties' => $latest_parties,
-            'latest_blogs' => $latest_blogs
+            'latest_blogs' => $latest_blogs,
+            'software_data' => $getquicksoftware
         ];
 
         return response()->json($response, 200);
@@ -384,8 +400,8 @@ class PageController extends Controller
                 'id' => $party->id ?? "",
                 'political_party_name' => $party->party_name ?? "",
                 'party_owner_name' => $party->owner_name ?? "",
-                'political_party_logo' => $party->party_img ?? "",
-                'candidate_image' => $party->candidate_img ?? "",
+                'political_party_logo' => $party->party_img ? asset('images/parties/' . $party->party_img) : "",
+                'candidate_image' => $party->candidate_img ? asset('images/parties/' . $party->candidate_img) : "",
                 'party_color' => $party->color ?? "",
             ];
         });
@@ -426,7 +442,7 @@ class PageController extends Controller
 
         $validator = Validator::make($request->all(), [
             'email_id' => 'required|email|unique:stayupdates,email_id'
-        ],$messages);
+        ], $messages);
 
         if ($validator->fails()) {
             return response()->json([

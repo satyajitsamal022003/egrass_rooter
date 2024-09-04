@@ -117,6 +117,20 @@
                             </div>
 
                             <div class="form-group row">
+                                <label for="example-email-input" class="col-xs-2 col-form-label form-control-label">Is Popular
+                                    @error('is_popular')
+                                    <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </label>
+                                <div class="col-sm-10">
+                                    <select class="form-control" name="is_popular" id="is_popular">
+                                        <option value="1" {{ $editnewsdata->is_popular == 1 ? 'selected' : '' }}>Yes</option>
+                                        <option value="0" {{ $editnewsdata->is_popular == 0 ? 'selected' : '' }}>No</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
                                 <div class="col-sm-10 offset-sm-2">
                                     <button type="submit" class="btn btn-success">Update</button>
                                 </div>
@@ -158,5 +172,6 @@
     </script>
 
 </body>
+
 </html>
 @endsection

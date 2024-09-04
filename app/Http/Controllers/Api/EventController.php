@@ -167,7 +167,7 @@ class EventController extends Controller
         if (!$event) {
             return response()->json([
                 'success' => false,
-                'message' => 'Blog not found'
+                'message' => 'Event not found'
             ], 404);
         }
 

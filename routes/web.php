@@ -297,7 +297,10 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
   //Manage Team
   Route::get('/manage-team/list', [ManageTeamController::class, 'list'])->name('manageteam.list');
+  Route::get('/manage-team/members/{teamid}', [ManageTeamController::class, 'teammembers'])->name('manageteam.teammembers');
   Route::any('/manage-team/destroy/{id}', [ManageTeamController::class, 'destroy'])->name('manageteam.destroy');
+  Route::post('/manage-team-members/status', [ManageTeamController::class, 'status'])->name('manageteammember.status');
+
 
   // Manage Survey List
   Route::get('/manage-survey/list', [ManageTeamController::class, 'surveylist'])->name('managesurvey.list');

@@ -87,9 +87,9 @@
 
                                 <div class="form-group row">
                                     <label for="example-text-input" class="col-xs-2 col-form-label form-control-label">Video URL *
-                                    @error('title')
-                                    <span class="text-danger">{{ $message }}</span>
-                                    @enderror
+                                        @error('title')
+                                        <span class="text-danger">{{ $message }}</span>
+                                        @enderror
                                     </label>
                                     <div class="col-sm-10">
                                         <input class="form-control" type="text" name="video_url" id="video_url" required>
@@ -97,14 +97,27 @@
                                 </div>
                                 <div class="form-group row">
                                     <label for="example-email-input" class="col-xs-2 col-form-label form-control-label">Status
-                                    @error('status')
-                                    <span class="text-danger">{{ $message }}</span>
-                                    @enderror
+                                        @error('status')
+                                        <span class="text-danger">{{ $message }}</span>
+                                        @enderror
                                     </label>
                                     <div class="col-sm-10">
                                         <select class="form-control" name="status" id="status">
                                             <option value="1">Publish</option>
                                             <option value="0" selected>UnPublish</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="example-email-input" class="col-xs-2 col-form-label form-control-label">Is Popular
+                                        @error('is_popular')
+                                        <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </label>
+                                    <div class="col-sm-10">
+                                        <select class="form-control" name="is_popular" id="is_popular">
+                                            <option value="1">Yes</option>
+                                            <option value="0" >No</option>
                                         </select>
                                     </div>
                                 </div>
