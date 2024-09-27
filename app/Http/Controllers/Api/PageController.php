@@ -52,8 +52,8 @@ class PageController extends Controller
             }
 
             $pagBannerImage = $contactsRes->banner_image;
-            $bannerImgpath = file_exists(public_path('uploads/pages/' . $pagBannerImage))
-                ? asset('uploads/pages/' . $pagBannerImage)
+            $bannerImgpath = file_exists(public_path('images/pages/' . $pagBannerImage))
+                ? asset('images/pages/' . $pagBannerImage)
                 : asset('frontfile/images/banner_main.jpg');
 
             $pagBannerText = $contactsRes->page_banner_text;
