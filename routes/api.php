@@ -142,7 +142,6 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/contacts-upload-members', [MemberController::class, 'bulkUpload']);
 
 
-
     //Team Api
     Route::get('team/', [TeamController::class, 'index']);
     Route::post('team-add/', [TeamController::class, 'store']);

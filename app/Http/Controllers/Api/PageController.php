@@ -246,7 +246,7 @@ class PageController extends Controller
 
     public function getHomePageData()
     {
-        $homecontents = Homepage::find(1);
+        $homecontents = Homepage::find(1); 
 
         if (!$homecontents) {
             return response()->json(['message' => 'Home Page Data not found'], 404);
@@ -313,7 +313,7 @@ class PageController extends Controller
                     'id' => $quicksoft->id,
                     'title' => $quicksoft->title ?? "",
                     'Image' => $quicksoft->image ? asset('images/quick_software/' . $quicksoft->image) : "",
-                    'Created_at' => $quicksoft->created ?? "",
+                    'Created_at' => $quicksoft->created ?? "", 
                 ];
             });
 

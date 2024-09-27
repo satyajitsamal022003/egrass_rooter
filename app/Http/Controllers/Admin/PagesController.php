@@ -89,7 +89,7 @@ class PagesController extends Controller
 
         $pages->delete(); // Delete the item
 
-        return redirect()->route('pages.index')->with('success', 'Item deleted successfully.'); // Redirect to the index page with success message
+        return redirect()->route('pages.index')->with('message', 'Page deleted successfully.'); // Redirect to the index page with success message
     }
 
     public function edit($id)
